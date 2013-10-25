@@ -117,7 +117,11 @@ def build_reference_fields(citation_elements, line_marker, reference_format):
 
         # DOI
         elif element['type'] == "DOI":
-            add_subfield(current_field, 'doi', element['doi_string'])
+            add_subfield(current_field, 'doi', 'doi:' + element['doi_string'])
+
+        # HDL
+        elif element['type'] == "HDL":
+            add_subfield(current_field, 'hdl', 'hdl:' + element['hdl_id'])
 
         # AUTHOR
         elif element['type'] == "AUTH":

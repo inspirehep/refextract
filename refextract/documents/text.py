@@ -242,7 +242,7 @@ def get_page_break_positions(docbody):
     p_break = re.compile(ur'^\s*\f\s*$', re.UNICODE)
     num_document_lines = len(docbody)
     for i in xrange(num_document_lines):
-        if p_break.match(docbody[i]) != None:
+        if p_break.match(docbody[i]) is not None:
             page_break_posns.append(i)
     return page_break_posns
 

@@ -470,7 +470,7 @@ def find_numeration_more(line):
             return {'year': info.get('year', None),
                     'series': series,
                     'volume': info['vol_num'],
-                    'page': info['page'],
+                    'page': info['page'] or info['jinst_page'],
                     'page_end': info['page_end'],
                     'len': len(info['aftertitle'])}
 
@@ -556,7 +556,7 @@ def extract_series_from_volume(volume):
     for p in patterns:
         match = p.search(volume)
         if match:
-            return match.group(1)
+            return match.group(1).upper()
     return None
 
 
@@ -1116,7 +1116,7 @@ def find_numeration(line):
             return {'year': info.get('year', None),
                     'series': series,
                     'volume': info['vol_num'],
-                    'page': info['page'],
+                    'page': info['page'] or info['jinst_page'],
                     'page_end': info['page_end'],
                     'len': match.end()}
 

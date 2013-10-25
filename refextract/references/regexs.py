@@ -382,7 +382,7 @@ re_tagged_numeration_near_line_start = \
 re_ibid = re.compile(ur'(-|\b)?IBID(EM)?\.?', re.UNICODE)
 
 re_series_from_numeration = re.compile(
-    ur'^([A-Z])\s*[,\s:-]?\s*\d+', re.UNICODE)
+    ur'^([A-Za-z])\s*[,\s:-]?\s*\d+', re.UNICODE)
 re_series_from_numeration_after_volume = re.compile(
     ur'^\d+\s*[,\s:-]?\s*([A-Z])', re.UNICODE)
 
@@ -458,9 +458,11 @@ re_year = ur"""
 re_page_prefix = ur"[pP]?[p]?\.?\s?"  # Starting page num: optional Pp.
 re_page_num = ur"[RL]?\w?\d+[cC]?"    # pagenum with optional R/L
 re_page_sep = ur"\s*-\s*"             # optional separator between pagenums
-re_page = re_page_prefix + \
-    u"(?P<page>" + re_page_num + u")(?:" + re_page_sep + \
-    u"(?P<page_end>" + re_page_num + u"))?"
+re_jinst_page = ur'(?P<jinst_page>[pP]\d{5}\d*)'
+re_page = ur"(%s|%s)" % (re_jinst_page, re_page_prefix +
+                         u"(?P<page>" + re_page_num + u")(?:" + re_page_sep +
+                         u"(?P<page_end>" + re_page_num + u"))?")
+
 
 # Series
 re_series = ur"(?P<series>[A-H])"
@@ -653,6 +655,11 @@ re_doi = (re.compile(ur"""
     [\w\-_:;\(\)/<>])                       # any character excluding a full stop
     """, re.VERBOSE))
 
+# Pattern used to locate HDL (handle identifiers)
+re_hdl = re.compile(ur"""([hH][dD][lL]:
+                          |https?://hdl\.handle\.net/)
+                         (?P<hdl_id>\S+/\S+)""", re.UNICODE | re.VERBOSE)
+
 
 def _create_regex_pattern_add_optional_spaces_to_word_characters(word):
     """Add the regex special characters (\s*) to allow optional spaces between
@@ -677,26 +684,26 @@ def get_reference_section_title_patterns():
     """
     patterns = []
     titles = [u'references',
-              u'references.',
               u'r\u00C9f\u00E9rences',
               u'r\u00C9f\u00C9rences',
-              u'reference',
-              u'refs',
-              u'r\u00E9f\u00E9rence',
-              u'r\u00C9f\u00C9rence',
               u'r\xb4ef\xb4erences',
-              u'r\u00E9fs',
-              u'r\u00C9fs',
               u'bibliography',
               u'bibliographie',
+              u'literaturverzeichnis',
               u'citations',
-              u'literaturverzeichnis']
+              u'refs',
+              u'publications'
+              u'r\u00E9fs',
+              u'r\u00C9fs',
+              u'reference',
+              u'r\u00E9f\u00E9rence',
+              u'r\u00C9f\u00C9rence']
     sect_marker = u'^\s*([\[\-\{\(])?\s*' \
                   u'((\w|\d){1,5}([\.\-\,](\w|\d){1,5})?\s*' \
                   u'[\.\-\}\)\]]\s*)?' \
                   u'(?P<title>'
     sect_marker1 = u'^(\d){1,3}\s*(?P<title>'
-    line_end = ur'(\s*s\s*e\s*c\s*t\s*i\s*o\s*n\s*)?)([\)\}\]])?' \
+    line_end = ur'(\s*s\s*e\s*c\s*t\s*i\s*o\s*n\s*)?)\.?([\)\}\]])?' \
         ur'($|\s*[\[\{\(\<]\s*[1a-z]\s*[\}\)\>\]]|\:$)'
 
     for t in titles:
@@ -902,3 +909,17 @@ re_arxiv_notation = re.compile(ur"""
 # et. al. before J. /// means J is a journal
 
 re_num = re.compile(ur'(\d+)')
+
+
+re_year_in_misc_txt = re.compile(ur"(?:^|(?<!\d))(?:19|20)\d{2}(?:(?!\d)|$)")
+
+
+def remove_year(s, year=None):
+    if year:
+        year_pattern = re.escape(year)
+    else:
+        year_pattern = ur"(?:19|20)\d{2}"
+    s = re.sub(ur'\[\s*%s\s*\]' % year_pattern, '', s)
+    s = re.sub(ur'\(\s*%s\s*\)' % year_pattern, '', s)
+    s = re.sub(ur'\s*%s\s*' % year_pattern, '', s)
+    return s
