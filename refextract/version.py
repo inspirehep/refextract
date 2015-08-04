@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# This file is part of refextract
+# This file is part of refextract.
 # Copyright (C) 2015, 2016 CERN.
 #
 # refextract is free software; you can redistribute it and/or
@@ -21,19 +21,12 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-[tox]
-envlist = py26, py27, py33, py34
+"""Version information for refextract.
 
-[testenv]
-commands = {envpython} setup.py test
+This file is imported by ``refextract.__init__``,
+and parsed by ``setup.py``.
+"""
 
-# See https://wiki.python.org/moin/TestPyPI
-[testenv:release]
-deps =
-    twine >= 1.4.0
-    wheel
-commands =
-    /bin/rm -Rf {toxinidir}/dist
-    {envpython} setup.py clean --all
-    {envpython} setup.py sdist bdist_wheel
-    twine upload -r testpypi {posargs} dist/*
+from __future__ import absolute_import, print_function, unicode_literals
+
+__version__ = "0.1.0.dev20150722"

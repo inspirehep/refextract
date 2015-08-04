@@ -62,7 +62,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'extractutils'
+project = u'refextract'
 copyright = u'2015, CERN'
 author = u'Invenio Software'
 
@@ -74,7 +74,7 @@ author = u'Invenio Software'
 
 # Get the version string. Cannot be done with import!
 g = {}
-with open(os.path.join('..', 'extractutils', 'version.py'), 'rt') as fp:
+with open(os.path.join('..', 'refextract', 'version.py'), 'rt') as fp:
     exec(fp.read(), g)
     version = g['__version__']
 
@@ -232,7 +232,7 @@ if not on_rtd:
 #html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'extractutils_namedoc'
+htmlhelp_basename = 'refextract_namedoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -254,7 +254,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  (master_doc, 'extractutils.tex', u'extractutils Documentation',
+  (master_doc, 'refextract.tex', u'refextract Documentation',
    u'Invenio Software', 'manual'),
 ]
 
@@ -284,7 +284,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'extractutils', u'extractutils Documentation',
+    (master_doc, 'refextract', u'refextract Documentation',
      [author], 1)
 ]
 
@@ -298,8 +298,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  (master_doc, 'extractutils', u'extractutils Documentation',
-   author, 'extractutils', 'Small library for validating and normalising persistent identifiers used in scholarly communication.',
+  (master_doc, 'refextract', u'refextract Documentation',
+   author, 'refextract', 'Small library for validating and normalising persistent identifiers used in scholarly communication.',
    'Miscellaneous'),
 ]
 

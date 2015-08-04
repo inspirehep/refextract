@@ -1,11 +1,21 @@
 # -*- coding: utf-8 -*-
 #
-# This file is part of extractutils
-# Copyright (C) 2015 CERN.
+# This file is part of refextract
+# Copyright (C) 2015, 2016 CERN.
 #
-# extractutils is free software; you can redistribute it and/or modify
-# it under the terms of the Revised BSD License; see LICENSE file for
-# more details.
+# refextract is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+#
+# refextract is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with refextract; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #
 # In applying this license, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
@@ -71,22 +81,22 @@ class PyTest(TestCommand):
 
 # Get the version string. Cannot be done with import!
 g = {}
-with open(os.path.join('extractutils', 'version.py'), 'rt') as fp:
+with open(os.path.join('refextract', 'version.py'), 'rt') as fp:
     exec(fp.read(), g)
     version = g['__version__']
 
 setup(
-    name='extractutils',
+    name='refextract',
     version=version,
     description=__doc__,
     long_description=readme + '\n\n' + history,
-    keywords='persistent identifiers',
-    license='Revised BSD License',
-    author='Invenio Software',
-    author_email='info@invenio-software.org',
-    url='https://github.com/inveniosoftware/extractutils',
+    keywords='bibliographic references extraction text-mining',
+    license='GPLv2',
+    author='CERN',
+    author_email='admin@inspirehep.net',
+    url='https://github.com/inspirehep/refextract',
     packages=[
-        'extractutils',
+        'refextract',
     ],
     zip_safe=False,
     include_package_data=True,
@@ -103,8 +113,9 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
+        'Topic :: Software Development :: Libraries :: Python Modules',
         'Programming Language :: Python',
-        "Programming Language :: Python :: 2",
+        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',

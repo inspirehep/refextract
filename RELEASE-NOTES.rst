@@ -1,44 +1,35 @@
 ===================================
- extractutils v0.1.1 is released
+ refextract v0.1.1 is released
 ===================================
 
-extractutils v0.1.0 was released on 2015-07-22
+refextract v0.1.0 was released on 2015-07-22
 
 About
 -----
 
 Small library for persistent identifiers used in scholarly communication.
 
+Standalone edition of docextract/refextract from Invenio Software 1.x -> 2.x.
+
 What's new
 ----------
 
-- Fixes GND validation and normalization.
-- Replaces invalid package name in `run-tests.sh` and makes `run-tests.sh` file
-  executable. One can now use `docker-compose run --rm web /code/run-tests.sh`
-  to run all the CI tests (pep257, sphinx, test suite).
-- Initial release of Docker configuration suitable for local developments.
-  `docker-compose build` rebuilds the image,
-  `docker-compose run --rm web /code/run-tests.sh` runs the test suite.
+- Initial standalone release.
+
 
 Installation
 ------------
 
-   $ pip install extractutils
+   $ pip install refextract
 
 Documentation
 -------------
 
-   http://extractutils.readthedocs.org/en/v0.1.1
+   http://refextract.readthedocs.org/en/v0.1.1
 
 Homepage
 --------
 
-   https://github.com/inveniosoftware/extractutils
+   https://github.com/inspirehep/refextract
 
-Good luck and thanks for choosing extractutils.
-
-| Invenio Development Team
-|   Email: info@invenio-software.org
-|   Twitter: http://twitter.com/inveniosoftware
-|   GitHub: http://github.com/inveniosoftware
-|   URL: http://invenio-software.org
+Good luck and thanks for choosing refextract!
