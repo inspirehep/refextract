@@ -21,7 +21,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Extractutils."""
+"""Refextract."""
 
 from __future__ import absolute_import, print_function, unicode_literals
 

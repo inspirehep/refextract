@@ -1,8 +1,8 @@
 ===================================
- refextract v0.1.1 is released
+ refextract v0.1.0 is released
 ===================================
 
-refextract v0.1.0 was released on 2016-01-13
+refextract v0.1.0 was released on 2016-01-12
 
 About
 -----
@@ -24,7 +24,7 @@ Installation
 Documentation
 -------------
 
-   http://pythonhosted.org/plotextractor/
+   http://pythonhosted.org/refextract/
 
 Homepage
 --------

@@ -24,7 +24,7 @@
 Changes
 =======
 
-Version 0.1.0 (2016-01-13)
+Version 0.1.0 (2016-01-12)
 
 - Initial export from Invenio Software <https://github.com/inveniosoftware/invenio>
 - Restructured into stripped down, standalone version

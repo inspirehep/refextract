@@ -84,7 +84,8 @@ def build_reference_fields(citation_elements, line_marker, reference_format):
     reference_fields = [current_field]
 
     for element in citation_elements:
-        # Before going onto checking 'what' the next element is, handle misc text and semi-colons
+        # Before going onto checking 'what' the next element is,
+        # handle misc text and semi-colons
         # Multiple misc text subfields will be compressed later
         # This will also be the only part of the code that deals with MISC
         # tag_typed elements
