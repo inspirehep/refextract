@@ -26,18 +26,107 @@ refextract
 ============
 
 
-Utilities for extracting structured metadata from PDF or text documents.
-
-Standalone edition of docextract/refextract from Invenio Software 1.x -> 2.x.
+Small library for extracting references used in scholarly communication.
 
 * Free software: GPLv2
+* Documentation: http://pythonhosted.org/refextract/
 
-Features
-========
+*Originally exported from Invenio https://github.com/inveniosoftware/invenio.*
 
-- TODO
 
 Installation
 ============
 
-The refextract package is NOT on PyPI yet.
+.. code-block:: shell
+
+    pip install refextract
+
+Usage
+=====
+
+To get structured info from a publication reference:
+
+.. code-block:: python
+
+    from refextract import extract_journal_reference
+    reference = extract_journal_reference("J.Phys.,A39,13445")
+    print(reference)
+    {
+        'extra_ibids': [],
+        'is_ibid': False,
+        'misc_txt': u'',
+        'page': u'13445',
+        'title': u'J. Phys.',
+        'type': 'JOURNAL',
+        'volume': u'A39',
+        'year': ''
+     }
+
+
+To extract references from a publication full-text PDF:
+
+.. code-block:: python
+
+    from refextract import extract_references_from_file
+    reference = extract_references_from_file("some/fulltext/1503.07589v1.pdf")
+    print(reference)
+    {
+        'references': [
+                {'author': [u'F. Englert and R. Brout'],
+                 'doi': [u'10.1103/PhysRevLett.13.321'],
+                 'journal_page': [u'321'],
+                 'journal_reference': ['Phys.Rev.Lett.,13,1964'],
+                 'journal_title': [u'Phys.Rev.Lett.'],
+                 'journal_volume': [u'13'],
+                 'journal_year': [u'1964'],
+                 'linemarker': [u'1'],
+                 'title': [u'Broken symmetry and the mass of gauge vector mesons'],
+                 'year': [u'1964']}, ...
+           ],
+        'stats': {
+              'author': 15,
+              'date': '2016-01-12 10:52:58',
+              'doi': 1,
+              'misc': 0,
+              'old_stats_str': '0-1-1-15-0-1-0',
+              'reportnum': 1,
+              'status': 0,
+              'title': 1,
+              'url': 0,
+              'version': u'0.1.0.dev20150722'
+        }
+    }
+
+You can also extract directly from a URL:
+
+.. code-block:: python
+
+    from refextract import extract_references_from_url
+    reference = extract_references_from_url("http://arxiv.org/pdf/1503.07589v1.pdf")
+    print(reference)
+    {
+        'references': [
+                {'author': [u'F. Englert and R. Brout'],
+                 'doi': [u'10.1103/PhysRevLett.13.321'],
+                 'journal_page': [u'321'],
+                 'journal_reference': ['Phys.Rev.Lett.,13,1964'],
+                 'journal_title': [u'Phys.Rev.Lett.'],
+                 'journal_volume': [u'13'],
+                 'journal_year': [u'1964'],
+                 'linemarker': [u'1'],
+                 'title': [u'Broken symmetry and the mass of gauge vector mesons'],
+                 'year': [u'1964']}, ...
+           ],
+        'stats': {
+              'author': 15,
+              'date': '2016-01-12 10:52:58',
+              'doi': 1,
+              'misc': 0,
+              'old_stats_str': '0-1-1-15-0-1-0',
+              'reportnum': 1,
+              'status': 0,
+              'title': 1,
+              'url': 0,
+              'version': u'0.1.0.dev20150722'
+        }
+    }

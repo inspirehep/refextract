@@ -24,4 +24,15 @@
 Authors
 =======
 
-- TODO
+- Alessio Deiana <alessio.deiana@cern.ch>
+- Christopher Hayward <christopher.james.hayward@cern.ch>
+- Federico Poli <federico.poli@cern.ch>
+- Gerrit Rindermann <Gerrit.Rindermann@cern.ch>
+- Graham R. Armstrong <graham.richard.armstrong@cern.ch>
+- Grzegorz Szpura <grzegorz.szpura@cern.ch>
+- Jan Aage Lavik <jan.age.lavik@cern.ch>
+- Javier Martin Montull <javier.martin.montull@cern.ch>
+- Samuele Kaplun <samuele.kaplun@cern.ch>
+- Jiri Kuncar <jiri.kuncar@cern.ch>
+- Lars Holm Nielsen <lars.holm.nielsen@cern.ch>
+- Tibor Simko <tibor.simko@cern.ch>

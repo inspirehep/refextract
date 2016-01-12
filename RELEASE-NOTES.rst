@@ -2,14 +2,13 @@
  refextract v0.1.1 is released
 ===================================
 
-refextract v0.1.0 was released on 2015-07-22
+refextract v0.1.0 was released on 2016-01-13
 
 About
 -----
 
-Small library for persistent identifiers used in scholarly communication.
+Small library for extracting references used in scholarly communication.
 
-Standalone edition of docextract/refextract from Invenio Software 1.x -> 2.x.
 
 What's new
 ----------
@@ -25,7 +24,7 @@ Installation
 Documentation
 -------------
 
-   http://refextract.readthedocs.org/en/v0.1.1
+   http://pythonhosted.org/plotextractor/
 
 Homepage
 --------
@@ -33,3 +32,9 @@ Homepage
    https://github.com/inspirehep/refextract
 
 Good luck and thanks for choosing refextract!
+
+| INSPIRE Development Team
+|   Email: feedback@inspirehep.net
+|   Twitter: http://twitter.com/inspirehep
+|   GitHub: http://github.com/inspirehep
+|   URL: http://inspirehep.net

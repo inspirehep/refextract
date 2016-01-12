@@ -26,5 +26,5 @@ Changes
 
 Version 0.1.0 (2016-01-13)
 
-- First public release.
-- Standalone edition of docextract/refextract from Invenio Software 1.x -> 2.x.
+- Initial export from Invenio Software <https://github.com/inveniosoftware/invenio>
+- Restructured into stripped down, standalone version
