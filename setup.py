@@ -35,6 +35,7 @@ history = open('CHANGES.rst').read()
 
 requirements = [
     'six>=1.7.2',
+    'requests>=2.8.1',
 ]
 
 test_requirements = [
@@ -42,6 +43,7 @@ test_requirements = [
     'pytest>=2.7.0',
     'pytest-cov>=1.8.0',
     'pytest-pep8>=1.0.6',
+    'responses>=0.5.0',
 ]
 
 
