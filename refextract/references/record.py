@@ -40,10 +40,10 @@ def build_references(citations, reference_format=False):
     # citation. It will take into account authors to try and split up
     # references which should be read as two SEPARATE ones.
     return [c for citation_elements in citations
-              for elements in citation_elements['elements']
-              for c in build_reference_fields(elements,
-                                              citation_elements['line_marker'],
-                                              reference_format)]
+            for elements in citation_elements['elements']
+            for c in build_reference_fields(elements,
+                                            citation_elements['line_marker'],
+                                            reference_format)]
 
 
 def add_subfield(field, code, value):
@@ -56,7 +56,8 @@ def add_journal_subfield(field, element, reference_format):
     add_subfield(field, 'journal_volume', element.get('volume'))
     add_subfield(field, 'journal_year', element.get('year'))
     add_subfield(field, 'journal_page', element.get('page'))
-    add_subfield(field, 'journal_reference', reference_format.format(**element))
+    add_subfield(field, 'journal_reference',
+                 reference_format.format(**element))
 
 
 def create_reference_field(line_marker):
@@ -77,15 +78,16 @@ def build_reference_fields(citation_elements, line_marker, reference_format):
     @return xml_line: (string) The MARC-XML representation of the list of
                       reference elements
     """
-    ## Begin the datafield element
+    # Begin the datafield element
     current_field = create_reference_field(line_marker)
 
     reference_fields = [current_field]
 
     for element in citation_elements:
-        ## Before going onto checking 'what' the next element is, handle misc text and semi-colons
-        ## Multiple misc text subfields will be compressed later
-        ## This will also be the only part of the code that deals with MISC tag_typed elements
+        # Before going onto checking 'what' the next element is, handle misc text and semi-colons
+        # Multiple misc text subfields will be compressed later
+        # This will also be the only part of the code that deals with MISC
+        # tag_typed elements
         misc_txt = element['misc_txt']
         if misc_txt.strip("., [](){}"):
             misc_txt = misc_txt.lstrip('])} ,.').rstrip('[({ ,.')
@@ -103,9 +105,11 @@ def build_reference_fields(citation_elements, line_marker, reference_format):
         # URL
         elif element['type'] == "URL":
             if element['url_string'] == element['url_desc']:
-                # Build the datafield for the URL segment of the reference line:
+                # Build the datafield for the URL segment of the reference
+                # line:
                 add_subfield(current_field, 'url', element['url_string'])
-            # Else, in the case that the url string and the description differ in some way, include them both
+            # Else, in the case that the url string and the description differ
+            # in some way, include them both
             else:
                 add_subfield(current_field, 'url', element['url_string'])
                 add_subfield(current_field, 'urldesc', element['url_desc'])

@@ -179,7 +179,8 @@ def extract_references_from_string(source,
             refs_info['start_line'] = 0
             refs_info['end_line'] = len(docbody) - 1,
 
-        reflines = rebuild_reference_lines(docbody, refs_info['marker_pattern'])
+        reflines = rebuild_reference_lines(
+            docbody, refs_info['marker_pattern'])
     return parse_references(
         reflines,
         recid=recid,
@@ -201,7 +202,8 @@ def extract_journal_reference(line, override_kbs_files=None):
     if tagged_line is None:
         return None
 
-    elements, dummy_marker, dummy_stats = parse_tagged_reference_line('', tagged_line, [], [])
+    elements, dummy_marker, dummy_stats = parse_tagged_reference_line(
+        '', tagged_line, [], [])
 
     for element in elements:
         if element['type'] == 'JOURNAL':

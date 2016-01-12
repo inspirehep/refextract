@@ -151,7 +151,7 @@ def handle_special_journals(citation_elements, kbs):
             if el['year'] == '' and re.match(r'(19|20)\d{2}$', el['page']):
                 el['type'] = 'MISC'
                 el['misc_txt'] = "%s,%s,%s" \
-                                     % (el['title'], el['volume'], el['page'])
+                    % (el['title'], el['volume'], el['page'])
 
             el['volume'] = el['year'][-2:] + '%02d' % int(el['volume'])
 
@@ -186,7 +186,7 @@ def format_hep(citation_elements):
             for p in prefixes:
                 if el['report_num'].startswith(p):
                     el['report_num'] = el['report_num'][:len(p) - 1] + '/' + \
-                                                    el['report_num'][len(p):]
+                        el['report_num'][len(p):]
     return citation_elements
 
 
@@ -251,8 +251,8 @@ def remove_b_for_nucl_phys(citation_elements):
     """
     for el in citation_elements:
         if el['type'] == 'JOURNAL' and el['title'] == 'Nucl.Phys.Proc.Suppl.' \
-            and 'volume' in el \
-            and (el['volume'].startswith('b') or el['volume'].startswith('B')):
+                and 'volume' in el \
+                and (el['volume'].startswith('b') or el['volume'].startswith('B')):
             el['volume'] = el['volume'][1:]
     return citation_elements
 
@@ -262,7 +262,7 @@ def mangle_volume(citation_elements):
 
     e.g. transforms 100B to B100
     """
-    volume_re = re.compile(ur"(\d+)([A-Z])", re.U|re.I)
+    volume_re = re.compile(ur"(\d+)([A-Z])", re.U | re.I)
     for el in citation_elements:
         if el['type'] == 'JOURNAL':
             matches = volume_re.match(el['volume'])
@@ -338,7 +338,7 @@ def split_citations(citation_elements):
             pass
         elif current_recid and el_recid and current_recid != el_recid \
                 or current_doi and el['type'] == 'DOI' and \
-                                            current_doi != el['doi_string']:
+                current_doi != el['doi_string']:
             start_new_citation()
             # Some authors may be found in the previous citation
             balance_authors(splitted_citations, new_elements)
@@ -399,7 +399,7 @@ def remove_invalid_references(splitted_citations):
             el['misc_txt'] += " " + txt
 
     splitted_citations = [citation for citation in splitted_citations
-                                                                   if citation]
+                          if citation]
 
     # We merge some elements in here which means it only makes sense when
     # we have at least 2 elements to merge together
@@ -419,7 +419,7 @@ def remove_invalid_references(splitted_citations):
             previous_citation = citation
 
     return [citation for citation in splitted_citations
-                                                   if valid_citation(citation)]
+            if valid_citation(citation)]
 
 
 def merge_invalid_references(splitted_citations):
@@ -430,7 +430,7 @@ def merge_invalid_references(splitted_citations):
             el['misc_txt'] += " " + txt
 
     splitted_citations = [citation for citation in splitted_citations
-                                                                   if citation]
+                          if citation]
 
     # We merge some elements in here which means it only makes sense when
     # we have at least 2 elements to merge together
@@ -449,7 +449,7 @@ def merge_invalid_references(splitted_citations):
             previous_citation_valid = current_citation_valid
 
     return [citation for citation in splitted_citations
-                                                   if valid_citation(citation)]
+            if valid_citation(citation)]
 
 
 def add_year_elements(splitted_citations):
@@ -461,14 +461,14 @@ def add_year_elements(splitted_citations):
         year = None
         for el in citation:
             if el['type'] == 'JOURNAL' or el['type'] == 'BOOK' \
-                                                              and 'year' in el:
+                    and 'year' in el:
                 year = el['year']
                 break
         if year:
             citation.append({'type': 'YEAR',
                              'year': year,
                              'misc_txt': '',
-                            })
+                             })
 
     return splitted_citations
 
@@ -488,19 +488,21 @@ def look_for_implied_ibids(splitted_citations):
                     numeration = find_numeration(el['misc_txt'])
                     if numeration:
                         if not numeration['series']:
-                            numeration['series'] = extract_series_from_volume(current_journal['volume'])
+                            numeration['series'] = extract_series_from_volume(
+                                current_journal['volume'])
                         if numeration['series']:
-                            volume = numeration['series'] + numeration['volume']
+                            volume = numeration[
+                                'series'] + numeration['volume']
                         else:
                             volume = numeration['volume']
-                        ibid_el = {'type'       : 'JOURNAL',
-                                   'misc_txt'   : '',
-                                   'title'      : current_journal['title'],
-                                   'volume'     : volume,
-                                   'year'       : numeration['year'],
-                                   'page'       : numeration['page'],
-                                   'page_end'   : numeration['page_end'],
-                                   'is_ibid'    : True,
+                        ibid_el = {'type': 'JOURNAL',
+                                   'misc_txt': '',
+                                   'title': current_journal['title'],
+                                   'volume': volume,
+                                   'year': numeration['year'],
+                                   'page': numeration['page'],
+                                   'page_end': numeration['page_end'],
+                                   'is_ibid': True,
                                    'extra_ibids': []}
                         citation.append(ibid_el)
                         el['misc_txt'] = el['misc_txt'][numeration['len']:]
@@ -662,9 +664,11 @@ def search_for_book_in_misc(citation, kbs):
     """
     for citation_element in citation:
         if citation_element['type'] == 'MISC':
-            print('* Unknown citation found. Searching for book title in: %s' % citation_element['misc_txt'])
+            print('* Unknown citation found. Searching for book title in: %s' %
+                  citation_element['misc_txt'])
             for title in kbs['books']:
-                startIndex = find_substring_ignore_special_chars(citation_element['misc_txt'], title)
+                startIndex = find_substring_ignore_special_chars(
+                    citation_element['misc_txt'], title)
                 if startIndex != -1:
                     line = kbs['books'][title.upper()]
                     book_year = line[2].strip(';')
@@ -693,17 +697,20 @@ def search_for_book_in_misc(citation, kbs):
                                             'title': line[1],
                                             'year': book_year}
                             citation.append(book_element)
-                            citation_element['misc_txt'] = cut_substring_with_special_chars(citation_element['misc_txt'], title, startIndex)
+                            citation_element['misc_txt'] = cut_substring_with_special_chars(
+                                citation_element['misc_txt'], title, startIndex)
                             return True
 
             print('  * Book not found!')
     return False
+
 
 def get_possible_author_names(citation):
     for citation_element in citation:
         if citation_element['type'] == 'AUTH':
             return re.findall('[a-zA-Z]{4,}', citation_element['auth_txt'])
     return []
+
 
 def find_substring_ignore_special_chars(s, substr):
     s = s.upper()
@@ -724,6 +731,7 @@ def find_substring_ignore_special_chars(s, substr):
     else:
         return -1
 
+
 def cut_substring_with_special_chars(s, sub, startIndex):
     counter = 0
     subPosition = 0
@@ -734,12 +742,15 @@ def cut_substring_with_special_chars(s, sub, startIndex):
         if char == clean_sub[subPosition]:
             subPosition += 1
         counter += 1
-        #end of substrin reached?
+        # end of substrin reached?
         if subPosition >= len(clean_sub):
-            #include everything till a space, open bracket or a normal character
-            counter += len(re.split('[ [{(a-zA-Z0-9]',s[startIndex+counter:],1)[0])
+            # include everything till a space, open bracket or a normal
+            # character
+            counter += len(re.split('[ [{(a-zA-Z0-9]',
+                                    s[startIndex + counter:], 1)[0])
 
-            return s[0:startIndex].strip()+ ' ' +s[startIndex+counter:].strip()
+            return s[0:startIndex].strip() + ' ' + s[startIndex + counter:].strip()
+
 
 def is_unknown_citation(citation):
     """Checks if the citation got recognized as one of the known types.
@@ -749,6 +760,7 @@ def is_unknown_citation(citation):
         if citation_element['type'] in knownTypes:
             return False
     return True
+
 
 def parse_references_elements(ref_sect, kbs, linker_callback=None):
     """Passed a complete reference section, process each line and attempt to
@@ -803,12 +815,13 @@ def parse_references_elements(ref_sect, kbs, linker_callback=None):
     # process references line-by-line:
     for ref_line in ref_sect:
         citation_elements, line_marker, this_counts, bad_titles_count = \
-            parse_reference_line(ref_line, kbs, bad_titles_count, linker_callback)
+            parse_reference_line(
+                ref_line, kbs, bad_titles_count, linker_callback)
 
         # Accumulate stats
         counts = sum_2_dictionaries(counts, this_counts)
 
-        citations.append({'elements'   : citation_elements,
+        citations.append({'elements': citation_elements,
                           'line_marker': line_marker})
 
     # Return the list of processed reference lines:
@@ -819,7 +832,6 @@ def parse_tagged_reference_line(line_marker,
                                 line,
                                 identified_dois,
                                 identified_urls):
-
     """ Given a single tagged reference line, convert it to its MARC-XML representation.
         Try to find all tags and extract their contents and their types into corresponding
         dictionary elements. Append each dictionary tag representation onto a list, which
@@ -847,7 +859,8 @@ def parse_tagged_reference_line(line_marker,
 
     # contains a list of dictionary entries of previously cited items
     citation_elements = []
-    # the last tag element found when working from left-to-right across the line
+    # the last tag element found when working from left-to-right across the
+    # line
     identified_citation_element = None
 
     while tag_match is not None:
@@ -862,18 +875,20 @@ def parse_tagged_reference_line(line_marker,
             # This tag is an identified journal TITLE. It should be followed
             # by VOLUME, YEAR and PAGE tags.
 
-            # See if the found title has been tagged as an ibid: <cds.JOURNALibid>
+            # See if the found title has been tagged as an ibid:
+            # <cds.JOURNALibid>
             if tag_match.group('ibid'):
                 is_ibid = True
-                closing_tag_length = len(CFG_REFEXTRACT_MARKER_CLOSING_TITLE_IBID)
+                closing_tag_length = len(
+                    CFG_REFEXTRACT_MARKER_CLOSING_TITLE_IBID)
                 idx_closing_tag = processed_line.find(CFG_REFEXTRACT_MARKER_CLOSING_TITLE_IBID,
-                                                        tag_match_end)
+                                                      tag_match_end)
             else:
                 is_ibid = False
                 closing_tag_length = len(CFG_REFEXTRACT_MARKER_CLOSING_TITLE)
                 # extract the title from the line:
                 idx_closing_tag = processed_line.find(CFG_REFEXTRACT_MARKER_CLOSING_TITLE,
-                                                       tag_match_end)
+                                                      tag_match_end)
 
             if idx_closing_tag == -1:
                 # no closing TITLE tag found - get rid of the solitary tag
@@ -885,12 +900,16 @@ def parse_tagged_reference_line(line_marker,
                 # The title text to be used in the marked-up citation:
                 title_text = processed_line[tag_match_end:idx_closing_tag]
 
-                # Now trim this matched title and its tags from the start of the line:
-                processed_line = processed_line[idx_closing_tag+closing_tag_length:]
+                # Now trim this matched title and its tags from the start of
+                # the line:
+                processed_line = processed_line[
+                    idx_closing_tag + closing_tag_length:]
 
-                numeration_match = re_recognised_numeration_for_title_plus_series.search(processed_line)
+                numeration_match = re_recognised_numeration_for_title_plus_series.search(
+                    processed_line)
                 if numeration_match:
-                    # recognised numeration immediately after the title - extract it:
+                    # recognised numeration immediately after the title -
+                    # extract it:
                     reference_volume = numeration_match.group('vol')
                     reference_year = numeration_match.group('yr') or ''
                     reference_page = numeration_match.group('pg')
@@ -901,7 +920,8 @@ def parse_tagged_reference_line(line_marker,
                     # series_from_title = re_series_from_title.search(title_text)
                     #
                     if numeration_match.group('series'):
-                        reference_volume = numeration_match.group('series') + reference_volume
+                        reference_volume = numeration_match.group(
+                            'series') + reference_volume
 
                     # Skip past the matched numeration in the working line:
                     processed_line = processed_line[numeration_match.end():]
@@ -909,16 +929,17 @@ def parse_tagged_reference_line(line_marker,
                     # 'id_ibid' saves whether THIS TITLE is an ibid or not. (True or False)
                     # 'extra_ibids' are there to hold ibid's without the word 'ibid', which
                     # come directly after this title
-                    # i.e., they are recognised using title numeration instead of ibid notation
-                    identified_citation_element = {'type'       : "JOURNAL",
-                                                   'misc_txt'   : cur_misc_txt,
-                                                   'title'      : title_text,
-                                                   'volume'     : reference_volume,
-                                                   'year'       : reference_year,
-                                                   'page'       : reference_page,
-                                                   'is_ibid'    : is_ibid,
+                    # i.e., they are recognised using title numeration instead
+                    # of ibid notation
+                    identified_citation_element = {'type': "JOURNAL",
+                                                   'misc_txt': cur_misc_txt,
+                                                   'title': title_text,
+                                                   'volume': reference_volume,
+                                                   'year': reference_year,
+                                                   'page': reference_page,
+                                                   'is_ibid': is_ibid,
                                                    'extra_ibids': []
-                                                  }
+                                                   }
                     count_title += 1
                     cur_misc_txt = u""
 
@@ -926,7 +947,8 @@ def parse_tagged_reference_line(line_marker,
                     # denoted with the word 'IBID'. (i.e. look for IBID's without the word 'IBID' by
                     # looking at extra numeration after this title)
 
-                    numeration_match = re_numeration_no_ibid_txt.match(processed_line)
+                    numeration_match = re_numeration_no_ibid_txt.match(
+                        processed_line)
                     while numeration_match is not None:
 
                         reference_volume = numeration_match.group('vol')
@@ -934,20 +956,22 @@ def parse_tagged_reference_line(line_marker,
                         reference_page = numeration_match.group('pg')
 
                         if numeration_match.group('series'):
-                            reference_volume = numeration_match.group('series') + reference_volume
+                            reference_volume = numeration_match.group(
+                                'series') + reference_volume
 
                         # Skip past the matched numeration in the working line:
-                        processed_line = processed_line[numeration_match.end():]
+                        processed_line = processed_line[
+                            numeration_match.end():]
 
                         # Takes the just found title text
                         identified_citation_element['extra_ibids'].append(
-                                                {'type'       : "JOURNAL",
-                                                 'misc_txt'   : "",
-                                                 'title'      : title_text,
-                                                 'volume'     : reference_volume,
-                                                 'year'       : reference_year,
-                                                 'page'       : reference_page,
-                                                })
+                            {'type': "JOURNAL",
+                             'misc_txt': "",
+                             'title': title_text,
+                             'volume': reference_volume,
+                             'year': reference_year,
+                             'page': reference_page,
+                             })
                         # Increment the stats counters:
                         count_title += 1
 
@@ -955,9 +979,11 @@ def parse_tagged_reference_line(line_marker,
                         reference_volume = ""
                         reference_year = ""
                         reference_page = ""
-                        numeration_match = re_numeration_no_ibid_txt.match(processed_line)
+                        numeration_match = re_numeration_no_ibid_txt.match(
+                            processed_line)
                 else:
-                    # No numeration was recognised after the title. Add the title into a MISC item instead:
+                    # No numeration was recognised after the title. Add the
+                    # title into a MISC item instead:
                     cur_misc_txt += "%s" % title_text
                     identified_citation_element = None
 
@@ -983,9 +1009,9 @@ def parse_tagged_reference_line(line_marker,
                     + len(CFG_REFEXTRACT_MARKER_CLOSING_REPORT_NUM)
                 processed_line = processed_line[ending_tag_pos:]
 
-                identified_citation_element = {'type'       : "REPORTNUMBER",
-                                               'misc_txt'   : cur_misc_txt,
-                                               'report_num' : report_num}
+                identified_citation_element = {'type': "REPORTNUMBER",
+                                               'misc_txt': cur_misc_txt,
+                                               'report_num': report_num}
                 count_reportnum += 1
                 cur_misc_txt = u""
 
@@ -1006,10 +1032,10 @@ def parse_tagged_reference_line(line_marker,
 
             # Save the current misc text
             identified_citation_element = {
-                'type'       : "URL",
-                'misc_txt'   : "%s" % cur_misc_txt,
-                'url_string' : "%s" % url_string,
-                'url_desc'   : "%s" % url_desc
+                'type': "URL",
+                'misc_txt': "%s" % cur_misc_txt,
+                'url_string': "%s" % url_string,
+                'url_desc': "%s" % url_desc
             }
 
             count_url += 1
@@ -1030,9 +1056,9 @@ def parse_tagged_reference_line(line_marker,
 
             # SAVE the current misc text
             identified_citation_element = {
-                'type'       : "DOI",
-                'misc_txt'   : "%s" % cur_misc_txt,
-                'doi_string' : "%s" % doi_string
+                'type': "DOI",
+                'misc_txt': "%s" % cur_misc_txt,
+                'doi_string': "%s" % doi_string
             }
 
             # Increment the stats counters:
@@ -1063,15 +1089,17 @@ def parse_tagged_reference_line(line_marker,
                 processed_line = processed_line[tag_match_end:]
                 identified_citation_element = None
             else:
-                auth_txt = processed_line[tag_match_end:idx_closing_tag_nearest]
+                auth_txt = processed_line[
+                    tag_match_end:idx_closing_tag_nearest]
                 # Now move past the ending tag in the line:
-                processed_line = processed_line[idx_closing_tag_nearest + len("</cds.AUTHxxxx>"):]
-                #SAVE the current misc text
+                processed_line = processed_line[
+                    idx_closing_tag_nearest + len("</cds.AUTHxxxx>"):]
+                # SAVE the current misc text
                 identified_citation_element = {
-                    'type'       : "AUTH",
-                    'misc_txt'   : "%s" % cur_misc_txt,
-                    'auth_txt'   : "%s" % auth_txt,
-                    'auth_type'  : "%s" % auth_type
+                    'type': "AUTH",
+                    'misc_txt': "%s" % cur_misc_txt,
+                    'auth_txt': "%s" % auth_txt,
+                    'auth_type': "%s" % auth_type
                 }
 
                 # Increment the stats counters:
@@ -1087,18 +1115,18 @@ def parse_tagged_reference_line(line_marker,
             # This tag is a SERIES tag; Since it was not preceeded by a TITLE
             # tag, it is useless - strip the tag and put it into miscellaneous:
             (cur_misc_txt, processed_line) = \
-              convert_unusable_tag_to_misc(processed_line, cur_misc_txt,
-                                           tag_match_end,
-                                           CFG_REFEXTRACT_MARKER_CLOSING_SERIES)
+                convert_unusable_tag_to_misc(processed_line, cur_misc_txt,
+                                             tag_match_end,
+                                             CFG_REFEXTRACT_MARKER_CLOSING_SERIES)
             identified_citation_element = None
 
         elif tag_type == "VOL":
             # This tag is a VOLUME tag; Since it was not preceeded by a TITLE
             # tag, it is useless - strip the tag and put it into miscellaneous:
             (cur_misc_txt, processed_line) = \
-              convert_unusable_tag_to_misc(processed_line, cur_misc_txt,
-                                           tag_match_end,
-                                           CFG_REFEXTRACT_MARKER_CLOSING_VOLUME)
+                convert_unusable_tag_to_misc(processed_line, cur_misc_txt,
+                                             tag_match_end,
+                                             CFG_REFEXTRACT_MARKER_CLOSING_VOLUME)
             identified_citation_element = None
 
         elif tag_type == "YR":
@@ -1106,9 +1134,9 @@ def parse_tagged_reference_line(line_marker,
             # VOLUME tags, it is useless - strip the tag and put the contents
             # into miscellaneous:
             (cur_misc_txt, processed_line) = \
-              convert_unusable_tag_to_misc(processed_line, cur_misc_txt,
-                                           tag_match_end,
-                                           CFG_REFEXTRACT_MARKER_CLOSING_YEAR)
+                convert_unusable_tag_to_misc(processed_line, cur_misc_txt,
+                                             tag_match_end,
+                                             CFG_REFEXTRACT_MARKER_CLOSING_YEAR)
             identified_citation_element = None
 
         elif tag_type == "PG":
@@ -1116,9 +1144,9 @@ def parse_tagged_reference_line(line_marker,
             # VOLUME and YEAR tags, it is useless - strip the tag and put the
             # contents into miscellaneous:
             (cur_misc_txt, processed_line) = \
-              convert_unusable_tag_to_misc(processed_line, cur_misc_txt,
-                                           tag_match_end,
-                                           CFG_REFEXTRACT_MARKER_CLOSING_PAGE)
+                convert_unusable_tag_to_misc(processed_line, cur_misc_txt,
+                                             tag_match_end,
+                                             CFG_REFEXTRACT_MARKER_CLOSING_PAGE)
             identified_citation_element = None
 
         elif tag_type == "QUOTED":
@@ -1167,8 +1195,8 @@ def parse_tagged_reference_line(line_marker,
         # Increment the stats counters:
         count_misc += 1
         identified_citation_element = {
-            'type'       : "MISC",
-            'misc_txt'   : "%s" % cur_misc_txt,
+            'type': "MISC",
+            'misc_txt': "%s" % cur_misc_txt,
         }
         citation_elements.append(identified_citation_element)
 
@@ -1195,9 +1223,9 @@ def map_tag_to_subfield(tag_type, line, cur_misc_txt, dest):
         line = line[len('<cds.%s>' % tag_type):]
     else:
         tag_content = line[:idx_closing_tag]
-        identified_citation_element = {'type'     : tag_type,
-                                       'misc_txt' : cur_misc_txt,
-                                       dest       : tag_content}
+        identified_citation_element = {'type': tag_type,
+                                       'misc_txt': cur_misc_txt,
+                                       dest: tag_content}
         ending_tag_pos = idx_closing_tag + len(closing_tag)
         line = line[ending_tag_pos:]
         cur_misc_txt = u""
@@ -1241,7 +1269,7 @@ def convert_unusable_tag_to_misc(line,
         # closing tag was found
         misc_text += line[tag_match_end:idx_closing_tag]
         # now trim the matched item and its tags from the start of the line:
-        line = line[idx_closing_tag+len(closing_tag):]
+        line = line[idx_closing_tag + len(closing_tag):]
     return (misc_text, line)
 
 # Tasks related to extraction of reference section from full-text:
@@ -1284,15 +1312,16 @@ def get_plaintext_document_body(fpath, keep_layout=False):
     """
     textbody = []
     status = 0
-    if os.access(fpath, os.F_OK|os.R_OK):
+    if os.access(fpath, os.F_OK | os.R_OK):
         # filepath OK - attempt to extract references:
         # get file type:
         cmd_pdftotext = [CFG_PATH_GFILE, fpath]
-        pipe_pdftotext = subprocess.Popen(cmd_pdftotext, stdout=subprocess.PIPE)
+        pipe_pdftotext = subprocess.Popen(
+            cmd_pdftotext, stdout=subprocess.PIPE)
         res_gfile = pipe_pdftotext.stdout.read()
 
         if (res_gfile.lower().find("text") != -1) and \
-            (res_gfile.lower().find("pdf") == -1):
+                (res_gfile.lower().find("pdf") == -1):
             # plain-text file: don't convert - just read in:
             f = open(fpath, "r")
             try:
@@ -1300,7 +1329,7 @@ def get_plaintext_document_body(fpath, keep_layout=False):
             finally:
                 f.close()
         elif (res_gfile.lower().find("pdf") != -1) or \
-            (res_gfile.lower().find("pdfa") != -1):
+                (res_gfile.lower().find("pdfa") != -1):
             # convert from PDF
             (textbody, status) = convert_PDF_to_plaintext(fpath, keep_layout)
         else:

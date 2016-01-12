@@ -24,13 +24,15 @@
 import re
 
 from ..documents.pdf import replace_undesirable_characters
-from ..documents.text import join_lines, \
-                                    repair_broken_urls, \
-                                    re_multiple_space, \
-                                    remove_page_boundary_lines
+from ..documents.text import (
+    join_lines,
+    repair_broken_urls,
+    re_multiple_space,
+    remove_page_boundary_lines
+)
+
 from .config import CFG_REFEXTRACT_MAX_LINES
-from .find import find_end_of_reference_section, \
-                                    get_reference_section_beginning
+from .find import find_end_of_reference_section, get_reference_section_beginning
 
 
 def extract_references_from_fulltext(fulltext):
@@ -53,24 +55,24 @@ def extract_references_from_fulltext(fulltext):
     ref_sect_start = get_reference_section_beginning(fulltext)
 
     if ref_sect_start is None:
-        ## No References
+        # No References
         refs = []
         status = 4
         print("* extract_references_from_fulltext: "
-                         "ref_sect_start is None")
+              "ref_sect_start is None")
     else:
         # If a reference section was found, however weak
         ref_sect_end = \
-           find_end_of_reference_section(fulltext,
-                                         ref_sect_start["start_line"],
-                                         ref_sect_start["marker"],
-                                         ref_sect_start["marker_pattern"])
+            find_end_of_reference_section(fulltext,
+                                          ref_sect_start["start_line"],
+                                          ref_sect_start["marker"],
+                                          ref_sect_start["marker_pattern"])
         if ref_sect_end is None:
             # No End to refs? Not safe to extract
             refs = []
             status = 5
             print("* extract_references_from_fulltext: "
-                             "no end to refs!")
+                  "no end to refs!")
         else:
             # If the end of the reference section was found.. start extraction
             refs = get_reference_lines(fulltext,
@@ -125,7 +127,7 @@ def get_reference_lines(docbody,
         start_idx += 1
 
     if ref_sect_end_line is not None:
-        ref_lines = docbody[start_idx:ref_sect_end_line+1]
+        ref_lines = docbody[start_idx:ref_sect_end_line + 1]
     else:
         ref_lines = docbody[start_idx:]
 
@@ -199,7 +201,7 @@ def rebuild_reference_lines(ref_sectn, ref_line_marker_ptn):
             ref_line_marker_ptn = ur'^[^\s]'
 
     print('* references separator %s' % ref_line_marker_ptn)
-    p_ref_line_marker = re.compile(ref_line_marker_ptn, re.I|re.UNICODE)
+    p_ref_line_marker = re.compile(ref_line_marker_ptn, re.I | re.UNICODE)
 
     # Start from ref 1
     # Append each fixed reference line to rebuilt_references
@@ -249,12 +251,13 @@ def rebuild_reference_lines(ref_sectn, ref_line_marker_ptn):
                 if lower_case_start.match(line.strip()):
                     new_line_detected = False
                 if working_ref and \
-                       continuing_line_markers.search(working_ref[-1].strip()):
+                        continuing_line_markers.search(working_ref[-1].strip()):
                     new_line_detected = False
 
             if new_line_detected:
                 # Reference line marker found! : Append this reference to the
-                # list of fixed references and reset the working_line to 'blank'
+                # list of fixed references and reset the working_line to
+                # 'blank'
                 start = m_ref_line_marker.start()
                 if line[:start]:
                     # If it's not a blank line to separate refs
@@ -321,11 +324,11 @@ def test_for_blank_lines_separating_reference_lines(ref_sect):
     num_blanks = 0             # Number of blank lines found between non-blanks
     num_lines = 0              # Number of reference lines separated by blanks
     blank_line_separators = 0  # Flag to indicate whether blanks lines separate
-                               # ref lines
+    # ref lines
     multi_nonblanks_found = 0  # Flag to indicate whether multiple nonblank
-                               # lines are found together (used because
-                               # if line is dbl-spaced, it isnt a blank that
-                               # separates refs & can't be relied upon)
+    # lines are found together (used because
+    # if line is dbl-spaced, it isnt a blank that
+    # separates refs & can't be relied upon)
     x = 0
     max_line = len(ref_sect)
     while x < max_line:
@@ -353,6 +356,6 @@ def test_for_blank_lines_separating_reference_lines(ref_sect):
     # then we have blank line separators between reference lines
     if (num_lines > 3) and ((num_blanks == num_lines) or
                             (num_blanks == num_lines - 1)) and \
-                            (multi_nonblanks_found):
+            (multi_nonblanks_found):
         blank_line_separators = 1
     return blank_line_separators

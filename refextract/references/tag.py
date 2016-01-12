@@ -133,11 +133,11 @@ def tag_reference_line(line, kbs, record_titles_count):
     # Remove multiple spaces from the line, recording
     # information about their coordinates:
     removed_spaces, working_line2 = \
-         remove_and_record_multiple_spaces_in_line(working_line2)
+        remove_and_record_multiple_spaces_in_line(working_line2)
 
     # Identify and record coordinates of institute preprint report numbers:
     found_pprint_repnum_matchlens, found_pprint_repnum_replstr, working_line2 =\
-       identify_report_numbers(working_line2, kbs['report-numbers'])
+        identify_report_numbers(working_line2, kbs['report-numbers'])
 
     # Identify and record coordinates of non-standard journal titles:
     journals_matches_more, working_line2, line_titles_count = \
@@ -245,7 +245,7 @@ def process_reference_line(working_line,
         # versions of the REPORT-NUMBERs and TITLEs are tagged:
         startpos = 0          # First cell of the reference line...
         previous_match = {}   # previously matched TITLE within line (used
-                              # for replacement of IBIDs.
+        # for replacement of IBIDs.
         replacement_types = {}
         journals_keys = journals_matches.keys()
         journals_keys.sort()
@@ -262,19 +262,19 @@ def process_reference_line(working_line,
         replacement_locations.sort()
 
         tagged_line = u""  # This is to be the new 'working-line'. It will
-                           # contain the tagged TITLEs and REPORT-NUMBERs,
-                           # as well as any previously tagged URLs and
-                           # numeration components.
+        # contain the tagged TITLEs and REPORT-NUMBERs,
+        # as well as any previously tagged URLs and
+        # numeration components.
         # begin:
         for replacement_index in replacement_locations:
             # first, factor in any stripped spaces before this 'replacement'
             true_replacement_index, extras = \
-                  account_for_stripped_whitespace(spaces_keys,
-                                                  removed_spaces,
-                                                  replacement_types,
-                                                  pprint_repnum_len,
-                                                  journals_matches,
-                                                  replacement_index)
+                account_for_stripped_whitespace(spaces_keys,
+                                                removed_spaces,
+                                                replacement_types,
+                                                pprint_repnum_len,
+                                                journals_matches,
+                                                replacement_index)
 
             if replacement_types[replacement_index] == u"journal":
                 # Add a tagged periodical TITLE into the line:
@@ -293,24 +293,27 @@ def process_reference_line(working_line,
                 # Add a tagged institutional preprint REPORT-NUMBER
                 # into the line:
                 rebuilt_chunk, startpos = \
-                  add_tagged_report_number(
-                    reading_line=working_line,
-                    len_reportnum=pprint_repnum_len[replacement_index],
-                    reportnum=pprint_repnum_matchtext[replacement_index],
-                    startpos=startpos,
-                    true_replacement_index=true_replacement_index,
-                    extras=extras)
+                    add_tagged_report_number(
+                        reading_line=working_line,
+                        len_reportnum=pprint_repnum_len[replacement_index],
+                        reportnum=pprint_repnum_matchtext[replacement_index],
+                        startpos=startpos,
+                        true_replacement_index=true_replacement_index,
+                        extras=extras
+                    )
                 tagged_line += rebuilt_chunk
 
             elif replacement_types[replacement_index] == u"publisher":
                 rebuilt_chunk, startpos = \
-                  add_tagged_publisher(
-                    reading_line=working_line,
-                    matched_publisher=publishers_matches[replacement_index],
-                    startpos=startpos,
-                    true_replacement_index=true_replacement_index,
-                    extras=extras,
-                    kb_publishers=kbs['publishers'])
+                    add_tagged_publisher(
+                        reading_line=working_line,
+                        matched_publisher=publishers_matches[
+                            replacement_index],
+                        startpos=startpos,
+                        true_replacement_index=true_replacement_index,
+                        extras=extras,
+                        kb_publishers=kbs['publishers']
+                    )
                 tagged_line += rebuilt_chunk
 
         # add the remainder of the original working-line into the rebuilt line:
@@ -388,9 +391,10 @@ def tag_arxiv_more(line):
 
     for report_re, report_repl in RE_OLD_ARXIV:
         report_number = report_repl + ur"/\g<num>"
-        line = report_re.sub(u'<cds.REPORTNUMBER>' + report_number
-                                                     + u'</cds.REPORTNUMBER>',
-                             line)
+        line = report_re.sub(
+            u'<cds.REPORTNUMBER>' + report_number + u'</cds.REPORTNUMBER>',
+            line
+        )
     return line
 
 
@@ -407,11 +411,13 @@ def tag_pos_volume(line):
         except IndexError:
             # Extract year from volume name
             # which should always include the year
-            g = re.search(re_pos_year_num, match.group('volume_num'), re.UNICODE)
+            g = re.search(re_pos_year_num, match.group(
+                'volume_num'), re.UNICODE)
             year = g.group(0)
 
         if year:
-            groups['year'] = ' <cds.YR>(%s)</cds.YR>' % year.strip().strip('()')
+            groups[
+                'year'] = ' <cds.YR>(%s)</cds.YR>' % year.strip().strip('()')
         else:
             groups['year'] = ''
 
@@ -494,7 +500,7 @@ def add_tagged_report_number(reading_line,
         integer (the next 'startpos' in the reading-line).
     """
     rebuilt_line = u""  # The segment of the line that's being rebuilt to
-                        # include the tagged & standardised REPORT-NUMBER
+    # include the tagged & standardised REPORT-NUMBER
 
     # Fill rebuilt_line with the contents of the reading_line up to the point
     # of the institutional REPORT-NUMBER. However, stop 1 character before the
@@ -507,7 +513,7 @@ def add_tagged_report_number(reading_line,
 
     # Add the tagged REPORT-NUMBER into the rebuilt-line segment:
     rebuilt_line += u"<cds.REPORTNUMBER>%(reportnum)s</cds.REPORTNUMBER>" \
-                        % {'reportnum' : reportnum}
+                    % {'reportnum': reportnum}
 
     # Move the pointer in the reading-line past the current match:
     startpos = true_replacement_index + len_reportnum + extras
@@ -540,8 +546,8 @@ def add_tagged_journal_in_place_of_IBID(previous_match):
     """
 
     return " %s%s%s" % (CFG_REFEXTRACT_MARKER_OPENING_TITLE_IBID,
-                       previous_match['title'],
-                       CFG_REFEXTRACT_MARKER_CLOSING_TITLE_IBID)
+                        previous_match['title'],
+                        CFG_REFEXTRACT_MARKER_CLOSING_TITLE_IBID)
 
 
 def extract_series_from_volume(volume):
@@ -636,7 +642,7 @@ def add_tagged_journal(reading_line,
     else:
         if ';' in standardised_titles[journal_info]:
             title, series = \
-                              standardised_titles[journal_info].rsplit(';', 1)
+                standardised_titles[journal_info].rsplit(';', 1)
             series = series.strip()
             previous_match = {'title': title,
                               'series': series}
@@ -712,7 +718,7 @@ def add_tagged_publisher(reading_line,
     rebuilt_line = reading_line[startpos:true_replacement_index]
     # This is a normal title, not an IBID
     rebuilt_line += "<cds.PUBLISHER>%(title)s</cds.PUBLISHER>" \
-                    % {'title' : kb_publishers[matched_publisher]['repl']}
+                    % {'title': kb_publishers[matched_publisher]['repl']}
     # Compute new start pos
     startpos = true_replacement_index + len(matched_publisher) + extras
 
@@ -811,18 +817,18 @@ def account_for_stripped_whitespace(spaces_keys,
             true_replacement_index += removed_spaces[space]
             spare_replacement_index += removed_spaces[space]
         elif space >= spare_replacement_index and \
-                 replacement_types[replacement_index] == u"journal" and \
-                 space < (spare_replacement_index +
-                                     len(journals_matches[replacement_index])):
+            replacement_types[replacement_index] == u"journal" and \
+            space < (spare_replacement_index +
+                     len(journals_matches[replacement_index])):
             # A periodical title is being replaced. Account for multi-spaces
             # that may have been stripped from the title before its
             # recognition:
             spare_replacement_index += removed_spaces[space]
             extras += removed_spaces[space]
         elif space >= spare_replacement_index and \
-                 replacement_types[replacement_index] == u"reportnumber" and \
-                 space < (spare_replacement_index +
-                           len_reportnums[replacement_index]):
+            replacement_types[replacement_index] == u"reportnumber" and \
+            space < (spare_replacement_index +
+                     len_reportnums[replacement_index]):
             # An institutional preprint report-number is being replaced.
             # Account for multi-spaces that may have been stripped from it
             # before its recognition:
@@ -843,7 +849,7 @@ def strip_tags(line):
                         re.UNICODE)
     for m in re_tag.finditer(line):
         chars_count = m.end() - m.start()
-        line = re_tag.sub('_'*chars_count, line, count=1)
+        line = re_tag.sub('_' * chars_count, line, count=1)
     return line
 
 
@@ -906,20 +912,22 @@ def identify_and_tag_authors(line, authors_kb):
             if line[match.start():match.end()].find("_") == -1:
                 # Has the group with name 'et' (for 'et al') been found in the pattern?
                 # Has the group with name 'es' (for ed. before the author) been found in the pattern?
-                # Has the group with name 'ee' (for ed. after the author) been found in the pattern?
+                # Has the group with name 'ee' (for ed. after the author) been
+                # found in the pattern?
                 matched_positions.append({
-                    'start'       : match.start(),
-                    'end'         : match.end(),
-                    'etal'        : match.group('et') or match.group('et2'),
-                    'ed_start'    : match.group('es'),
-                    'ed_end'      : match.group('ee'),
-                    'multi_auth'  : match.group('multi_auth'),
-                    'multi_surs'  : match.group('multi_surs'),
-                    'text_before' : preceeding_text_string[preceeding_text_start:match.start()],
-                    'auth_no'     : auth_no,
+                    'start': match.start(),
+                    'end': match.end(),
+                    'etal': match.group('et') or match.group('et2'),
+                    'ed_start': match.group('es'),
+                    'ed_end': match.group('ee'),
+                    'multi_auth': match.group('multi_auth'),
+                    'multi_surs': match.group('multi_surs'),
+                    'text_before': preceeding_text_string[preceeding_text_start:match.start()],
+                    'auth_no': auth_no,
                     'author_names': match.group('author_names')
                 })
-                # Save the end of the match, from where to snip the misc text found before an author match
+                # Save the end of the match, from where to snip the misc text
+                # found before an author match
                 preceeding_text_start = match.end()
 
         # Work backwards to avoid index problems when adding AUTH tags
@@ -929,11 +937,13 @@ def identify_and_tag_authors(line, authors_kb):
             start = m['start']
             end = m['end']
 
-            # Check the text before the current match to see if it has a bad 'et al'
+            # Check the text before the current match to see if it has a bad
+            # 'et al'
             lower_text_before = m['text_before'].strip().lower()
             for e in etal_matches:
                 if lower_text_before.endswith(e):
-                    ## If so, this author match is likely to be a bad match on a missed title
+                    # If so, this author match is likely to be a bad match on a
+                    # missed title
                     dump_in_misc = True
                     break
 
@@ -944,12 +954,16 @@ def identify_and_tag_authors(line, authors_kb):
             # and the author group is legit (not to be dumped in misc)
             if not dump_in_misc and not (m['multi_auth'] or m['multi_surs']) \
                     and (lower_text_before.endswith(' and')):
-                # Search using a weaker author pattern to try and find the missed author(s) (cut away the end 'and')
+                # Search using a weaker author pattern to try and find the
+                # missed author(s) (cut away the end 'and')
                 weaker_match = re_auth_near_miss.match(m['text_before'])
                 if weaker_match and not (weaker_match.group('es') or weaker_match.group('ee')):
-                    # Change the start of the author group to include this new author group
-                    start = start - (len(m['text_before']) - weaker_match.start())
-                # Still no match, do not add tags for this author match.. dump it into misc
+                    # Change the start of the author group to include this new
+                    # author group
+                    start = start - \
+                        (len(m['text_before']) - weaker_match.start())
+                # Still no match, do not add tags for this author match.. dump
+                # it into misc
                 else:
                     dump_in_misc = True
 
@@ -962,10 +976,10 @@ def identify_and_tag_authors(line, authors_kb):
 
             # Standardize eds. notation
             tmp_output_line = re.sub(re_ed_notation, '(ed.)',
-                output_line[start:end], re.IGNORECASE)
+                                     output_line[start:end], re.IGNORECASE)
             # Standardize et al. notation
             tmp_output_line = re.sub(re_etal, 'et al.',
-                tmp_output_line, re.IGNORECASE)
+                                     tmp_output_line, re.IGNORECASE)
             # Strip
             tmp_output_line = tmp_output_line.lstrip('.').strip(",:;- [](")
             if not tmp_output_line.endswith('(ed.)'):
@@ -989,12 +1003,13 @@ def identify_and_tag_authors(line, authors_kb):
                     + CFG_REFEXTRACT_MARKER_CLOSING_AUTHOR_STND \
                     + add_to_misc \
                     + output_line[end:]
-            # Apply the 'include in $h' method to author groups marked as editors
+            # Apply the 'include in $h' method to author groups marked as
+            # editors
             elif m['ed_start'] or m['ed_end']:
                 ed_notation = " (eds.)"
                 # Standardize et al. notation
                 tmp_output_line = re.sub(re_etal, 'et al.',
-                    m['author_names'], re.IGNORECASE)
+                                         m['author_names'], re.IGNORECASE)
                 # remove any characters which denote this author group
                 # to be editors, just take the
                 # author names, and append '(ed.)'
@@ -1045,8 +1060,8 @@ def identify_ibids(line):
         ibid_match_txt[m_ibid.start()] = m_ibid.group(0)
         # Replace matched text in line with underscores:
         line = line[0:m_ibid.start()] + \
-               "_" * len(m_ibid.group(0)) + \
-               line[m_ibid.end():]
+            "_" * len(m_ibid.group(0)) + \
+            line[m_ibid.end():]
 
     return ibid_match_txt, line
 
@@ -1138,9 +1153,9 @@ def identify_journals(line, kb_journals):
     periodical_title_search_keys = kb_journals[2]
 
     title_matches = {}            # the text matched at the given line
-                                  # location (i.e. the title itself)
+    # location (i.e. the title itself)
     titles_count = {}             # sum totals of each 'bad title found in
-                                  # line.
+    # line.
 
     # Begin searching:
     for title in periodical_title_search_keys:
@@ -1212,9 +1227,9 @@ def identify_report_numbers(line, kb_reports):
             return -1
 
     repnum_matches_matchlen = {}  # info about lengths of report numbers
-                                  # matched at given locations in line
+    # matched at given locations in line
     repnum_matches_repl_str = {}  # standardised report numbers matched
-                                  # at given locations in line
+    # at given locations in line
 
     repnum_search_kb, repnum_standardised_categs = kb_reports
     repnum_categs = repnum_standardised_categs.keys()
@@ -1245,16 +1260,16 @@ def identify_report_numbers(line, kb_reports):
             # string with underscores
             # (this will replace chars in the lower-cased line):
             line = line[0:repnum_match.start(1)] \
-                   + "_"*len(repnum_match.group(1)) + line[repnum_match.end(1):]
+                + "_" * len(repnum_match.group(1)) + line[repnum_match.end(1):]
 
             # record the information about the matched preprint report number:
             # total length in the line of the matched preprint report number:
             repnum_matches_matchlen[repnum_match.start(1)] = \
-                                                    len(repnum_match.group(1))
+                len(repnum_match.group(1))
             # standardised replacement for the matched preprint report number:
             repnum_matches_repl_str[repnum_match.start(1)] = \
-                                    repnum_standardised_categs[categ] \
-                                    + numeration_match
+                repnum_standardised_categs[categ] \
+                + numeration_match
 
     # return recorded information about matched report numbers, along with
     # the newly changed working line:
@@ -1263,7 +1278,7 @@ def identify_report_numbers(line, kb_reports):
 
 def identify_publishers(line, kb_publishers):
     matches_repl = {}  # standardised report numbers matched
-                       # at given locations in line
+    # at given locations in line
 
     for abbrev, info in kb_publishers.iteritems():
         for match in info['pattern'].finditer(line):
@@ -1316,8 +1331,8 @@ def identify_and_tag_URLs(line):
     line_pre_url_check = line
     # Dictionaries to record details of matched URLs:
     found_url_full_matchlen = {}
-    found_url_urlstring     = {}
-    found_url_urldescr      = {}
+    found_url_urlstring = {}
+    found_url_urldescr = {}
 
     # List to contain details of all matched URLs:
     identified_urls = []
@@ -1326,23 +1341,23 @@ def identify_and_tag_URLs(line):
     m_tagged_url_iter = re_html_tagged_url.finditer(line)
     for m_tagged_url in m_tagged_url_iter:
         startposn = m_tagged_url.start()        # start position of matched URL
-        endposn   = m_tagged_url.end()          # end position of matched URL
-        matchlen  = len(m_tagged_url.group(0))  # total length of URL match
+        endposn = m_tagged_url.end()          # end position of matched URL
+        matchlen = len(m_tagged_url.group(0))  # total length of URL match
 
         found_url_full_matchlen[startposn] = matchlen
-        found_url_urlstring[startposn]     = m_tagged_url.group('url')
-        found_url_urldescr[startposn]      = m_tagged_url.group('desc')
+        found_url_urlstring[startposn] = m_tagged_url.group('url')
+        found_url_urldescr[startposn] = m_tagged_url.group('desc')
         # temporarily replace the URL match with underscores so that
         # it won't be re-found
-        line = line[0:startposn] + u"_"*matchlen + line[endposn:]
+        line = line[0:startposn] + u"_" * matchlen + line[endposn:]
 
     # Attempt to identify and tag all RAW (i.e. not
     # HTML-marked-up) URLs in the line:
     m_raw_url_iter = re_raw_url.finditer(line)
     for m_raw_url in m_raw_url_iter:
-        startposn   = m_raw_url.start()        # start position of matched URL
-        endposn     = m_raw_url.end()          # end position of matched URL
-        matchlen    = len(m_raw_url.group(0))  # total length of URL match
+        startposn = m_raw_url.start()        # start position of matched URL
+        endposn = m_raw_url.end()          # end position of matched URL
+        matchlen = len(m_raw_url.group(0))  # total length of URL match
         matched_url = m_raw_url.group('url')
 
         if len(matched_url) > 0 and matched_url[-1] in (".", ","):
@@ -1350,11 +1365,11 @@ def identify_and_tag_URLs(line):
             matched_url = matched_url[:-1]
 
         found_url_full_matchlen[startposn] = matchlen
-        found_url_urlstring[startposn]     = matched_url
-        found_url_urldescr[startposn]      = matched_url
+        found_url_urlstring[startposn] = matched_url
+        found_url_urldescr[startposn] = matched_url
         # temporarily replace the URL match with underscores
         # so that it won't be re-found
-        line = line[0:startposn] + u"_"*matchlen + line[endposn:]
+        line = line[0:startposn] + u"_" * matchlen + line[endposn:]
 
     # Now that all URLs have been identified, insert them
     # back into the line, tagged:
@@ -1363,7 +1378,7 @@ def identify_and_tag_URLs(line):
     found_url_positions.reverse()
     for url_position in found_url_positions:
         line = line[0:url_position] + "<cds.URL />" \
-               + line[url_position + found_url_full_matchlen[url_position]:]
+            + line[url_position + found_url_full_matchlen[url_position]:]
 
     # The line has been rebuilt. Now record the information about the
     # matched URLs:

@@ -75,18 +75,18 @@ def get_url_repair_patterns():
         ur'((http|ftp):\/\/([\w\d\_\.\-])+\/(([\w\d\_\s\.\-])+?\/)+)',
         ur'((http|ftp):\/\/([\w\d\_\.\-])+\/(([\w\d\_\s\.\-])+?\/)*([\w\d\_\s\-]+\.\s?[\w\d]+))',
     ]
-    pattern_list = [re.compile(p, re.I|re.UNICODE) for p in pattern_list]
+    pattern_list = [re.compile(p, re.I | re.UNICODE) for p in pattern_list]
 
-    ## some possible endings for URLs:
+    # some possible endings for URLs:
     p = ur'((http|ftp):\/\/([\w\d\_\.\-])+\/(([\w\d\_\.\-])+?\/)*([\w\d\_\-]+\.%s))'
     for extension in file_types_list:
-        p_url = re.compile(p % extension, re.I|re.UNICODE)
+        p_url = re.compile(p % extension, re.I | re.UNICODE)
         pattern_list.append(p_url)
 
-    ## if url last thing in line, and only 10 letters max, concat them
+    # if url last thing in line, and only 10 letters max, concat them
     p_url = re.compile(
         r'((http|ftp):\/\/([\w\d\_\.\-])+\/(([\w\d\_\.\-])+?\/)*\s*?([\w\d\_\.\-]\s?){1,10}\s*)$',
-        re.I|re.UNICODE)
+        re.I | re.UNICODE)
     pattern_list.append(p_url)
 
     return pattern_list
@@ -106,12 +106,12 @@ def join_lines(line1, line2):
     if line1 == u"":
         pass
     elif line1[-1] == u'-':
-        ## hyphenated word at the end of the
-        ## line - don't add in a space and remove hyphen
+        # hyphenated word at the end of the
+        # line - don't add in a space and remove hyphen
         line1 = line1[:-1]
     elif line1[-1] != u' ':
-        ## no space at the end of this
-        ## line, add in a space
+        # no space at the end of this
+        # line, add in a space
         line1 = line1 + u' '
     return line1 + line2
 
@@ -189,25 +189,25 @@ def remove_page_boundary_lines(docbody):
         represents a line in the document.
     """
     number_head_lines = number_foot_lines = 0
-    ## Make sure document not just full of whitespace:
+    # Make sure document not just full of whitespace:
     if not document_contains_text(docbody):
-        ## document contains only whitespace - cannot safely
-        ## strip headers/footers
+        # document contains only whitespace - cannot safely
+        # strip headers/footers
         return docbody
 
-    ## Get list of index posns of pagebreaks in document:
+    # Get list of index posns of pagebreaks in document:
     page_break_posns = get_page_break_positions(docbody)
 
-    ## Get num lines making up each header if poss:
+    # Get num lines making up each header if poss:
     number_head_lines = get_number_header_lines(docbody, page_break_posns)
 
-    ## Get num lines making up each footer if poss:
+    # Get num lines making up each footer if poss:
     number_foot_lines = get_number_footer_lines(docbody, page_break_posns)
 
-    ## Remove pagebreaks,headers,footers:
-    docbody = strip_headers_footers_pagebreaks(docbody, \
-                                               page_break_posns, \
-                                               number_head_lines, \
+    # Remove pagebreaks,headers,footers:
+    docbody = strip_headers_footers_pagebreaks(docbody,
+                                               page_break_posns,
+                                               number_head_lines,
                                                number_foot_lines)
 
     return docbody
@@ -224,7 +224,7 @@ def document_contains_text(docbody):
     found_non_space = 0
     for line in docbody:
         if not line.isspace():
-            ## found a non-whitespace character in this line
+            # found a non-whitespace character in this line
             found_non_space = 1
             break
     return found_non_space
@@ -259,7 +259,7 @@ def get_number_header_lines(docbody, page_break_posns):
     """
     remaining_breaks = len(page_break_posns) - 1
     num_header_lines = empty_line = 0
-    ## pattern to search for a word in a line:
+    # pattern to search for a word in a line:
     p_wordSearch = re.compile(ur'([A-Za-z0-9-]+)', re.UNICODE)
     if remaining_breaks > 2:
         if remaining_breaks > 3:
@@ -271,43 +271,43 @@ def get_number_header_lines(docbody, page_break_posns):
         keep_checking = 1
         while keep_checking:
             cur_break = 1
-            if docbody[(page_break_posns[cur_break] \
-                        + num_header_lines + 1)].isspace():
-                ## this is a blank line
+            if docbody[(page_break_posns[cur_break] +
+                        num_header_lines + 1)].isspace():
+                # this is a blank line
                 empty_line = 1
 
             if (page_break_posns[cur_break] + num_header_lines + 1) \
-                   == (page_break_posns[(cur_break + 1)]):
-                ## Have reached next page-break: document has no
-                ## body - only head/footers!
+                    == (page_break_posns[(cur_break + 1)]):
+                # Have reached next page-break: document has no
+                # body - only head/footers!
                 keep_checking = 0
 
             grps_headLineWords = \
-                p_wordSearch.findall(docbody[(page_break_posns[cur_break] \
-                                              + num_header_lines + 1)])
+                p_wordSearch.findall(docbody[(page_break_posns[cur_break] +
+                                              num_header_lines + 1)])
             cur_break = cur_break + next_head
             while (cur_break < remaining_breaks) and keep_checking:
                 grps_thisLineWords = \
-                    p_wordSearch.findall(docbody[(page_break_posns[cur_break] \
-                                                  + num_header_lines + 1)])
+                    p_wordSearch.findall(docbody[(page_break_posns[cur_break] +
+                                                  num_header_lines + 1)])
                 if empty_line:
                     if len(grps_thisLineWords) != 0:
-                        ## This line should be empty, but isn't
+                        # This line should be empty, but isn't
                         keep_checking = 0
                 else:
                     if (len(grps_thisLineWords) == 0) or \
-                           (len(grps_headLineWords) != len(grps_thisLineWords)):
-                        ## Not same num 'words' as equivilent line
-                        ## in 1st header:
+                            (len(grps_headLineWords) != len(grps_thisLineWords)):
+                        # Not same num 'words' as equivilent line
+                        # in 1st header:
                         keep_checking = 0
                     else:
                         keep_checking = \
-                            check_boundary_lines_similar(grps_headLineWords, \
+                            check_boundary_lines_similar(grps_headLineWords,
                                                          grps_thisLineWords)
-                ## Update cur_break for nxt line to check
+                # Update cur_break for nxt line to check
                 cur_break = cur_break + next_head
             if keep_checking:
-                ## Line is a header line: check next
+                # Line is a header line: check next
                 num_header_lines = num_header_lines + 1
             empty_line = 0
     return num_header_lines
@@ -334,37 +334,37 @@ def get_number_footer_lines(docbody, page_break_posns):
             if page_break_posns[cur_break] - num_footer_lines - 1 < 0 or \
                page_break_posns[cur_break] - num_footer_lines - 1 > \
                len(docbody) - 1:
-                ## Be sure that the docbody list boundary wasn't overstepped:
+                # Be sure that the docbody list boundary wasn't overstepped:
                 break
-            if docbody[(page_break_posns[cur_break] \
-                        - num_footer_lines - 1)].isspace():
+            if docbody[(page_break_posns[cur_break] -
+                        num_footer_lines - 1)].isspace():
                 empty_line = 1
             grps_headLineWords = \
-                p_wordSearch.findall(docbody[(page_break_posns[cur_break] \
-                                              - num_footer_lines - 1)])
+                p_wordSearch.findall(docbody[(page_break_posns[cur_break] -
+                                              num_footer_lines - 1)])
             cur_break = cur_break + 1
             while (cur_break < num_breaks) and keep_checking:
                 grps_thisLineWords = \
-                    p_wordSearch.findall(docbody[(page_break_posns[cur_break] \
-                                                  - num_footer_lines - 1)])
+                    p_wordSearch.findall(docbody[(page_break_posns[cur_break] -
+                                                  num_footer_lines - 1)])
                 if empty_line:
                     if len(grps_thisLineWords) != 0:
-                        ## this line should be empty, but isn't
+                        # this line should be empty, but isn't
                         keep_checking = 0
                 else:
                     if (len(grps_thisLineWords) == 0) or \
-                           (len(grps_headLineWords) != len(grps_thisLineWords)):
-                        ## Not same num 'words' as equivilent line
-                        ## in 1st footer:
+                            (len(grps_headLineWords) != len(grps_thisLineWords)):
+                        # Not same num 'words' as equivilent line
+                        # in 1st footer:
                         keep_checking = 0
                     else:
                         keep_checking = \
-                            check_boundary_lines_similar(grps_headLineWords, \
+                            check_boundary_lines_similar(grps_headLineWords,
                                                          grps_thisLineWords)
-                ## Update cur_break for nxt line to check
+                # Update cur_break for nxt line to check
                 cur_break = cur_break + 1
             if keep_checking:
-                ## Line is a footer line: check next
+                # Line is a footer line: check next
                 num_footer_lines = num_footer_lines + 1
             empty_line = 0
     return num_footer_lines
@@ -394,26 +394,26 @@ def strip_headers_footers_pagebreaks(docbody,
             page_lens.append(page_break_posns[x + 1] - page_break_posns[x])
     page_lens.sort()
     if (len(page_lens) > 0) and \
-           (num_head_lines + num_foot_lines + 1 < page_lens[0]):
-        ## Safe to chop hdrs & ftrs
+            (num_head_lines + num_foot_lines + 1 < page_lens[0]):
+        # Safe to chop hdrs & ftrs
         page_break_posns.reverse()
         first = 1
         for i in xrange(0, len(page_break_posns)):
-            ## Unless this is the last page break, chop headers
+            # Unless this is the last page break, chop headers
             if not first:
                 for dummy in xrange(1, num_head_lines + 1):
-                    docbody[page_break_posns[i] \
-                            + 1:page_break_posns[i] + 2] = []
+                    docbody[page_break_posns[i] +
+                            1:page_break_posns[i] + 2] = []
             else:
                 first = 0
-            ## Chop page break itself
+            # Chop page break itself
             docbody[page_break_posns[i]:page_break_posns[i] + 1] = []
-            ## Chop footers (unless this is the first page break)
+            # Chop footers (unless this is the first page break)
             if i != len(page_break_posns) - 1:
                 for dummy in xrange(1, num_foot_lines + 1):
-                    docbody[page_break_posns[i] \
-                            - num_foot_lines:page_break_posns[i] \
-                            - num_foot_lines + 1] = []
+                    docbody[page_break_posns[i] -
+                            num_foot_lines:page_break_posns[i] -
+                            num_foot_lines + 1] = []
     return docbody
 
 
@@ -425,19 +425,19 @@ def check_boundary_lines_similar(l_1, l_2):
     """
     num_matches = 0
     if (type(l_1) != list) or (type(l_2) != list) or (len(l_1) != len(l_2)):
-        ## these 'boundaries' are not similar
+        # these 'boundaries' are not similar
         return 0
 
     num_elements = len(l_1)
     for i in xrange(0, num_elements):
         if l_1[i].isdigit() and l_2[i].isdigit():
-            ## both lines are integers
+            # both lines are integers
             num_matches += 1
         else:
             l1_str = l_1[i].lower()
             l2_str = l_2[i].lower()
             if (l1_str[0] == l2_str[0]) and \
-                   (l1_str[len(l1_str) - 1] == l2_str[len(l2_str) - 1]):
+                    (l1_str[len(l1_str) - 1] == l2_str[len(l2_str) - 1]):
                 num_matches = num_matches + 1
     if (len(l_1) == 0) or (float(num_matches) / float(len(l_1)) < 0.9):
         return 0

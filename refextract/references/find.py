@@ -70,15 +70,16 @@ def find_reference_section(docbody):
         if title_match:
             title = title_match.group('title')
             index = len(docbody) - 1 - reversed_index
-            temp_ref_details, found_title = find_numeration(docbody[index:index+6], title)
+            temp_ref_details, found_title = find_numeration(
+                docbody[index:index + 6], title)
             if temp_ref_details:
                 if ref_details and 'title' in ref_details \
-                               and ref_details['title'] \
-                               and not temp_ref_details['title']:
+                        and ref_details['title'] \
+                        and not temp_ref_details['title']:
                     continue
                 if ref_details and 'marker' in ref_details \
-                               and ref_details['marker'] \
-                               and not temp_ref_details['marker']:
+                        and ref_details['marker'] \
+                        and not temp_ref_details['marker']:
                     continue
 
                 ref_details = temp_ref_details
@@ -147,9 +148,9 @@ def find_numeration_in_title(docbody, title):
     title = re.escape(title)
 
     mk_with_title_ptns = \
-       get_reference_line_numeration_marker_patterns(title)
+        get_reference_line_numeration_marker_patterns(title)
     mk_with_title_match = \
-       regex_match_list(first_line, mk_with_title_ptns)
+        regex_match_list(first_line, mk_with_title_ptns)
     if mk_with_title_match:
         mk = mk_with_title_match.group('mark')
         mk_ptn = mk_with_title_match.re.pattern
@@ -311,7 +312,7 @@ def find_reference_section_no_title_generic(docbody, marker_patterns):
             next_test_lines = 10
 
             index = len(docbody) - reversed_index
-            zone_to_check = docbody[index:index+next_test_lines]
+            zone_to_check = docbody[index:index + next_test_lines]
             if len(zone_to_check) < 5:
                 # We found a 1 towards the end, we assume
                 # we only have one reference
@@ -335,11 +336,11 @@ def find_reference_section_no_title_generic(docbody, marker_patterns):
 
     if found_ref_sect:
         ref_sectn_details = {
-            'start_line'             : ref_start_line,
-            'title_string'           : None,
-            'marker'                 : ref_line_marker.strip(),
-            'marker_pattern'         : ref_line_marker_pattern,
-            'title_marker_same_line' : False,
+            'start_line': ref_start_line,
+            'title_string': None,
+            'marker': ref_line_marker.strip(),
+            'marker_pattern': ref_line_marker_pattern,
+            'title_marker_same_line': False,
         }
     else:
         # didn't manage to find the reference section
@@ -369,7 +370,7 @@ def find_end_of_reference_section(docbody,
     section_ended = False
     x = ref_start_line
     if type(x) is not int or x < 0 or \
-           x > len(docbody) or len(docbody) < 1:
+            x > len(docbody) or len(docbody) < 1:
         # The provided 'first line' of the reference section was invalid.
         # Either it was out of bounds in the document body, or it was not a
         # valid integer.
@@ -380,7 +381,7 @@ def find_end_of_reference_section(docbody,
     kw_patterns = get_post_reference_section_keyword_patterns()
 
     if None not in (ref_line_marker, ref_line_marker_ptn):
-        mk_patterns = [re.compile(ref_line_marker_ptn, re.I|re.UNICODE)]
+        mk_patterns = [re.compile(ref_line_marker_ptn, re.I | re.UNICODE)]
     else:
         mk_patterns = get_reference_line_numeration_marker_patterns()
 
@@ -394,7 +395,8 @@ def find_end_of_reference_section(docbody,
             except (ValueError, IndexError):
                 # non numerical references marking
                 pass
-        # look for a likely section title that would follow a reference section:
+        # look for a likely section title that would follow a reference
+        # section:
         end_match = regex_match_list(docbody[x].strip(), t_patterns)
         if not end_match:
             # didn't match a section title - try looking for keywords that
@@ -429,12 +431,12 @@ def find_end_of_reference_section(docbody,
             # Does this & the next 5 lines simply contain numbers? If yes, it's
             # probably the axis scale of a graph in a fig. End refs section
             digit_test_str = docbody[x].replace(" ", "").\
-                                        replace(".", "").\
-                                        replace("-", "").\
-                                        replace("+", "").\
-                                        replace(u"\u00D7", "").\
-                                        replace(u"\u2212", "").\
-                                        strip()
+                replace(".", "").\
+                replace("-", "").\
+                replace("+", "").\
+                replace(u"\u00D7", "").\
+                replace(u"\u2212", "").\
+                strip()
             if len(digit_test_str) > 10 and digit_test_str.isdigit():
                 # The line contains only digits and is longer than 10 chars:
                 y = x + 1
@@ -442,12 +444,12 @@ def find_end_of_reference_section(docbody,
                 num_digit_lines = 1
                 while y < x + digit_lines and y < len(docbody):
                     digit_test_str = docbody[y].replace(" ", "").\
-                                     replace(".", "").\
-                                     replace("-", "").\
-                                     replace("+", "").\
-                                     replace(u"\u00D7", "").\
-                                     replace(u"\u2212", "").\
-                                     strip()
+                        replace(".", "").\
+                        replace("-", "").\
+                        replace("+", "").\
+                        replace(u"\u00D7", "").\
+                        replace(u"\u2212", "").\
+                        strip()
                     if len(digit_test_str) > 10 and digit_test_str.isdigit():
                         num_digit_lines += 1
                     elif len(digit_test_str) == 0:
@@ -463,40 +465,43 @@ def find_end_of_reference_section(docbody,
 
 def get_reference_section_beginning(fulltext):
 
-    sect_start = {'start_line'     : None,
-                  'end_line'       : None,
-                  'title_string'   : None,
-                  'marker_pattern' : None,
-                  'marker'         : None,
+    sect_start = {'start_line': None,
+                  'end_line': None,
+                  'title_string': None,
+                  'marker_pattern': None,
+                  'marker': None,
                   'how_found_start': None,
                   }
 
-    ## Find start of refs section:
+    # Find start of refs section:
     sect_start = find_reference_section(fulltext)
     if sect_start is not None:
         sect_start['how_found_start'] = 1
     else:
-        ## No references found - try with no title option
+        # No references found - try with no title option
         sect_start = find_reference_section_no_title_via_brackets(fulltext)
         if sect_start is not None:
             sect_start['how_found_start'] = 2
-        ## Try weaker set of patterns if needed
+        # Try weaker set of patterns if needed
         if sect_start is None:
-            ## No references found - try with no title option (with weaker patterns..)
+            # No references found - try with no title option (with weaker
+            # patterns..)
             sect_start = find_reference_section_no_title_via_dots(fulltext)
             if sect_start is not None:
                 sect_start['how_found_start'] = 3
             if sect_start is None:
-                ## No references found - try with no title option (with even weaker patterns..)
-                sect_start = find_reference_section_no_title_via_numbers(fulltext)
+                # No references found - try with no title option (with even
+                # weaker patterns..)
+                sect_start = find_reference_section_no_title_via_numbers(
+                    fulltext)
                 if sect_start is not None:
                     sect_start['how_found_start'] = 4
 
     if sect_start:
         print('* title %r' % sect_start['title_string'])
         print('* marker %r' % sect_start['marker'])
-        print('* title_marker_same_line %s' \
-            % sect_start['title_marker_same_line'])
+        print('* title_marker_same_line %s'
+              % sect_start['title_marker_same_line'])
     else:
         print('* could not find references section')
     return sect_start

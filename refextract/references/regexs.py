@@ -36,12 +36,13 @@ re_sep_opt = ur"\s*[,\s:-]?\s*"
 # e.g. 2006
 re_pos_year_num = ur'(?:19|20)\d{2}'
 re_pos_year = ur'(?P<year>(' \
-                  + ur'\s' + re_pos_year_num + ur'\s' \
-                  + ur'|' \
-                  + ur'\(' + re_pos_year_num + '\)' \
-                  + ur'))'
+    + ur'\s' + re_pos_year_num + ur'\s' \
+    + ur'|' \
+    + ur'\(' + re_pos_year_num + '\)' \
+    + ur'))'
 # e.g. LAT2007
-re_pos_volume = ur'(?P<volume_name>\w{1,10})' + re_sep_opt + ur'(?P<volume_num>(?:19|20)\d{2})'
+re_pos_volume = ur'(?P<volume_name>\w{1,10})' + \
+    re_sep_opt + ur'(?P<volume_num>(?:19|20)\d{2})'
 # e.g. (LAT2007)
 re_pos_volume_par = ur'\(' + re_pos_volume + ur'\)'
 # e.g. 20
@@ -49,9 +50,12 @@ re_pos_page = ur'(?P<page>\d{1,4})'
 re_pos_title = ur'POS'
 
 re_pos_patterns = [
-    re_pos_title + re_sep_opt + re_pos_year + re_sep + re_pos_volume + re_sep + re_pos_page,
-    re_pos_title + re_sep + re_pos_volume + re_sep_opt + re_pos_year + re_sep_opt + re_pos_page,
-    re_pos_title + re_sep + re_pos_volume + re_sep + re_pos_page + re_sep_opt + re_pos_year,
+    re_pos_title + re_sep_opt + re_pos_year +
+    re_sep + re_pos_volume + re_sep + re_pos_page,
+    re_pos_title + re_sep + re_pos_volume + re_sep_opt +
+    re_pos_year + re_sep_opt + re_pos_page,
+    re_pos_title + re_sep + re_pos_volume + re_sep +
+    re_pos_page + re_sep_opt + re_pos_year,
     re_pos_title + re_sep_opt + re_pos_volume_par + re_sep_opt + re_pos_page,
 ]
 re_opts = re.VERBOSE | re.UNICODE | re.IGNORECASE
@@ -82,9 +86,9 @@ RE_ARXIV_CATCHUP = re.compile(ur"""
 
 # Patterns for ATLAS CONF report numbers
 RE_ATLAS_CONF_PRE_2010 = re.compile(
-              ur'(?<!\w:)ATL(AS)?-CONF-(?P<code>(?:200\d|99)-\d{3})(?![\w\d])')
+    ur'(?<!\w:)ATL(AS)?-CONF-(?P<code>(?:200\d|99)-\d{3})(?![\w\d])')
 RE_ATLAS_CONF_POST_2010 = re.compile(
-              ur'(?<!\w:)ATL(AS)?-CONF-(?P<code>20[1-9]\d-\d{3})(?![\w\d])')
+    ur'(?<!\w:)ATL(AS)?-CONF-(?P<code>20[1-9]\d-\d{3})(?![\w\d])')
 
 
 # Pattern for old arxiv numbers
@@ -209,9 +213,9 @@ old_arxiv = {
 def compute_arxiv_re(report_pattern, report_number):
     if report_number is None:
         report_number = ur"\g<name>"
-    report_re = re.compile(ur"(?<!<cds\.REPORTNUMBER>)(?<!\w)" \
-                                        + "(?P<name>" + report_pattern + ")" \
-                                        + old_arxiv_numbers, re.U|re.I)
+    report_re = re.compile(ur"(?<!<cds\.REPORTNUMBER>)(?<!\w)" +
+                           "(?P<name>" + report_pattern + ")" +
+                           old_arxiv_numbers, re.U | re.I)
     return report_re, report_number
 
 RE_OLD_ARXIV = [compute_arxiv_re(*i) for i in iteritems(old_arxiv)]
@@ -271,19 +275,19 @@ re_multiple_hyphens = re.compile(ur'-{2,}', re.UNICODE)
 # The pattern below is used to identify this situation and remove the
 # " bf" component:
 re_identify_bf_before_vol = \
-                re.compile(ur' bf ((\w )?: \<cds\.VOL\>)', \
-                            re.UNICODE)
+    re.compile(ur' bf ((\w )?: \<cds\.VOL\>)',
+               re.UNICODE)
 
 # Patterns used for creating institutional preprint report-number
 # recognition patterns (used by function "institute_num_pattern_to_regex"):
 # Recognise any character that isn't a->z, A->Z, 0->9, /, [, ], ' ', '"':
 re_report_num_chars_to_escape = \
-                re.compile(ur'([^\]A-Za-z0-9\/\[ "])', re.UNICODE)
+    re.compile(ur'([^\]A-Za-z0-9\/\[ "])', re.UNICODE)
 # Replace "hello" with hello:
 re_extract_quoted_text = (re.compile(ur'\"([^"]+)\"', re.UNICODE), ur'\g<1>',)
 # Replace / [abcd ]/ with /( [abcd])?/ :
-re_extract_char_class = (re.compile(ur' \[([^\]]+) \]', re.UNICODE), \
-                          ur'( [\g<1>])?')
+re_extract_char_class = (re.compile(ur' \[([^\]]+) \]', re.UNICODE),
+                         ur'( [\g<1>])?')
 
 
 # URL recognition:
@@ -293,13 +297,13 @@ raw_url_pattern = ur"""
 """
 # Stand-alone URL (e.g. http://invenio-software.org/ )
 re_raw_url = \
- re.compile("['\"]?(?P<url>" + raw_url_pattern + ")['\"]?",
-            re.UNICODE|re.I|re.VERBOSE)
+    re.compile("['\"]?(?P<url>" + raw_url_pattern + ")['\"]?",
+               re.UNICODE | re.I | re.VERBOSE)
 
 # HTML marked-up URL (e.g. <a href="http://invenio-software.org/">
 # CERN Document Server Software Consortium</a> )
 re_html_tagged_url = \
- re.compile(ur"""
+    re.compile(ur"""
     # Opening a tag
     <a\s+
     # href attribute
@@ -311,7 +315,7 @@ re_html_tagged_url = \
     # Tag content
     (?P<desc>[^\<]+)
     # Closing a tag
-    </a>""", re.UNICODE|re.I|re.VERBOSE)
+    </a>""", re.UNICODE | re.I | re.VERBOSE)
 
 
 # Numeration recognition pattern - used to identify numeration
@@ -330,18 +334,20 @@ re_recognised_numeration_for_title_plus_series = re.compile(
 # <cds.YR>(1998)</cds.YR> <cds.PG>2391</cds.PG>; : <cds.VOL>32</cds.VOL>
 # <cds.YR>(1999)</cds.YR> <cds.PG>6119</cds.PG>.
 re_numeration_no_ibid_txt = \
-          re.compile(ur"""
+    re.compile(ur"""
           ^((\s*;\s*|\s+and\s+)(?P<series>(?:[A-H]|I{1,3}V?|VI{0,3}))?\s*:?\s   ## Leading ; : or " and :", and a possible series letter
           \<cds\.VOL\>(?P<vol>\d+|(?:\d+\-\d+))\<\/cds\.VOL>\s                  ## Volume
           \<cds\.YR\>\((?P<yr>[12]\d{3})\)\<\/cds\.YR\>\s                       ## year
           \<cds\.PG\>(?P<pg>[RL]?\d+[c]?)\<\/cds\.PG\>)                         ## page
-          """, re.UNICODE|re.VERBOSE)
+          """, re.UNICODE | re.VERBOSE)
 
 re_title_followed_by_series_markup_tags = \
-     re.compile(ur'(\<cds.JOURNAL(?P<ibid>ibid)?\>([^\<]+)\<\/cds.JOURNAL(?:ibid)?\>\s*.?\s*\<cds\.SER\>([A-H]|(I{1,3}V?|VI{0,3}))\<\/cds\.SER\>)', re.UNICODE)
+    re.compile(
+        ur'(\<cds.JOURNAL(?P<ibid>ibid)?\>([^\<]+)\<\/cds.JOURNAL(?:ibid)?\>\s*.?\s*\<cds\.SER\>([A-H]|(I{1,3}V?|VI{0,3}))\<\/cds\.SER\>)', re.UNICODE)
 
 re_title_followed_by_implied_series = \
-     re.compile(ur'(\<cds.JOURNAL(?P<ibid>ibid)?\>([^\<]+)\<\/cds.JOURNAL(?:ibid)?\>\s*.?\s*([A-H]|(I{1,3}V?|VI{0,3}))\s+:)', re.UNICODE)
+    re.compile(
+        ur'(\<cds.JOURNAL(?P<ibid>ibid)?\>([^\<]+)\<\/cds.JOURNAL(?:ibid)?\>\s*.?\s*([A-H]|(I{1,3}V?|VI{0,3}))\s+:)', re.UNICODE)
 
 
 re_punctuation = re.compile(ur'[\.\,\;\'\(\)\-]', re.UNICODE)
@@ -365,18 +371,20 @@ re_tagged_citation = re.compile(ur"""
           |AUTH(stnd|etal|incl)) ## or an AUTH tag
           (\s\/)?                ## optional /
           \>                     ## closing of tag (>)
-          """, re.UNICODE|re.VERBOSE)
+          """, re.UNICODE | re.VERBOSE)
 
 
 # is there pre-recognised numeration-tagging within a
 # few characters of the start if this part of the line?
 re_tagged_numeration_near_line_start = \
-                         re.compile(ur'^.{0,4}?<CDS (VOL|SER)>', re.UNICODE)
+    re.compile(ur'^.{0,4}?<CDS (VOL|SER)>', re.UNICODE)
 
 re_ibid = re.compile(ur'(-|\b)?IBID(EM)?\.?', re.UNICODE)
 
-re_series_from_numeration = re.compile(ur'^([A-Z])\s*[,\s:-]?\s*\d+', re.UNICODE)
-re_series_from_numeration_after_volume = re.compile(ur'^\d+\s*[,\s:-]?\s*([A-Z])', re.UNICODE)
+re_series_from_numeration = re.compile(
+    ur'^([A-Z])\s*[,\s:-]?\s*\d+', re.UNICODE)
+re_series_from_numeration_after_volume = re.compile(
+    ur'^\d+\s*[,\s:-]?\s*([A-Z])', re.UNICODE)
 
 # Obtain the series character from the standardised title text
 # Only used when no series letter is obtained from numeration matching
@@ -385,13 +393,13 @@ re_series_from_title = re.compile(ur"""
     (?:[\s\.]+(?:(?P<open_bracket>\()\s*[Ss][Ee][Rr]\.)?
             ([A-H]|(I{1,3}V?|VI{0,3}))
     )?
-    (?(open_bracket)\s*\))$   ## Only match the ending bracket if the opening bracket was found""", \
-                               re.UNICODE|re.VERBOSE)
+    (?(open_bracket)\s*\))$   ## Only match the ending bracket if the opening bracket was found""",
+                                  re.UNICODE | re.VERBOSE)
 
 
 re_wash_volume_tag = (
     re.compile(ur'<cds\.VOL>(\w) (\d+)</cds\.VOL>'),
-        ur'<cds.VOL>\g<1>\g<2></cds.VOL>',
+    ur'<cds.VOL>\g<1>\g<2></cds.VOL>',
 )
 
 # Roman Numbers
@@ -412,7 +420,8 @@ re_volume_sub_number_opt = u'(?:' + re_sep + u'(?P<vol_sub>' + \
 re_volume_prefix = ur"(?:[Vv]o?l?\.?|[Nn][oO°]\.?)"  # Optional Vol./No.
 re_volume_suffix = ur"(?:\s*\(\d{1,2}(?:-\d)?\))?"
 re_volume_num = ur"\d+|" + "(?:(?<!\w)" + re_roman_numbers + "(?!\w))"
-re_volume_id = ur"(?P<vol>(?:(?:[A-Za-z]\s*[,\s:-]?\s*)?(?P<vol_num>%(volume_num)s))|(?:(?P<vol_num_alt>%(volume_num)s)(?:[A-Za-z]))|(?:(?:[A-Za-z]\s?)?(?P<vol_num_alt2>\d+)\s*\-\s*(?:[A-Za-z]\s?)?\d+))" % {'volume_num': re_volume_num}
+re_volume_id = ur"(?P<vol>(?:(?:[A-Za-z]\s*[,\s:-]?\s*)?(?P<vol_num>%(volume_num)s))|(?:(?P<vol_num_alt>%(volume_num)s)(?:[A-Za-z]))|(?:(?:[A-Za-z]\s?)?(?P<vol_num_alt2>\d+)\s*\-\s*(?:[A-Za-z]\s?)?\d+))" % {
+    'volume_num': re_volume_num}
 re_volume_check = ur"(?<![\/\d])"
 re_volume = ur"\b" + u"(?:" + re_volume_prefix + u")?\s*" + re_volume_check + \
     re_volume_id + re_volume_suffix
@@ -470,41 +479,41 @@ re_sep_or_after_parentesis = u'(?:' + \
 # are used for this:
 
 re_correct_numeration_2nd_try_ptn1 = re.compile(
-  re_year + re_sep +         # Year
-  re_title_tag +             # Recognised, tagged title
-  u'(?P<aftertitle>' +
-  re_sep +
-  re_volume + re_sep +       # The volume
-  re_page +                  # The page
-  u')', re.UNICODE|re.VERBOSE)
+    re_year + re_sep +         # Year
+    re_title_tag +             # Recognised, tagged title
+    u'(?P<aftertitle>' +
+    re_sep +
+    re_volume + re_sep +       # The volume
+    re_page +                  # The page
+    u')', re.UNICODE | re.VERBOSE)
 
 re_correct_numeration_2nd_try_ptn2 = re.compile(
-  re_year + re_sep +
-  re_title_tag +
-  u'(?P<aftertitle>' +
-  re_sep +
-  re_volume + re_sep +
-  re_series + re_sep +
-  re_page +
-  u')', re.UNICODE|re.VERBOSE)
+    re_year + re_sep +
+    re_title_tag +
+    u'(?P<aftertitle>' +
+    re_sep +
+    re_volume + re_sep +
+    re_series + re_sep +
+    re_page +
+    u')', re.UNICODE | re.VERBOSE)
 
 re_correct_numeration_2nd_try_ptn3 = re.compile(
-  re_title_tag +
-  u'(?P<aftertitle>' +
-  re_sep +                   # Recognised, tagged title
-  re_volume + re_sep +       # The volume
-  re_page +                  # The page
-  u')', re.UNICODE|re.VERBOSE)
+    re_title_tag +
+    u'(?P<aftertitle>' +
+    re_sep +                   # Recognised, tagged title
+    re_volume + re_sep +       # The volume
+    re_page +                  # The page
+    u')', re.UNICODE | re.VERBOSE)
 
 
 re_correct_numeration_2nd_try_ptn4 = re.compile(
-  re_title_tag +
-  u'(?P<aftertitle>' +
-  re_sep +                       # Recognised, tagged title
-  re_year + ur"\s*[.,\s:]\s*" +  # Year
-  re_volume + re_sep +           # The volume
-  re_page +                      # The page
-  u')', re.UNICODE|re.VERBOSE)
+    re_title_tag +
+    u'(?P<aftertitle>' +
+    re_sep +                       # Recognised, tagged title
+    re_year + ur"\s*[.,\s:]\s*" +  # Year
+    re_volume + re_sep +           # The volume
+    re_page +                      # The page
+    u')', re.UNICODE | re.VERBOSE)
 
 
 # precompile some regexps used to search for and standardize
@@ -514,7 +523,7 @@ re_correct_numeration_2nd_try_ptn4 = re.compile(
 # <serie : volume> E.g. Replace the string """Series A, Vol 4""" with """A 4"""
 re_strip_series_and_volume_labels = (re.compile(
     ur'(Serie\s|\bS\.?\s)?([A-H])\s?[:,]\s?(\b[Vv]o?l?\.?|\b[Nn]o\.?)?\s?(\d+)', re.UNICODE),
-                      ur'\g<2> \g<4>')
+    ur'\g<2> \g<4>')
 
 
 # This pattern is not compiled, but rather included in
@@ -531,59 +540,60 @@ re_nucphysb_subtitle_opt = \
 
 # <v, p, y>
 re_numeration_vol_page_yr = re.compile(
-  re_start +
-  re_volume + re_volume_sub_number_opt + re_sep +
-  re_page + re_sep_or_parentesis +
-  re_year, re.UNICODE|re.VERBOSE)
+    re_start +
+    re_volume + re_volume_sub_number_opt + re_sep +
+    re_page + re_sep_or_parentesis +
+    re_year, re.UNICODE | re.VERBOSE)
 
 # <v, [FS], p, y>
 re_numeration_vol_nucphys_page_yr = re.compile(
-  re_start +
-  re_volume + re_volume_sub_number_opt + re_sep +
-  re_nucphysb_subtitle + re_sep +
-  re_page + re_sep_or_parentesis +
-  re_year, re.UNICODE|re.VERBOSE)
+    re_start +
+    re_volume + re_volume_sub_number_opt + re_sep +
+    re_nucphysb_subtitle + re_sep +
+    re_page + re_sep_or_parentesis +
+    re_year, re.UNICODE | re.VERBOSE)
 
 # <[FS], v, p, y>
 re_numeration_nucphys_vol_page_yr = re.compile(
-  re_start +
-  re_nucphysb_subtitle + re_sep +
-  re_volume + re_sep +
-  re_page + re_sep_or_parentesis +
-  re_year, re.UNICODE|re.VERBOSE)
+    re_start +
+    re_nucphysb_subtitle + re_sep +
+    re_volume + re_sep +
+    re_page + re_sep_or_parentesis +
+    re_year, re.UNICODE | re.VERBOSE)
 
 # Pattern 2: <vol, year, page>
 
 # <v, y, p>
 re_numeration_vol_yr_page = re.compile(
-  re_start +
-  re_volume + re_sep_or_parentesis +
-  re_year + re_sep_or_after_parentesis +
-  re_page, re.UNICODE|re.VERBOSE)
+    re_start +
+    re_volume + re_sep_or_parentesis +
+    re_year + re_sep_or_after_parentesis +
+    re_page, re.UNICODE | re.VERBOSE)
 
 # <v, sv, [FS]?, y, p>
 re_numeration_vol_subvol_nucphys_yr_page = re.compile(
-  re_start +
-  re_volume + re_volume_sub_number_opt +
-  re_nucphysb_subtitle_opt + re_sep_or_parentesis +
-  re_year + re_sep_or_after_parentesis +
-  re_page, re.UNICODE|re.VERBOSE)
+    re_start +
+    re_volume + re_volume_sub_number_opt +
+    re_nucphysb_subtitle_opt + re_sep_or_parentesis +
+    re_year + re_sep_or_after_parentesis +
+    re_page, re.UNICODE | re.VERBOSE)
 
 # <v, [FS]?, y, sv, p>
 re_numeration_vol_nucphys_yr_subvol_page = re.compile(
-  re_start +
-  re_volume + re_nucphysb_subtitle_opt +
-  re_sep_or_parentesis +
-  re_year + re_volume_sub_number_opt + re_sep +
-  re_page, re.UNICODE|re.VERBOSE)
+    re_start +
+    re_volume + re_nucphysb_subtitle_opt +
+    re_sep_or_parentesis +
+    re_year + re_volume_sub_number_opt + re_sep +
+    re_page, re.UNICODE | re.VERBOSE)
 
 # <[FS]?, v, y, p>
 re_numeration_nucphys_vol_yr_page = re.compile(
-  re_start +
-  re_nucphysb_subtitle + re_sep +
-  re_volume + re_sep_or_parentesis +        # The volume (optional "vol"/"no")
-  re_year + re_sep_or_after_parentesis +    # Year
-  re_page, re.UNICODE|re.VERBOSE)
+    re_start +
+    re_nucphysb_subtitle + re_sep +
+    # The volume (optional "vol"/"no")
+    re_volume + re_sep_or_parentesis +
+    re_year + re_sep_or_after_parentesis +    # Year
+    re_page, re.UNICODE | re.VERBOSE)
 
 # Pattern 3: <vol, serie, year, page>
 
@@ -600,35 +610,35 @@ re_numeration_nucphys_vol_yr_page = re.compile(
 
 # <v, [FS]?, s, y, p
 re_numeration_vol_nucphys_series_yr_page = re.compile(
-  re_start +
-  re_volume + re_nucphysb_subtitle_opt + re_sep +
-  re_series + re_sep_or_parentesis +
-  re_year + re_sep_or_after_parentesis +
-  re_page, re.UNICODE|re.VERBOSE)
+    re_start +
+    re_volume + re_nucphysb_subtitle_opt + re_sep +
+    re_series + re_sep_or_parentesis +
+    re_year + re_sep_or_after_parentesis +
+    re_page, re.UNICODE | re.VERBOSE)
 
 # Pattern 4: <vol, serie, page, year>
 # <v, s, [FS]?, p, y>
 re_numeration_vol_series_nucphys_page_yr = re.compile(
-  re_start +
-  re_volume + re_sep +
-  re_series + re_nucphysb_subtitle_opt + re_sep +
-  re_page + re_sep +
-  re_year, re.UNICODE|re.VERBOSE)
+    re_start +
+    re_volume + re_sep +
+    re_series + re_nucphysb_subtitle_opt + re_sep +
+    re_page + re_sep +
+    re_year, re.UNICODE | re.VERBOSE)
 
 # <v, [FS]?, s, p, y>
 re_numeration_vol_nucphys_series_page_yr = re.compile(
-  re_start +
-  re_volume + re_nucphysb_subtitle_opt + re_sep +
-  re_series + re_sep +
-  re_page + re_sep +
-  re_year, re.UNICODE|re.VERBOSE)
+    re_start +
+    re_volume + re_nucphysb_subtitle_opt + re_sep +
+    re_series + re_sep +
+    re_page + re_sep +
+    re_year, re.UNICODE | re.VERBOSE)
 
 # Pattern 5: <year, vol, page>
 re_numeration_yr_vol_page = re.compile(
-  re_start +
-  re_year + re_sep_or_after_parentesis +
-  re_volume + re_sep +
-  re_page, re.UNICODE|re.VERBOSE)
+    re_start +
+    re_year + re_sep_or_after_parentesis +
+    re_volume + re_sep +
+    re_page, re.UNICODE | re.VERBOSE)
 
 
 # Pattern used to locate references of a doi inside a citation
@@ -690,14 +700,14 @@ def get_reference_section_title_patterns():
         ur'($|\s*[\[\{\(\<]\s*[1a-z]\s*[\}\)\>\]]|\:$)'
 
     for t in titles:
-        t_ptn = re.compile(sect_marker + \
-                            _create_regex_pattern_add_optional_spaces_to_word_characters(t) + \
-                            line_end, re.I|re.UNICODE)
+        t_ptn = re.compile(sect_marker +
+                           _create_regex_pattern_add_optional_spaces_to_word_characters(t) +
+                           line_end, re.I | re.UNICODE)
         patterns.append(t_ptn)
-        ## allow e.g.  'N References' to be found where N is an integer
-        t_ptn = re.compile(sect_marker1 + \
-                       _create_regex_pattern_add_optional_spaces_to_word_characters(t) + \
-                       line_end, re.I|re.UNICODE)
+        # allow e.g.  'N References' to be found where N is an integer
+        t_ptn = re.compile(sect_marker1 +
+                           _create_regex_pattern_add_optional_spaces_to_word_characters(t) +
+                           line_end, re.I | re.UNICODE)
         patterns.append(t_ptn)
 
     return patterns
@@ -719,7 +729,8 @@ def get_reference_line_numeration_marker_patterns(prefix=u''):
         # [1]
         space + title + g_name + ur'\[\s*(?P<marknum>\d+)\s*\]' + g_close,
         # [<letters and numbers]
-        space + title + g_name + ur'\[\s*[a-zA-Z:-]+\+?\s?(\d{1,4}[A-Za-z:-]?)?\s*\]' + g_close,
+        space + title + g_name +
+        ur'\[\s*[a-zA-Z:-]+\+?\s?(\d{1,4}[A-Za-z:-]?)?\s*\]' + g_close,
         # {1}
         space + title + g_name + ur'\{\s*(?P<marknum>\d+)\s*\}' + g_close,
         # (1)
@@ -741,7 +752,7 @@ def get_reference_line_numeration_marker_patterns(prefix=u''):
         # *
         space + title + g_name + ur'\*' + g_close,
     ]
-    return [re.compile(p, re.I|re.UNICODE) for p in patterns]
+    return [re.compile(p, re.I | re.UNICODE) for p in patterns]
 
 
 def get_reference_line_marker_pattern(pattern):
@@ -752,19 +763,19 @@ def get_reference_line_marker_pattern(pattern):
        The line is considered to start with : 1 or 2 etc (just a number)
        @return: (list) of compiled regex patterns.
     """
-    return re.compile(u'(?P<mark>' + pattern + u')', re.I|re.UNICODE)
+    return re.compile(u'(?P<mark>' + pattern + u')', re.I | re.UNICODE)
 
 re_reference_line_bracket_markers = get_reference_line_marker_pattern(
-        ur'(?P<left>\[)\s*(?P<marknum>\d+)\s*(?P<right>\])'
+    ur'(?P<left>\[)\s*(?P<marknum>\d+)\s*(?P<right>\])'
 )
 re_reference_line_curly_bracket_markers = get_reference_line_marker_pattern(
-        ur'(?P<left>\{)\s*(?P<marknum>\d+)\s*(?P<right>\})'
+    ur'(?P<left>\{)\s*(?P<marknum>\d+)\s*(?P<right>\})'
 )
 re_reference_line_dot_markers = get_reference_line_marker_pattern(
-        ur'(?P<left>)\s*(?P<marknum>\d+)\s*(?P<right>\.)'
+    ur'(?P<left>)\s*(?P<marknum>\d+)\s*(?P<right>\.)'
 )
 re_reference_line_number_markers = get_reference_line_marker_pattern(
-        ur'(?P<left>)\s*(?P<marknum>\d+)\s*(?P<right>)'
+    ur'(?P<left>)\s*(?P<marknum>\d+)\s*(?P<right>)'
 )
 
 
@@ -780,33 +791,64 @@ def get_post_reference_section_title_patterns():
     roman_numbers = ur'[LVIX]'
     patterns = [
         # Section titles
-        thead + _create_regex_pattern_add_optional_spaces_to_word_characters(u'appendix') + ttail,
-        thead + _create_regex_pattern_add_optional_spaces_to_word_characters(u'appendices') + ttail,
-        thead + _create_regex_pattern_add_optional_spaces_to_word_characters(u'acknowledgement') + ur's?' + ttail,
-        thead + _create_regex_pattern_add_optional_spaces_to_word_characters(u'acknowledgment') + ur's?' + ttail,
-        thead + _create_regex_pattern_add_optional_spaces_to_word_characters(u'table') + ur'\w?s?\d?' + ttail,
-        thead + _create_regex_pattern_add_optional_spaces_to_word_characters(u'figure') + ur's?' + ttail,
-        thead + _create_regex_pattern_add_optional_spaces_to_word_characters(u'list of figure') + ur's?' + ttail,
-        thead + _create_regex_pattern_add_optional_spaces_to_word_characters(u'annex') + ur's?' + ttail,
-        thead + _create_regex_pattern_add_optional_spaces_to_word_characters(u'discussion') + ur's?' + ttail,
-        thead + _create_regex_pattern_add_optional_spaces_to_word_characters(u'remercie') + ur's?' + ttail,
-        thead + _create_regex_pattern_add_optional_spaces_to_word_characters(u'index') + ur's?' + ttail,
-        thead + _create_regex_pattern_add_optional_spaces_to_word_characters(u'summary') + ur's?' + ttail,
+        thead +
+        _create_regex_pattern_add_optional_spaces_to_word_characters(
+            u'appendix') + ttail,
+        thead +
+        _create_regex_pattern_add_optional_spaces_to_word_characters(
+            u'appendices') + ttail,
+        thead + _create_regex_pattern_add_optional_spaces_to_word_characters(
+            u'acknowledgement') + ur's?' + ttail,
+        thead + _create_regex_pattern_add_optional_spaces_to_word_characters(
+            u'acknowledgment') + ur's?' + ttail,
+        thead + _create_regex_pattern_add_optional_spaces_to_word_characters(
+            u'table') + ur'\w?s?\d?' + ttail,
+        thead +
+        _create_regex_pattern_add_optional_spaces_to_word_characters(
+            u'figure') + ur's?' + ttail,
+        thead + _create_regex_pattern_add_optional_spaces_to_word_characters(
+            u'list of figure') + ur's?' + ttail,
+        thead +
+        _create_regex_pattern_add_optional_spaces_to_word_characters(
+            u'annex') + ur's?' + ttail,
+        thead + _create_regex_pattern_add_optional_spaces_to_word_characters(
+            u'discussion') + ur's?' + ttail,
+        thead +
+        _create_regex_pattern_add_optional_spaces_to_word_characters(
+            u'remercie') + ur's?' + ttail,
+        thead +
+        _create_regex_pattern_add_optional_spaces_to_word_characters(
+            u'index') + ur's?' + ttail,
+        thead +
+        _create_regex_pattern_add_optional_spaces_to_word_characters(
+            u'summary') + ur's?' + ttail,
         # Figure nums
-        ur'^\s*' + _create_regex_pattern_add_optional_spaces_to_word_characters(u'figure') + numatn,
-        ur'^\s*' + _create_regex_pattern_add_optional_spaces_to_word_characters(u'fig') + ur'\.\s*' + numatn,
-        ur'^\s*' + _create_regex_pattern_add_optional_spaces_to_word_characters(u'fig') + ur'\.?\s*\d\w?\b',
+        ur'^\s*' +
+        _create_regex_pattern_add_optional_spaces_to_word_characters(
+            u'figure') + numatn,
+        ur'^\s*' +
+        _create_regex_pattern_add_optional_spaces_to_word_characters(
+            u'fig') + ur'\.\s*' + numatn,
+        ur'^\s*' +
+        _create_regex_pattern_add_optional_spaces_to_word_characters(
+            u'fig') + ur'\.?\s*\d\w?\b',
         # Tables
-        ur'^\s*' + _create_regex_pattern_add_optional_spaces_to_word_characters(u'table') + numatn,
-        ur'^\s*' + _create_regex_pattern_add_optional_spaces_to_word_characters(u'tab') + ur'\.\s*' + numatn,
-        ur'^\s*' + _create_regex_pattern_add_optional_spaces_to_word_characters(u'tab') + ur'\.?\s*\d\w?\b',
+        ur'^\s*' +
+        _create_regex_pattern_add_optional_spaces_to_word_characters(
+            u'table') + numatn,
+        ur'^\s*' +
+        _create_regex_pattern_add_optional_spaces_to_word_characters(
+            u'tab') + ur'\.\s*' + numatn,
+        ur'^\s*' +
+        _create_regex_pattern_add_optional_spaces_to_word_characters(
+            u'tab') + ur'\.?\s*\d\w?\b',
         # Other titles formats
         ur'^\s*' + roman_numbers + ur'\.?\s*[Cc]onclusion[\w\s]*$',
         ur'^\s*Appendix\s[A-Z]\s*\:\s*[a-zA-Z]+\s*',
     ]
 
     for p in patterns:
-        compiled_patterns.append(re.compile(p, re.I|re.UNICODE))
+        compiled_patterns.append(re.compile(p, re.I | re.UNICODE))
 
     return compiled_patterns
 
@@ -818,16 +860,19 @@ def get_post_reference_section_keyword_patterns():
        @return: (list) of compiled regex patterns.
     """
     compiled_patterns = []
-    patterns = [u'(' + _create_regex_pattern_add_optional_spaces_to_word_characters(u'prepared') + \
-                ur'|' + _create_regex_pattern_add_optional_spaces_to_word_characters(u'created') + \
+    patterns = [u'(' + _create_regex_pattern_add_optional_spaces_to_word_characters(u'prepared') +
+                ur'|' + _create_regex_pattern_add_optional_spaces_to_word_characters(u'created') +
                 ur').*(AAS\s*)?\sLATEX',
-                ur'AAS\s+?LATEX\s+?' + _create_regex_pattern_add_optional_spaces_to_word_characters(u'macros') + u'v',
-                ur'^\s*' + _create_regex_pattern_add_optional_spaces_to_word_characters(u'This paper has been produced using'),
-                ur'^\s*' + \
-                _create_regex_pattern_add_optional_spaces_to_word_characters(u'This article was processed by the author using Springer-Verlag') + \
+                ur'AAS\s+?LATEX\s+?' +
+                _create_regex_pattern_add_optional_spaces_to_word_characters(
+                    u'macros') + u'v',
+                ur'^\s*' + _create_regex_pattern_add_optional_spaces_to_word_characters(
+                    u'This paper has been produced using'),
+                ur'^\s*' +
+                _create_regex_pattern_add_optional_spaces_to_word_characters(u'This article was processed by the author using Springer-Verlag') +
                 u' LATEX']
     for p in patterns:
-        compiled_patterns.append(re.compile(p, re.I|re.UNICODE))
+        compiled_patterns.append(re.compile(p, re.I | re.UNICODE))
     return compiled_patterns
 
 

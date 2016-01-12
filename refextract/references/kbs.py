@@ -179,16 +179,16 @@ def institute_num_pattern_to_regex(pattern):
        @return: (string) the regexp for recognising the pattern.
     """
     simple_replacements = [
-                            ('9',    r'\d'),
-                            ('9+',   r'\d+'),
-                            ('w+',   r'\w+'),
-                            ('a',    r'[A-Za-z]'),
-                            ('v',    r'[Vv]'),
-                            ('mm',   r'(0[1-9]|1[0-2])'),
-                            ('yyyy', r'[12]\d{3}'),
-                            ('yy',   r'\d\d'),
-                            ('s',    r'\s*'),
-                            (r'/',   r'\/')]
+        ('9', r'\d'),
+        ('9+', r'\d+'),
+        ('w+', r'\w+'),
+        ('a', r'[A-Za-z]'),
+        ('v', r'[Vv]'),
+        ('mm', r'(0[1-9]|1[0-2])'),
+        ('yyyy', r'[12]\d{3}'),
+        ('yy', r'\d\d'),
+        ('s', r'\s*'),
+        (r'/', r'\/')]
     # first, escape certain characters that could be sensitive to a regexp:
     pattern = re_report_num_chars_to_escape.sub(r'\\\g<1>', pattern)
 
@@ -200,9 +200,9 @@ def institute_num_pattern_to_regex(pattern):
     # quoted string with non-quoted version ("hello" with hello);
     # Replace / [abcd ]/ with /( [abcd])?/ :
     pattern = re_extract_quoted_text[0].sub(re_extract_quoted_text[1],
-                                             pattern)
-    pattern = re_extract_char_class[0].sub(re_extract_char_class[1],
                                             pattern)
+    pattern = re_extract_char_class[0].sub(re_extract_char_class[1],
+                                           pattern)
 
     # the pattern has been transformed
     return pattern
@@ -287,11 +287,12 @@ def build_reportnum_kb(fpath):
             # First, order the numeration styles by line-length, and build a
             # grouped regexp for recognising numeration:
             ordered_patterns = \
-              order_reportnum_patterns_bylen(preprint_numeration_ptns)
+                order_reportnum_patterns_bylen(preprint_numeration_ptns)
             # create a grouped regexp for numeration part of
             # preprint reference:
             numeration_regexp = \
-              create_institute_numeration_group_regexp_pattern(ordered_patterns)
+                create_institute_numeration_group_regexp_pattern(
+                    ordered_patterns)
 
             # for each "classification" part of preprint references, create a
             # complete regex:
@@ -302,45 +303,45 @@ def build_reportnum_kb(fpath):
                                      + numeration_regexp + u'[\]\)]?)'
 
                 re_search_pattern = re.compile(search_pattern_str,
-                                                 re.UNICODE)
+                                               re.UNICODE)
                 preprint_reference_search_regexp_patterns[(kb_line_num,
-                                                          classification[0])] =\
-                                                          re_search_pattern
+                                                           classification[0])] =\
+                    re_search_pattern
                 standardised_preprint_reference_categories[(kb_line_num,
-                                                          classification[0])] =\
-                                                          classification[1]
+                                                            classification[0])] =\
+                    classification[1]
 
     preprint_reference_search_regexp_patterns = {}  # a dictionary of patterns
-                                                     # used to recognise
-                                                     # categories of preprints
-                                                     # as used by various
-                                                     # institutes
+    # used to recognise
+    # categories of preprints
+    # as used by various
+    # institutes
     standardised_preprint_reference_categories = {}  # dictionary of
-                                                     # standardised category
-                                                     # strings for preprint cats
+    # standardised category
+    # strings for preprint cats
     current_institute_preprint_classifications = []  # list of tuples containing
-                                                     # preprint categories in
-                                                     # their raw & standardised
-                                                     # forms, as read from KB
+    # preprint categories in
+    # their raw & standardised
+    # forms, as read from KB
     current_institute_numerations = []               # list of preprint
-                                                     # numeration patterns, as
-                                                     # read from the KB
+    # numeration patterns, as
+    # read from the KB
 
     # pattern to recognise an institute name line in the KB
     re_institute_name = re.compile(ur'^\*{5}\s*(.+)\s*\*{5}$', re.UNICODE)
 
     # pattern to recognise an institute preprint categ line in the KB
     re_preprint_classification = \
-                re.compile(ur'^\s*(\w.*)\s*---\s*(\w.*)\s*$', re.UNICODE)
+        re.compile(ur'^\s*(\w.*)\s*---\s*(\w.*)\s*$', re.UNICODE)
 
     # pattern to recognise a preprint numeration-style line in KB
     re_numeration_pattern = re.compile(ur'^\<(.+)\>$', re.UNICODE)
 
     kb_line_num = 0    # when making the dictionary of patterns, which is
-                       # keyed by the category search string, this counter
-                       # will ensure that patterns in the dictionary are not
-                       # overwritten if 2 institutes have the same category
-                       # styles.
+    # keyed by the category search string, this counter
+    # will ensure that patterns in the dictionary are not
+    # overwritten if 2 institutes have the same category
+    # styles.
 
     try:
         if isinstance(fpath, six.string_types):
@@ -375,13 +376,13 @@ def build_reportnum_kb(fpath):
                 continue
 
             m_preprint_classification = \
-                                     re_preprint_classification.search(rawline)
+                re_preprint_classification.search(rawline)
             if m_preprint_classification:
                 # This KB line contains a preprint classification for
                 # the current institute
                 try:
                     current_institute_preprint_classifications.append((m_preprint_classification.group(1),
-                                                                      m_preprint_classification.group(2)))
+                                                                       m_preprint_classification.group(2)))
                 except (AttributeError, NameError):
                     # didn't match this line correctly - skip it
                     pass
@@ -393,7 +394,8 @@ def build_reportnum_kb(fpath):
                 # This KB line contains a preprint item numeration pattern
                 # for the current institute
                 try:
-                    current_institute_numerations.append(m_numeration_pattern.group(1))
+                    current_institute_numerations.append(
+                        m_numeration_pattern.group(1))
                 except (AttributeError, NameError):
                     # didn't match the numeration pattern correctly - skip it
                     pass
@@ -412,7 +414,7 @@ def build_reportnum_kb(fpath):
         emsg = """Error: Could not build knowledge base containing """ \
                """institute preprint referencing patterns - failed """ \
                """to read from KB %(kb)s.""" \
-               % {'kb' : fpath}
+               % {'kb': fpath}
         print(emsg)
         raise IOError("Error: Unable to open report number kb '%s'" % fpath)
 
@@ -475,7 +477,7 @@ def build_books_kb(fpath):
         except IOError:
             # problem opening KB for reading, or problem while reading from it:
             emsg = "Error: Could not build list of books - failed " \
-                   "to read from KB %(kb)s." % {'kb' : fpath}
+                   "to read from KB %(kb)s." % {'kb': fpath}
             raise IOError(emsg)
     else:
         fpath_needs_closing = False
@@ -506,7 +508,7 @@ def build_publishers_kb(fpath):
         except IOError:
             # problem opening KB for reading, or problem while reading from it:
             emsg = "Error: Could not build list of publishers - failed " \
-                   "to read from KB %(kb)s." % {'kb' : fpath}
+                   "to read from KB %(kb)s." % {'kb': fpath}
             raise IOError(emsg)
     else:
         fpath_needs_closing = False
@@ -516,7 +518,7 @@ def build_publishers_kb(fpath):
         publishers = {}
         for line in source:
             try:
-                pattern = re.compile(ur'(\b|^)%s(\b|$)' % line[0], re.I|re.U)
+                pattern = re.compile(ur'(\b|^)%s(\b|$)' % line[0], re.I | re.U)
                 publishers[line[0]] = {'pattern': pattern, 'repl': line[1]}
             except IndexError:
                 print('Invalid line in books kb %s' % line)
@@ -538,7 +540,7 @@ def build_authors_kb(fpath):
         except IOError:
             # problem opening KB for reading, or problem while reading from it:
             emsg = "Error: Could not build list of authors - failed " \
-                   "to read from KB %(kb)s." % {'kb' : fpath}
+                   "to read from KB %(kb)s." % {'kb': fpath}
             print(emsg)
             raise IOError("Error: Unable to open authors kb '%s'" % fpath)
     else:
@@ -622,7 +624,7 @@ def load_kb_from_file(path, builder):
                 yield m_kb_line.group('seek'), m_kb_line.group('repl')
             else:
                 raise StandardError("Badly formatted kb '%s' at line %s"
-                                                            % (path, rawline))
+                                    % (path, rawline))
 
     try:
         return builder(lazy_parser(fh))
@@ -695,7 +697,7 @@ def build_journals_kb(knowledgebase):
         raw_repl_phrase = repl_term.upper()
         raw_repl_phrase = re_punctuation.sub(u' ', raw_repl_phrase)
         raw_repl_phrase = \
-             re_group_captured_multiple_space.sub(u' ', raw_repl_phrase)
+            re_group_captured_multiple_space.sub(u' ', raw_repl_phrase)
         raw_repl_phrase = raw_repl_phrase.strip()
         if raw_repl_phrase not in kb:
             # The replace-phrase was not in the KB as a seek phrase
@@ -724,5 +726,5 @@ def build_collaborations_kb(knowledgebase):
         pattern = pattern.replace(' ', '\s')
         pattern = pattern.replace('Collaboration', collaboration_pattern)
         re_pattern = "%s(%s)%s" % (prefix, pattern, suffix)
-        kb[collab] = re.compile(re_pattern, re.I|re.U)
+        kb[collab] = re.compile(re_pattern, re.I | re.U)
     return kb
