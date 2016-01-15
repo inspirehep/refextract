@@ -196,15 +196,10 @@ def extract_journal_reference(line, override_kbs_files=None):
     Extracts the journal reference from string and parses for specific
     journal information.
     """
-    tagged_line = tag_reference_line(
-        line, get_kbs(custom_kbs_files=override_kbs_files), {}
-    )[0]
-    if tagged_line is None:
-        return None
+    kbs = get_kbs(custom_kbs_files=override_kbs_files)
+    references, dummy_m, dummy_c, dummy_co = parse_reference_line(line, kbs)
 
-    elements, dummy_marker, dummy_stats = parse_tagged_reference_line(
-        '', tagged_line, [], [])
-
-    for element in elements:
-        if element['type'] == 'JOURNAL':
-            return element
+    for elements in references:
+        for el in elements:
+            if el['type'] == 'JOURNAL':
+                return el

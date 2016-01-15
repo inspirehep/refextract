@@ -58,6 +58,7 @@ CFG_REFEXTRACT_FIELDS = {
     'misc': 'm',
     'linemarker': 'o',
     'doi': 'a',
+    'hdl': 'a',
     'reportnumber': 'r',
     'journal': 's',
     'url': 'u',
