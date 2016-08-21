@@ -24,6 +24,7 @@
 """Various utilities to manipulate or clean text"""
 
 import re
+from six.moves import xrange
 
 re_space_comma = re.compile(ur'\s,', re.UNICODE)
 re_space_semicolon = re.compile(ur'\s;', re.UNICODE)

@@ -25,6 +25,7 @@ import re
 
 from datetime import datetime
 from six import iteritems
+from six.moves import xrange
 
 # Sep
 re_sep = ur"\s*[,\s:-]\s*"
