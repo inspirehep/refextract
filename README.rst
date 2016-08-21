@@ -34,6 +34,11 @@ Small library for extracting references used in scholarly communication.
 *Originally exported from Invenio https://github.com/inveniosoftware/invenio.*
 
 
+Dependencies
+============
+* [file](http://linux.die.net/man/1/file)
+* [pdftotext](http://linux.die.net/man/1/pdftotext)
+
 Installation
 ============
 
