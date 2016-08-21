@@ -28,6 +28,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 import re
 import sys
 
+from six.moves import xrange
+
 from ..references.config import CFG_REFEXTRACT_KBS
 
 
