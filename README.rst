@@ -30,6 +30,7 @@ Small library for extracting references used in scholarly communication.
 
 * Free software: GPLv2
 * Documentation: http://pythonhosted.org/refextract/
+* Issues and pull requests: https://github.com/inspirehep/refextract
 
 *Originally exported from Invenio https://github.com/inveniosoftware/invenio.*
 
