@@ -23,6 +23,8 @@
 
 import re
 
+from urlparse import unquote
+
 from unidecode import unidecode
 
 from .config import \
@@ -1419,7 +1421,9 @@ def identify_and_tag_DOI(line):
         start = match.start()
         end = match.end()
         # Get the actual DOI string (remove the url part of the doi string)
-        doi_phrase = match.group(6)
+        doi_phrase = match.group('doi')
+        if '%2f' in doi_phrase.lower():
+            doi_phrase = unquote(doi_phrase)
 
         # Replace the entire matched doi with a tag
         line = line[0:start] + "<cds.DOI />" + line[end:]

@@ -648,13 +648,13 @@ re_numeration_yr_vol_page = re.compile(
 # This pattern matches both url (http) and 'doi:' or 'DOI' formats
 re_doi = (re.compile(ur"""
     ((\(?[Dd][Oo][Ii](\s)*\)?:?(\s)*)       # 'doi:' or 'doi' or '(doi)' (upper or lower case)
-    |(https?://dx\.doi\.org\/))?            # or 'http://dx.doi.org/'    (neither has to be present)
-    (10\.                                   # 10.                        (mandatory for DOI's)
+    |(https?://(dx\.)?doi\.org\/))?         # or 'http://(dx.)doi.org/'  (neither has to be present)
+    (?P<doi>10\.                            # 10.                        (mandatory for DOI's)
     \d{4}                                   # [0-9] x4
-    /                                       # /
+    (/|%2f)                                 # / (possibly urlencoded)
     [\w\-_:;\(\)/\.<>]+                     # any character
     [\w\-_:;\(\)/<>])                       # any character excluding a full stop
-    """, re.VERBOSE))
+    """, re.VERBOSE + re.IGNORECASE))
 
 # Pattern used to locate HDL (handle identifiers)
 re_hdl = re.compile(ur"""([hH][dD][lL]:
