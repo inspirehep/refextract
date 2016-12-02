@@ -1370,6 +1370,28 @@ def remove_leading_garbage_lines_from_reference_section(ref_sectn):
 
 # Tasks related to conversion of full-text to plain-text:
 
+def file_type(fpath):
+    """Get the type of file at the given path
+
+       @param fpath: (string) - the path to the file
+       @return: "pdf", "plain" or None (if neither)
+    """
+    status = 0
+    if os.access(fpath, os.F_OK | os.R_OK):
+        # filepath OK - get file type:
+        cmd_pdftotext = [CFG_PATH_GFILE, fpath]
+        pipe_pdftotext = subprocess.Popen(
+            cmd_pdftotext, stdout=subprocess.PIPE)
+        res_gfile = pipe_pdftotext.stdout.read()
+
+        if (res_gfile.lower().find("text") != -1) and \
+                (res_gfile.lower().find("pdf") == -1):
+            return "plain"
+        elif (res_gfile.lower().find("pdf") != -1) or \
+                (res_gfile.lower().find("pdfa") != -1):
+            return "pdf"
+
+
 def get_plaintext_document_body(fpath, keep_layout=False):
     """Given a file-path to a full-text, return a list of unicode strings
        whereby each string is a line of the fulltext.
@@ -1381,31 +1403,19 @@ def get_plaintext_document_body(fpath, keep_layout=False):
     """
     textbody = []
     status = 0
-    if os.access(fpath, os.F_OK | os.R_OK):
-        # filepath OK - attempt to extract references:
-        # get file type:
-        cmd_pdftotext = [CFG_PATH_GFILE, fpath]
-        pipe_pdftotext = subprocess.Popen(
-            cmd_pdftotext, stdout=subprocess.PIPE)
-        res_gfile = pipe_pdftotext.stdout.read()
-
-        if (res_gfile.lower().find("text") != -1) and \
-                (res_gfile.lower().find("pdf") == -1):
-            # plain-text file: don't convert - just read in:
-            f = open(fpath, "r")
-            try:
-                textbody = [line.decode("utf-8") for line in f.readlines()]
-            finally:
-                f.close()
-        elif (res_gfile.lower().find("pdf") != -1) or \
-                (res_gfile.lower().find("pdfa") != -1):
-            # convert from PDF
-            (textbody, status) = convert_PDF_to_plaintext(fpath, keep_layout)
-        else:
-            # invalid format
-            status = 1
+    ftype = file_type(fpath)
+    if ftype == "plain":
+        # plain-text file: don't convert - just read in:
+        f = open(fpath, "r")
+        try:
+            textbody = [line.decode("utf-8") for line in f.readlines()]
+        finally:
+            f.close()
+    elif ftype == "pdf":
+        # convert from PDF
+        (textbody, status) = convert_PDF_to_plaintext(fpath, keep_layout)
     else:
-        # filepath not OK
+        # invalid format
         status = 1
     return (textbody, status)
 
