@@ -1436,10 +1436,8 @@ def parse_references(reference_lines,
     processed_references, counts, dummy_bad_titles_count = \
         parse_references_elements(reference_lines, kbs, linker_callback)
 
-    return {
-        "references": build_references(processed_references, reference_format),
-        "stats": build_stats(counts)
-    }
+    return (build_references(processed_references, reference_format),
+            build_stats(counts))
 
 
 def build_stats(counts):

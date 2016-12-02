@@ -122,7 +122,7 @@ def test_journal_extract():
 def test_extract_references_from_string(kbs_override):
     ref_lines = """[9] R. Bousso, JHEP 9906:028 (1999); hep-th/9906022."""
     r = extract_references_from_string(ref_lines, override_kbs_files=kbs_override)
-    assert len(r['references']) == 2
+    assert len(r) == 2
 
 
 def test_extract_references_from_file():
@@ -133,7 +133,7 @@ def test_extract_references_from_file():
     )
 
     r = extract_references_from_file(path_to_pdf)
-    assert len(r['references']) == 36
+    assert len(r) == 36
 
 
 def test_extract_references_from_url():
@@ -152,4 +152,4 @@ def test_extract_references_from_url():
         )
 
     r = extract_references_from_url(url)
-    assert len(r['references']) == 36
+    assert len(r) == 36

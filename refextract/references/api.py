@@ -49,7 +49,9 @@ from .text import extract_references_from_fulltext, rebuild_reference_lines
 def extract_references_from_url(url, headers=None, chunk_size=1024, **kwargs):
     """Extract references from the pdf specified in the url.
 
-    The first parameter is the path to the file
+    The first parameter is the URL of the file.
+    It returns a list of parsed references.
+
     It raises FullTextNotAvailable if the file does not exist.
 
     The standard reference format is: {title} {volume} ({year}) {page}.
@@ -104,7 +106,8 @@ def extract_references_from_file(path,
                                  override_kbs_files=None):
     """Extract references from a local pdf file.
 
-    The first parameter is the path to the file
+    The first parameter is the path to the file.
+    It returns a list of parsed references.
     It raises FullTextNotAvailable if the file does not exist.
 
     The standard reference format is: {title} {volume} ({year}) {page}.
@@ -121,7 +124,6 @@ def extract_references_from_file(path,
 
     >>> extract_references_from_file(path, override_kbs_files={'journals': 'my/path/to.kb'})
 
-    Returns a dictionary with extracted references and stats.
     """
     if not os.path.isfile(path):
         raise FullTextNotAvailable()
@@ -132,13 +134,15 @@ def extract_references_from_file(path,
         docbody, dummy = get_plaintext_document_body(path, keep_layout=True)
         reflines, dummy, dummy = extract_references_from_fulltext(docbody)
 
-    return parse_references(
+    parsed_refs, stats = parse_references(
         reflines,
         recid=recid,
         reference_format=reference_format,
         linker_callback=linker_callback,
         override_kbs_files=override_kbs_files,
     )
+
+    return parsed_refs
 
 
 def extract_references_from_string(source,
@@ -149,7 +153,8 @@ def extract_references_from_string(source,
                                    override_kbs_files=None):
     """Extract references from a raw string.
 
-    The first parameter is the path to the file
+    The first parameter is the path to the file.
+    It returns a tuple (references, stats).
     It raises FullTextNotAvailable if the file does not exist.
 
     If the string does not only contain references, improve accuracy by
@@ -181,13 +186,14 @@ def extract_references_from_string(source,
 
         reflines = rebuild_reference_lines(
             docbody, refs_info['marker_pattern'])
-    return parse_references(
+    parsed_refs, stats = parse_references(
         reflines,
         recid=recid,
         reference_format=reference_format,
         linker_callback=linker_callback,
         override_kbs_files=override_kbs_files,
     )
+    return parsed_refs
 
 
 def extract_journal_reference(line, override_kbs_files=None):

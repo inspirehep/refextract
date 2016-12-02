@@ -76,32 +76,18 @@ To extract references from a publication full-text PDF:
     from refextract import extract_references_from_file
     reference = extract_references_from_file("some/fulltext/1503.07589v1.pdf")
     print(reference)
-    {
-        'references': [
-                {'author': [u'F. Englert and R. Brout'],
-                 'doi': [u'10.1103/PhysRevLett.13.321'],
-                 'journal_page': [u'321'],
-                 'journal_reference': ['Phys.Rev.Lett.,13,1964'],
-                 'journal_title': [u'Phys.Rev.Lett.'],
-                 'journal_volume': [u'13'],
-                 'journal_year': [u'1964'],
-                 'linemarker': [u'1'],
-                 'title': [u'Broken symmetry and the mass of gauge vector mesons'],
-                 'year': [u'1964']}, ...
-           ],
-        'stats': {
-              'author': 15,
-              'date': '2016-01-12 10:52:58',
-              'doi': 1,
-              'misc': 0,
-              'old_stats_str': '0-1-1-15-0-1-0',
-              'reportnum': 1,
-              'status': 0,
-              'title': 1,
-              'url': 0,
-              'version': u'0.1.0.dev20150722'
-        }
-    }
+    [
+            {'author': [u'F. Englert and R. Brout'],
+             'doi': [u'10.1103/PhysRevLett.13.321'],
+             'journal_page': [u'321'],
+             'journal_reference': ['Phys.Rev.Lett.,13,1964'],
+             'journal_title': [u'Phys.Rev.Lett.'],
+             'journal_volume': [u'13'],
+             'journal_year': [u'1964'],
+             'linemarker': [u'1'],
+             'title': [u'Broken symmetry and the mass of gauge vector mesons'],
+             'year': [u'1964']}, ...
+    ]
 
 You can also extract directly from a URL:
 
@@ -110,29 +96,15 @@ You can also extract directly from a URL:
     from refextract import extract_references_from_url
     reference = extract_references_from_url("http://arxiv.org/pdf/1503.07589v1.pdf")
     print(reference)
-    {
-        'references': [
-                {'author': [u'F. Englert and R. Brout'],
-                 'doi': [u'10.1103/PhysRevLett.13.321'],
-                 'journal_page': [u'321'],
-                 'journal_reference': ['Phys.Rev.Lett.,13,1964'],
-                 'journal_title': [u'Phys.Rev.Lett.'],
-                 'journal_volume': [u'13'],
-                 'journal_year': [u'1964'],
-                 'linemarker': [u'1'],
-                 'title': [u'Broken symmetry and the mass of gauge vector mesons'],
-                 'year': [u'1964']}, ...
-           ],
-        'stats': {
-              'author': 15,
-              'date': '2016-01-12 10:52:58',
-              'doi': 1,
-              'misc': 0,
-              'old_stats_str': '0-1-1-15-0-1-0',
-              'reportnum': 1,
-              'status': 0,
-              'title': 1,
-              'url': 0,
-              'version': u'0.1.0.dev20150722'
-        }
-    }
+    [
+             {'author': [u'F. Englert and R. Brout'],
+              'doi': [u'10.1103/PhysRevLett.13.321'],
+              'journal_page': [u'321'],
+              'journal_reference': ['Phys.Rev.Lett.,13,1964'],
+              'journal_title': [u'Phys.Rev.Lett.'],
+              'journal_volume': [u'13'],
+              'journal_year': [u'1964'],
+              'linemarker': [u'1'],
+              'title': [u'Broken symmetry and the mass of gauge vector mesons'],
+              'year': [u'1964']}, ...
+    ]
