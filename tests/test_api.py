@@ -125,24 +125,15 @@ def test_extract_references_from_string(kbs_override):
     assert len(r) == 2
 
 
-def test_extract_references_from_file():
-    path_to_pdf = os.path.join(
-        os.path.dirname(__file__),
-        'data',
-        '1503.07589v1.pdf'
-    )
-
-    r = extract_references_from_file(path_to_pdf)
+def test_extract_references_from_file(pdf_files):
+    r = extract_references_from_file(pdf_files[0])
+    assert 'texkey' in r[0]
+    assert 'author' in r[0]
     assert len(r) == 36
 
 
-def test_extract_references_from_url():
-    path_to_pdf = os.path.join(
-        os.path.dirname(__file__),
-        'data',
-        '1503.07589v1.pdf'
-    )
-    with open(path_to_pdf, 'rb') as fd:
+def test_extract_references_from_url(pdf_files):
+    with open(pdf_files[0], 'rb') as fd:
         url = "http://arxiv.org/pdf/1503.07589v1.pdf"
         responses.add(
             responses.GET,
