@@ -33,8 +33,10 @@ import os
 import requests
 
 from tempfile import mkstemp
+from itertools import izip
 
-from .engine import (get_kbs,
+from .engine import (file_type,
+                     get_kbs,
                      get_plaintext_document_body,
                      parse_reference_line,
                      parse_references,
@@ -42,6 +44,7 @@ from .engine import (get_kbs,
 from .errors import FullTextNotAvailable
 from .find import (find_numeration_in_body,
                    get_reference_section_beginning)
+from .pdf import extract_texkeys_from_pdf
 from .tag import tag_reference_line
 from .text import extract_references_from_fulltext, rebuild_reference_lines
 
@@ -141,6 +144,11 @@ def extract_references_from_file(path,
         linker_callback=linker_callback,
         override_kbs_files=override_kbs_files,
     )
+
+    if file_type(path) == "pdf":
+        texkeys = extract_texkeys_from_pdf(path)
+        if len(texkeys) == len(parsed_refs):
+            parsed_refs = [dict(ref, texkey=[key]) for ref, key in izip(parsed_refs, texkeys)]
 
     return parsed_refs
 
