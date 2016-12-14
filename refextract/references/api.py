@@ -31,12 +31,12 @@ from a raw string.
 
 import os
 import requests
+import magic
 
 from tempfile import mkstemp
 from itertools import izip
 
-from .engine import (file_type,
-                     get_kbs,
+from .engine import (get_kbs,
                      get_plaintext_document_body,
                      parse_reference_line,
                      parse_references,
@@ -145,7 +145,7 @@ def extract_references_from_file(path,
         override_kbs_files=override_kbs_files,
     )
 
-    if file_type(path) == "pdf":
+    if magic.from_file(path, mime=True) == "application/pdf":
         texkeys = extract_texkeys_from_pdf(path)
         if len(texkeys) == len(parsed_refs):
             parsed_refs = [dict(ref, texkey=[key]) for ref, key in izip(parsed_refs, texkeys)]
