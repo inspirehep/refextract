@@ -99,7 +99,7 @@ def extract_references_from_url(url, headers=None, chunk_size=1024, **kwargs):
 
 def extract_references_from_file(path,
                                  recid=None,
-                                 reference_format="{title} {volume} ({year}) {page}",
+                                 reference_format=u"{title} {volume} ({year}) {page}",
                                  linker_callback=None,
                                  override_kbs_files=None):
     """Extract references from a local pdf file.
@@ -111,7 +111,7 @@ def extract_references_from_file(path,
 
     E.g. you can change that by passing the reference_format:
 
-    >>> extract_references_from_file(path, reference_format="{title},{volume},{page}")
+    >>> extract_references_from_file(path, reference_format=u"{title},{volume},{page}")
 
     If you want to also link each reference to some other resource (like a record),
     you can provide a linker_callback function to be executed for every reference
