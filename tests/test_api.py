@@ -35,6 +35,8 @@ from refextract.references.api import (
     extract_references_from_file,
 )
 
+from refextract.references.errors import FullTextNotAvailableError
+
 
 @pytest.fixture
 def kbs_override():
@@ -130,8 +132,10 @@ def test_extract_references_from_file(pdf_files):
     assert 'texkey' in r[0]
     assert 'author' in r[0]
     assert len(r) == 36
+    with pytest.raises(FullTextNotAvailableError):
+        extract_references_from_file(pdf_files[0] + "error")
 
-
+@responses.activate
 def test_extract_references_from_url(pdf_files):
     with open(pdf_files[0], 'rb') as fd:
         url = "http://arxiv.org/pdf/1503.07589v1.pdf"
@@ -144,3 +148,14 @@ def test_extract_references_from_url(pdf_files):
 
     r = extract_references_from_url(url)
     assert len(r) == 36
+
+    with pytest.raises(FullTextNotAvailableError):
+        url = "http://www.example.com"
+        responses.add(
+            responses.GET,
+            url,
+            body="File not found!",
+            status=404,
+            content_type='text/plain',
+        )
+        extract_references_from_url(url)

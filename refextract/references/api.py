@@ -30,6 +30,7 @@ from a raw string.
 
 
 import os
+import sys
 import requests
 import magic
 
@@ -41,7 +42,7 @@ from .engine import (get_kbs,
                      parse_reference_line,
                      parse_references,
                      parse_tagged_reference_line)
-from .errors import FullTextNotAvailable
+from .errors import FullTextNotAvailableError
 from .find import (find_numeration_in_body,
                    get_reference_section_beginning)
 from .pdf import extract_texkeys_from_pdf
@@ -55,7 +56,9 @@ def extract_references_from_url(url, headers=None, chunk_size=1024, **kwargs):
     The first parameter is the URL of the file.
     It returns a list of parsed references.
 
-    It raises FullTextNotAvailable if the file does not exist.
+    It raises FullTextNotAvailableError if the URL gives a 404,
+    UnknownDocumentTypeError if it is not a PDF or plain text
+    and GarbageFullTextError if the fulltext extraction gives garbage.
 
     The standard reference format is: {title} {volume} ({year}) {page}.
 
@@ -71,7 +74,6 @@ def extract_references_from_url(url, headers=None, chunk_size=1024, **kwargs):
 
     >>> extract_references_from_url(path, override_kbs_files={'journals': 'my/path/to.kb'})
 
-    It raises FullTextNotAvailable if the url gives a 404
     """
     # Get temporary filepath to download to
     filename, filepath = mkstemp(
@@ -79,24 +81,19 @@ def extract_references_from_url(url, headers=None, chunk_size=1024, **kwargs):
     )
     os.close(filename)
 
-    req = requests.get(
-        url=url,
-        headers=headers,
-        stream=True
-    )
-    if req.status_code == 200:
+    try:
+        req = requests.get(
+            url=url,
+            headers=headers,
+            stream=True
+        )
+        req.raise_for_status()
         with open(filepath, 'wb') as f:
             for chunk in req.iter_content(chunk_size):
                 f.write(chunk)
-
-    try:
-        try:
-            references = extract_references_from_file(filepath, **kwargs)
-        except IOError as err:
-            if err.code == 404:
-                raise FullTextNotAvailable()
-            else:
-                raise
+        references = extract_references_from_file(filepath, **kwargs)
+    except requests.exceptions.HTTPError as e:
+        raise FullTextNotAvailableError("URL not found: '{0}'".format(url)), None, sys.exc_info()[2]
     finally:
         os.remove(filepath)
     return references
@@ -111,7 +108,10 @@ def extract_references_from_file(path,
 
     The first parameter is the path to the file.
     It returns a list of parsed references.
-    It raises FullTextNotAvailable if the file does not exist.
+    It raises FullTextNotAvailableError if the file does not exist,
+    UnknownDocumentTypeError if it is not a PDF or plain text
+    and GarbageFullTextError if the fulltext extraction gives garbage.
+
 
     The standard reference format is: {title} {volume} ({year}) {page}.
 
@@ -129,12 +129,12 @@ def extract_references_from_file(path,
 
     """
     if not os.path.isfile(path):
-        raise FullTextNotAvailable()
+        raise FullTextNotAvailableError("File not found: '{0}'".format(path))
 
-    docbody, dummy = get_plaintext_document_body(path)
+    docbody = get_plaintext_document_body(path)
     reflines, dummy, dummy = extract_references_from_fulltext(docbody)
-    if not len(reflines):
-        docbody, dummy = get_plaintext_document_body(path, keep_layout=True)
+    if not reflines:
+        docbody = get_plaintext_document_body(path, keep_layout=True)
         reflines, dummy, dummy = extract_references_from_fulltext(docbody)
 
     parsed_refs, stats = parse_references(
@@ -163,7 +163,6 @@ def extract_references_from_string(source,
 
     The first parameter is the path to the file.
     It returns a tuple (references, stats).
-    It raises FullTextNotAvailable if the file does not exist.
 
     If the string does not only contain references, improve accuracy by
     specifing ``is_only_references=False``.
@@ -172,7 +171,7 @@ def extract_references_from_string(source,
 
     E.g. you can change that by passing the reference_format:
 
-    >>> extract_references_from_url(path, reference_format="{title},{volume},{page}")
+    >>> extract_references_from_string(path, reference_format="{title},{volume},{page}")
 
     If you want to also link each reference to some other resource (like a record),
     you can provide a linker_callback function to be executed for every reference
@@ -180,7 +179,7 @@ def extract_references_from_string(source,
 
     To override KBs for journal names etc., use ``override_kbs_files``:
 
-    >>> extract_references_from_url(path, override_kbs_files={'journals': 'my/path/to.kb'})
+    >>> extract_references_from_string(path, override_kbs_files={'journals': 'my/path/to.kb'})
     """
     docbody = source.split('\n')
     if not is_only_references:

@@ -46,6 +46,8 @@ from .config import (
     CFG_PATH_GFILE
 )
 
+from .errors import UnknownDocumentTypeError
+
 from .tag import (
     tag_reference_line,
     sum_2_dictionaries,
@@ -1377,13 +1379,14 @@ def get_plaintext_document_body(fpath, keep_layout=False):
     """Given a file-path to a full-text, return a list of unicode strings
        whereby each string is a line of the fulltext.
        In the case of a plain-text document, this simply means reading the
-       contents in from the file. In the case of a PDF/PostScript however,
+       contents in from the file. In the case of a PDF however,
        this means converting the document to plaintext.
+       It raises UnknownDocumentTypeError if the document is not a PDF or
+       plain text.
        @param fpath: (string) - the path to the fulltext file
        @return: (list) of strings - each string being a line in the document.
     """
     textbody = []
-    status = 0
     mime_type = magic.from_file(fpath, mime=True)
 
     if mime_type == "text/plain":
@@ -1391,13 +1394,12 @@ def get_plaintext_document_body(fpath, keep_layout=False):
             textbody = [line.decode("utf-8") for line in f.readlines()]
 
     elif mime_type == "application/pdf":
-        (textbody, status) = convert_PDF_to_plaintext(fpath, keep_layout)
+        textbody = convert_PDF_to_plaintext(fpath, keep_layout)
 
     else:
-        # invalid format
-        status = 1
+        raise UnknownDocumentTypeError(mime_type)
 
-    return (textbody, status)
+    return textbody
 
 
 def parse_references(reference_lines,

@@ -23,9 +23,14 @@
 
 """The Refextract unit test suite"""
 
+import pytest
+
 from refextract.references.engine import (
+    get_plaintext_document_body,
     parse_references,
 )
+
+from refextract.references.errors import UnknownDocumentTypeError
 
 from refextract.references.text import wash_and_repair_reference_line
 
@@ -99,3 +104,16 @@ def test_extra_a_in_report_number():
         u'ATLAS-CONF-2012-078',
     ]
     assert references[0]['linemarker'] == [u'14']
+
+def test_get_plaintext_document_body(tmpdir):
+    input = [u"Some text\n", u"on multiple lines\n"]
+    f = tmpdir.join("plain.txt")
+    f.write("".join(input))
+    assert input == get_plaintext_document_body(str(f))
+
+    with pytest.raises(UnknownDocumentTypeError) as excinfo:
+        html = "<html><body>Some page</body></html>"
+        f = tmpdir.join("page.html")
+        f.write(html)
+        get_plaintext_document_body(str(f))
+    assert 'text/html' in excinfo.value
