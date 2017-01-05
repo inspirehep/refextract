@@ -43,6 +43,7 @@ import subprocess
 from six import iteritems
 
 from ..references.config import CFG_PATH_PDFTOTEXT
+from ..references.errors import GarbageFullTextError
 
 # a dictionary of undesirable characters and their replacements:
 UNDESIRABLE_CHAR_REPLACEMENTS = {
@@ -480,18 +481,18 @@ def convert_PDF_to_plaintext(fpath, keep_layout=False):
 
     Take the path to a PDF file and run pdftotext for this file, capturing
     the output.
+    It raises GarbageFullTextError when this output is garbage.
     @param fpath: (string) path to the PDF file
     @return: (list) of unicode strings (contents of the PDF file translated
     into plaintext; each string is a line in the document.)
     """
     if not os.path.isfile(CFG_PATH_PDFTOTEXT):
-        raise Exception('Missing pdftotext executable')
+        raise FileNotFoundError('Missing pdftotext executable')
 
     if keep_layout:
         layout_option = "-layout"
     else:
         layout_option = "-raw"
-    status = 0
     doclines = []
     # Pattern to check for lines with a leading page-break character.
     # If this pattern is matched, we want to split the page-break into
@@ -525,7 +526,6 @@ def convert_PDF_to_plaintext(fpath, keep_layout=False):
 
     # finally, check conversion result not bad:
     if pdftotext_conversion_is_bad(doclines):
-        status = 2
-        doclines = []
+        raise GarbageFullTextError("Garbage fulltext in '{0}'".format(fpath))
 
-    return (doclines, status)
+    return doclines

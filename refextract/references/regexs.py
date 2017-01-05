@@ -260,6 +260,9 @@ re_isbn = re.compile(ur"""
 re_kb_line = re.compile(ur'^\s*(?P<seek>[^\s].*)\s*---\s*(?P<repl>[^\s].*)\s*$',
                         re.UNICODE)
 
+# Pattern to recognise references in PDF named destinations
+re_reference_in_dest = re.compile(ur'^cite\.(.*)$', re.UNICODE)
+
 # precompile some often-used regexp for speed reasons:
 re_regexp_character_class = re.compile(ur'\[[^\]]+\]', re.UNICODE)
 re_multiple_hyphens = re.compile(ur'-{2,}', re.UNICODE)

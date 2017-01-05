@@ -37,6 +37,8 @@ requirements = [
     'six>=1.7.2',
     'requests>=2.8.1',
     'unidecode>=0.4.18',
+    'python-magic>=0.4.12',
+    'PyPDF2>=1.26.0',
 ]
 
 test_requirements = [

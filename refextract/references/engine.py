@@ -30,6 +30,8 @@ import subprocess
 from datetime import datetime
 from itertools import chain
 
+import magic
+
 from .config import (
     CFG_REFEXTRACT_MARKER_CLOSING_REPORT_NUM,
     CFG_REFEXTRACT_MARKER_CLOSING_AUTHOR_INCL,
@@ -43,6 +45,8 @@ from .config import (
     CFG_REFEXTRACT_MARKER_CLOSING_SERIES,
     CFG_PATH_GFILE
 )
+
+from .errors import UnknownDocumentTypeError
 
 from .tag import (
     tag_reference_line,
@@ -1370,44 +1374,32 @@ def remove_leading_garbage_lines_from_reference_section(ref_sectn):
 
 # Tasks related to conversion of full-text to plain-text:
 
+
 def get_plaintext_document_body(fpath, keep_layout=False):
     """Given a file-path to a full-text, return a list of unicode strings
        whereby each string is a line of the fulltext.
        In the case of a plain-text document, this simply means reading the
-       contents in from the file. In the case of a PDF/PostScript however,
+       contents in from the file. In the case of a PDF however,
        this means converting the document to plaintext.
+       It raises UnknownDocumentTypeError if the document is not a PDF or
+       plain text.
        @param fpath: (string) - the path to the fulltext file
        @return: (list) of strings - each string being a line in the document.
     """
     textbody = []
-    status = 0
-    if os.access(fpath, os.F_OK | os.R_OK):
-        # filepath OK - attempt to extract references:
-        # get file type:
-        cmd_pdftotext = [CFG_PATH_GFILE, fpath]
-        pipe_pdftotext = subprocess.Popen(
-            cmd_pdftotext, stdout=subprocess.PIPE)
-        res_gfile = pipe_pdftotext.stdout.read()
+    mime_type = magic.from_file(fpath, mime=True)
 
-        if (res_gfile.lower().find("text") != -1) and \
-                (res_gfile.lower().find("pdf") == -1):
-            # plain-text file: don't convert - just read in:
-            f = open(fpath, "r")
-            try:
-                textbody = [line.decode("utf-8") for line in f.readlines()]
-            finally:
-                f.close()
-        elif (res_gfile.lower().find("pdf") != -1) or \
-                (res_gfile.lower().find("pdfa") != -1):
-            # convert from PDF
-            (textbody, status) = convert_PDF_to_plaintext(fpath, keep_layout)
-        else:
-            # invalid format
-            status = 1
+    if mime_type == "text/plain":
+        with open(fpath, "r") as f:
+            textbody = [line.decode("utf-8") for line in f.readlines()]
+
+    elif mime_type == "application/pdf":
+        textbody = convert_PDF_to_plaintext(fpath, keep_layout)
+
     else:
-        # filepath not OK
-        status = 1
-    return (textbody, status)
+        raise UnknownDocumentTypeError(mime_type)
+
+    return textbody
 
 
 def parse_references(reference_lines,
@@ -1426,10 +1418,8 @@ def parse_references(reference_lines,
     processed_references, counts, dummy_bad_titles_count = \
         parse_references_elements(reference_lines, kbs, linker_callback)
 
-    return {
-        "references": build_references(processed_references, reference_format),
-        "stats": build_stats(counts)
-    }
+    return (build_references(processed_references, reference_format),
+            build_stats(counts))
 
 
 def build_stats(counts):

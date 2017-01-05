@@ -35,6 +35,8 @@ from refextract.references.api import (
     extract_references_from_file,
 )
 
+from refextract.references.errors import FullTextNotAvailableError
+
 
 @pytest.fixture
 def kbs_override():
@@ -122,27 +124,20 @@ def test_journal_extract():
 def test_extract_references_from_string(kbs_override):
     ref_lines = """[9] R. Bousso, JHEP 9906:028 (1999); hep-th/9906022."""
     r = extract_references_from_string(ref_lines, override_kbs_files=kbs_override)
-    assert len(r['references']) == 2
+    assert len(r) == 2
 
 
-def test_extract_references_from_file():
-    path_to_pdf = os.path.join(
-        os.path.dirname(__file__),
-        'data',
-        '1503.07589v1.pdf'
-    )
+def test_extract_references_from_file(pdf_files):
+    r = extract_references_from_file(pdf_files[0])
+    assert 'texkey' in r[0]
+    assert 'author' in r[0]
+    assert len(r) == 36
+    with pytest.raises(FullTextNotAvailableError):
+        extract_references_from_file(pdf_files[0] + "error")
 
-    r = extract_references_from_file(path_to_pdf)
-    assert len(r['references']) == 36
-
-
-def test_extract_references_from_url():
-    path_to_pdf = os.path.join(
-        os.path.dirname(__file__),
-        'data',
-        '1503.07589v1.pdf'
-    )
-    with open(path_to_pdf, 'rb') as fd:
+@responses.activate
+def test_extract_references_from_url(pdf_files):
+    with open(pdf_files[0], 'rb') as fd:
         url = "http://arxiv.org/pdf/1503.07589v1.pdf"
         responses.add(
             responses.GET,
@@ -152,4 +147,15 @@ def test_extract_references_from_url():
         )
 
     r = extract_references_from_url(url)
-    assert len(r['references']) == 36
+    assert len(r) == 36
+
+    with pytest.raises(FullTextNotAvailableError):
+        url = "http://www.example.com"
+        responses.add(
+            responses.GET,
+            url,
+            body="File not found!",
+            status=404,
+            content_type='text/plain',
+        )
+        extract_references_from_url(url)
