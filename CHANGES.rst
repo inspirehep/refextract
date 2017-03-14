@@ -1,6 +1,6 @@
 ..
    This file is part of refextract
-   Copyright (C) 2015, 2016 CERN.
+   Copyright (C) 2015, 2016, 2017 CERN.
 
    refextract is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
@@ -23,6 +23,23 @@
 
 Changes
 =======
+
+Version 0.2.0 (2017-06-26)
+
+- Substantial rewrite of the API. In particular:
+
+  * ``extract_references_from_file``, ``extract_references_from_string``, and
+    ``extract_references_from_url`` now return a list of the references,
+    instead of an object with keys ``stats`` and ``references``.
+
+  * If the number of TeXkeys that were extracted from the PDF metadata matches
+    the number of references parsed by RefExtract, an extra ``texkey`` field is
+    added to each returned reference.
+
+  * The API now raises exceptions when it encounters an unrecoverable error.
+
+  * Finally, the API now returns the list of raw references on which
+    ``refextract`` worked.
 
 Version 0.1.0 (2016-01-12)
 
