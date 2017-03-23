@@ -36,7 +36,6 @@ from refextract.references.text import wash_and_repair_reference_line
 
 
 def get_references(ref_line, override_kbs_files=None):
-    ref_line = wash_and_repair_reference_line(ref_line)
     return parse_references([ref_line], override_kbs_files=override_kbs_files)
 
 
@@ -44,47 +43,62 @@ def test_month_with_year():
     ref_line = u"""[2] S. Weinberg, A Model of Leptons, Phys. Rev. Lett. 19 (Nov, 1967) 1264–1266."""
     res = get_references(ref_line)
     references = res[0]
-    assert len(references) == 1
-    assert references[0]['author'] == [u'S. Weinberg, A Model of Leptons']
-    assert references[0]['journal_page'] == [u'1264-1266']
-    assert references[0]['journal_reference'] == [u'Phys. Rev. Lett. 19 (1967) 1264-1266']
-    assert references[0]['journal_title'] == [u'Phys. Rev. Lett.']
-    assert references[0]['journal_volume'] == [u'19']
-    assert references[0]['journal_year'] == [u'1967']
-    assert references[0]['linemarker'] == [u'2']
-    assert references[0]['year'] == [u'1967']
+    expected = [
+        {
+            'author': [u'S. Weinberg, A Model of Leptons'],
+            'journal_page': [u'1264-1266'],
+            'journal_reference': [u'Phys. Rev. Lett. 19 (1967) 1264-1266'],
+            'journal_title': [u'Phys. Rev. Lett.'],
+            'journal_volume': [u'19'],
+            'journal_year': [u'1967'],
+            'linemarker': [u'2'],
+            'year': [u'1967'],
+            'raw_ref': [ref_line],
+        }
+    ]
+    assert references == expected
 
 
 def test_numeration_not_finding_year():
     ref_line = u"""[137] M. Papakyriacou, H. Mayer, C. Pypen, H. P. Jr., and S. Stanzl-Tschegg, “Inﬂuence of loading frequency on high cycle fatigue properties of b.c.c. and h.c.p. metals,” Materials Science and Engineering, vol. A308, pp. 143–152, 2001."""
     res = get_references(ref_line)
     references = res[0]
-    assert len(references) == 1
-    assert references[0]['author'] == [u'M. Papakyriacou, H. Mayer, C. Pypen, H. P. Jr., and S. Stanzl-Tschegg']
-    assert references[0]['journal_page'] == [u'143-152']
-    assert references[0]['journal_reference'] == [u'Mat.Sci.Eng. A308 (2001) 143-152']
-    assert references[0]['journal_title'] == [u'Mat.Sci.Eng.']
-    assert references[0]['journal_volume'] == [u'A308']
-    assert references[0]['journal_year'] == [u'2001']
-    assert references[0]['linemarker'] == [u'137']
-    assert references[0]['year'] == [u'2001']
-    assert references[0]['title'] == [u'Influence of loading frequency on high cycle fatigue properties of b.c.c. and h.c.p. metals']
+    expected = [
+        {
+            'author': [u'M. Papakyriacou, H. Mayer, C. Pypen, H. P. Jr., and S. Stanzl-Tschegg'],
+            'journal_page': [u'143-152'],
+            'journal_reference': [u'Mat.Sci.Eng. A308 (2001) 143-152'],
+            'journal_title': [u'Mat.Sci.Eng.'],
+            'journal_volume': [u'A308'],
+            'journal_year': [u'2001'],
+            'linemarker': [u'137'],
+            'year': [u'2001'],
+            'title': [u'Influence of loading frequency on high cycle fatigue properties of b.c.c. and h.c.p. metals'],
+            'raw_ref': [ref_line],
+        }
+    ]
+    assert references == expected
 
 
 def test_numeration_not_finding_year2():
     ref_line = u"""[138] Y.-B. Park, R. Mnig, and C. A. Volkert, “Frequency effect on thermal fatigue damage in Cu interconnects,” Thin Solid Films, vol. 515, pp. 3253– 3258, 2007."""
     res = get_references(ref_line)
     references = res[0]
-    assert len(references) == 1
-    assert references[0]['author'] == [u'Y.-B. Park, R. Mnig, and C. A. Volkert']
-    assert references[0]['journal_page'] == [u'3253-3258']
-    assert references[0]['journal_reference'] == [u'Thin Solid Films 515 (2007) 3253-3258']
-    assert references[0]['journal_title'] == [u'Thin Solid Films']
-    assert references[0]['journal_volume'] == [u'515']
-    assert references[0]['journal_year'] == [u'2007']
-    assert references[0]['linemarker'] == [u'138']
-    assert references[0]['year'] == [u'2007']
-    assert references[0]['title'] == [u'Frequency effect on thermal fatigue damage in Cu interconnects']
+    expected = [
+        {
+            'author': [u'Y.-B. Park, R. Mnig, and C. A. Volkert'],
+            'journal_page': [u'3253-3258'],
+            'journal_reference': [u'Thin Solid Films 515 (2007) 3253-3258'],
+            'journal_title': [u'Thin Solid Films'],
+            'journal_volume': [u'515'],
+            'journal_year': [u'2007'],
+            'linemarker': [u'138'],
+            'year': [u'2007'],
+            'title': [u'Frequency effect on thermal fatigue damage in Cu interconnects'],
+            'raw_ref': [ref_line],
+        }
+    ]
+    assert references == expected
 
 
 def test_extra_a_in_report_number():
@@ -104,6 +118,7 @@ def test_extra_a_in_report_number():
         u'ATLAS-CONF-2012-078',
     ]
     assert references[0]['linemarker'] == [u'14']
+
 
 def test_get_plaintext_document_body(tmpdir):
     input = [u"Some text\n", u"on multiple lines\n"]

@@ -56,6 +56,7 @@ from .tag import (
     find_numeration,
     extract_series_from_volume
 )
+from .text import wash_and_repair_reference_line
 from .record import build_references
 from ..documents.pdf import convert_PDF_to_plaintext
 from .kbs import get_kbs
@@ -561,9 +562,8 @@ def remove_duplicated_dois(splitted_citations):
 
 
 def remove_duplicated_collaborations(splitted_citations):
-    collabs = []
     for citation in splitted_citations:
-        found_doi = False
+        collabs = []
         for el in citation[:]:
             if el['type'] == 'COLLABORATION':
                 if el['collaboration'] in collabs:
@@ -885,17 +885,22 @@ def parse_references_elements(ref_sect, kbs, linker_callback=None):
     # in the entire reference section:
     bad_titles_count = {}
 
+    # Cleanup the reference lines
+
     # process references line-by-line:
     for ref_line in ref_sect:
+        clean_line = wash_and_repair_reference_line(ref_line)
+
         citation_elements, line_marker, this_counts, bad_titles_count = \
             parse_reference_line(
-                ref_line, kbs, bad_titles_count, linker_callback)
+                clean_line, kbs, bad_titles_count, linker_callback)
 
         # Accumulate stats
         counts = sum_2_dictionaries(counts, this_counts)
 
         citations.append({'elements': citation_elements,
-                          'line_marker': line_marker})
+                          'line_marker': line_marker,
+                          'raw_ref': ref_line})
 
     # Return the list of processed reference lines:
     return citations, counts, bad_titles_count
@@ -1405,12 +1410,12 @@ def get_plaintext_document_body(fpath, keep_layout=False):
 def parse_references(reference_lines,
                      recid=None,
                      override_kbs_files=None,
-                     reference_format="{title} {volume} ({year}) {page}",
+                     reference_format=u"{title} {volume} ({year}) {page}",
                      linker_callback=None):
     """Parse a list of references
 
     Given a list of raw reference lines (list of strings),
-    output the MARC-XML content extracted version
+    output a list of dictionaries containing the parsed references
     """
     # RefExtract knowledge bases
     kbs = get_kbs(custom_kbs_files=override_kbs_files)
