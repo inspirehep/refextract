@@ -215,8 +215,7 @@ def rebuild_reference_lines(ref_sectn, ref_line_marker_ptn):
         working_line = ""
         for l in working_ref:
             working_line = join_lines(working_line, l.strip())
-        working_line = working_line.rstrip()
-        return wash_and_repair_reference_line(working_line)
+        return working_line.rstrip()
 
     lower_case_start = re.compile(ur'[a-z]')
     continuing_line_markers = re.compile(ur'[,&-]$')

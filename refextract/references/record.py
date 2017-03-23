@@ -27,9 +27,7 @@ def format_marker(line_marker):
 
 
 def build_references(citations, reference_format=False):
-    """Build marc xml from a references list
-
-    Transform the reference elements into marc xml
+    """Build list of reference dictionaries from a references list
     """
     # Now, run the method which will take as input:
     # 1. A list of lists of dictionaries, where each dictionary is a piece
@@ -43,6 +41,7 @@ def build_references(citations, reference_format=False):
             for elements in citation_elements['elements']
             for c in build_reference_fields(elements,
                                             citation_elements['line_marker'],
+                                            citation_elements['raw_ref'],
                                             reference_format)]
 
 
@@ -67,7 +66,8 @@ def create_reference_field(line_marker):
     return field
 
 
-def build_reference_fields(citation_elements, line_marker, reference_format):
+def build_reference_fields(citation_elements, line_marker, raw_ref,
+                           reference_format):
     """Create the final representation of the reference information.
 
     @param citation_elements: (list) an ordered list of dictionary elements,
@@ -75,11 +75,13 @@ def build_reference_fields(citation_elements, line_marker, reference_format):
                               piece of information from a reference line.
     @param line_marker: (string) The line marker for this single reference
                         line (e.g. [19])
-    @return xml_line: (string) The MARC-XML representation of the list of
+    @param raw_ref: (string) The raw string of this line
+    @return reference_fields: (list) A list of one dictionary containing the
                       reference elements
     """
     # Begin the datafield element
     current_field = create_reference_field(line_marker)
+    current_field['raw_ref'] = [raw_ref]
 
     reference_fields = [current_field]
 
