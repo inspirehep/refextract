@@ -27,6 +27,7 @@ import re
 import six
 import csv
 import codecs
+import contextlib
 
 from hashlib import md5
 from six import iteritems
@@ -40,6 +41,21 @@ from .regexs import (
     re_punctuation,
 )
 from ..documents.text import re_group_captured_multiple_space
+
+
+@contextlib.contextmanager
+def file_resolving(fpath, reader=None, **kwargs):
+    if isinstance(fpath, six.string_types):
+        fh = codecs.open(fpath, encoding='utf-8')
+        if reader:
+            yield reader(fh, delimiter=kwargs.pop('delimiter', b'|'), lineterminator=kwargs.pop('lineterminator', ';'))
+        else:
+            yield fh
+
+        fh.close()
+    else:
+        fh = fpath
+        yield fh
 
 
 def get_kbs(custom_kbs_files=None, cache={}):  # noqa
@@ -71,6 +87,7 @@ def load_kbs(kbs_files):
                  default values
     If path starts with "kb:", the kb will be loaded from the database
     """
+
     return {
         'journals_re': build_journals_re_kb(kbs_files['journals-re']),
         'journals': load_kb(kbs_files['journals'], build_journals_kb),
@@ -87,10 +104,8 @@ def load_kb(path, builder):
     try:
         path.startswith
     except AttributeError:
-        print("Loading kb from array")
         return load_kb_from_iterable(path, builder)
     else:
-        print("Loading kb from %s" % path)
         return load_kb_from_file(path, builder)
 
 
@@ -338,16 +353,7 @@ def build_reportnum_kb(fpath):
     # will ensure that patterns in the dictionary are not
     # overwritten if 2 institutes have the same category
     # styles.
-
-    try:
-        if isinstance(fpath, six.string_types):
-            print('Loading reports kb from %s' % fpath)
-            fh = codecs.open(fpath, encoding='utf-8')
-            fpath_needs_closing = True
-        else:
-            fpath_needs_closing = False
-            fh = fpath
-
+    with file_resolving(fpath) as fh:
         for rawline in fh:
             if rawline.startswith('#'):
                 continue
@@ -402,17 +408,6 @@ def build_reportnum_kb(fpath):
                                          preprint_reference_search_regexp_patterns,
                                          standardised_preprint_reference_categories,
                                          kb_line_num)
-        if fpath_needs_closing:
-            print('Loaded reports kb')
-            fh.close()
-    except IOError:
-        # problem opening KB for reading, or problem while reading from it:
-        emsg = """Error: Could not build knowledge base containing """ \
-               """institute preprint referencing patterns - failed """ \
-               """to read from KB %(kb)s.""" \
-               % {'kb': fpath}
-        print(emsg)
-        raise IOError("Error: Unable to open report number kb '%s'" % fpath)
 
     # return the preprint reference patterns and the replacement strings
     # for non-standard categ-strings:
@@ -445,9 +440,7 @@ def build_special_journals_kb(fpath):
     before the volume.
     """
     journals = set()
-    print('Loading special journals kb from %s' % fpath)
-    fh = codecs.open(fpath, encoding='utf-8')
-    try:
+    with file_resolving(fpath) as fh:
         for line in fh:
             # Skip commented lines
             if line.startswith('#'):
@@ -456,94 +449,32 @@ def build_special_journals_kb(fpath):
             if not line.strip():
                 continue
             journals.add(line.strip())
-    finally:
-        fh.close()
-        print('Loaded special journals kb')
 
     return journals
 
 
 def build_books_kb(fpath):
-    if isinstance(fpath, six.string_types):
-        fpath_needs_closing = True
-        try:
-            print('Loading books kb from %s' % fpath)
-            fh = codecs.open(fpath, encoding='utf-8')
-            source = csv.reader(fh, delimiter=b'|', lineterminator=';')
-        except IOError:
-            # problem opening KB for reading, or problem while reading from it:
-            emsg = "Error: Could not build list of books - failed " \
-                   "to read from KB %(kb)s." % {'kb': fpath}
-            raise IOError(emsg)
-    else:
-        fpath_needs_closing = False
-        source = fpath
-
-    try:
+    with file_resolving(fpath, reader=csv.reader) as fh:
         books = {}
-        for line in source:
-            try:
-                books[line[1].upper()] = line
-            except IndexError:
-                print('Invalid line in books kb %s' % line)
-    finally:
-        if fpath_needs_closing:
-            fh.close()
-            print('Loaded books kb')
+        for line in fh:
+            books[line[1].upper()] = line
 
     return books
 
 
 def build_publishers_kb(fpath):
-    if isinstance(fpath, six.string_types):
-        fpath_needs_closing = True
-        try:
-            print('Loading publishers kb from %s' % fpath)
-            fh = codecs.open(fpath, encoding='utf-8')
-            source = csv.reader(fh, delimiter=b'|', lineterminator='\n')
-        except IOError:
-            # problem opening KB for reading, or problem while reading from it:
-            emsg = "Error: Could not build list of publishers - failed " \
-                   "to read from KB %(kb)s." % {'kb': fpath}
-            raise IOError(emsg)
-    else:
-        fpath_needs_closing = False
-        source = fpath
-
-    try:
+    with file_resolving(fpath, reader=csv.reader, lineterminator='\n') as fh:
         publishers = {}
-        for line in source:
-            try:
-                pattern = re.compile(ur'(\b|^)%s(\b|$)' % line[0], re.I | re.U)
-                publishers[line[0]] = {'pattern': pattern, 'repl': line[1]}
-            except IndexError:
-                print('Invalid line in books kb %s' % line)
-    finally:
-        if fpath_needs_closing:
-            fh.close()
-            print('Loaded publishers kb')
+        for line in fh:
+            pattern = re.compile(ur'(\b|^)%s(\b|$)' % line[0], re.I | re.U)
+            publishers[line[0]] = {'pattern': pattern, 'repl': line[1]}
 
     return publishers
 
 
 def build_authors_kb(fpath):
     replacements = []
-
-    if isinstance(fpath, six.string_types):
-        fpath_needs_closing = True
-        try:
-            fh = codecs.open(fpath, encoding='utf-8')
-        except IOError:
-            # problem opening KB for reading, or problem while reading from it:
-            emsg = "Error: Could not build list of authors - failed " \
-                   "to read from KB %(kb)s." % {'kb': fpath}
-            print(emsg)
-            raise IOError("Error: Unable to open authors kb '%s'" % fpath)
-    else:
-        fpath_needs_closing = False
-        fh = fpath
-
-    try:
+    with file_resolving(fpath) as fh:
         for rawline in fh:
             if rawline.startswith('#'):
                 continue
@@ -554,9 +485,6 @@ def build_authors_kb(fpath):
                 seek = m_kb_line.group('seek')
                 repl = m_kb_line.group('repl')
                 replacements.append((seek, repl))
-    finally:
-        if fpath_needs_closing:
-            fh.close()
 
     return replacements
 
@@ -573,26 +501,13 @@ def build_journals_re_kb(fpath):
 
     kb = []
 
-    if isinstance(fpath, six.string_types):
-        fpath_needs_closing = True
-        try:
-            fh = open(fpath, "r")
-        except IOError:
-            raise IOError("Error: Unable to open journal kb '%s'" % fpath)
-    else:
-        fpath_needs_closing = False
-        fh = fpath
-
-    try:
+    with file_resolving(fpath) as fh:
         for rawline in fh:
             if rawline.startswith('#'):
                 continue
             # Extract the seek->replace terms from this KB line:
             m_kb_line = re_kb_line.search(rawline)
             kb.append(make_tuple(m_kb_line))
-    finally:
-        if fpath_needs_closing:
-            fh.close()
 
     return kb
 
@@ -602,10 +517,6 @@ def load_kb_from_iterable(kb, builder):
 
 
 def load_kb_from_file(path, builder):
-    try:
-        fh = codecs.open(path, encoding='utf-8')
-    except IOError as e:
-        raise StandardError("Unable to open kb '%s': %s" % (path, e))
 
     def lazy_parser(fh):
         for rawline in fh:
@@ -622,10 +533,8 @@ def load_kb_from_file(path, builder):
                 raise StandardError("Badly formatted kb '%s' at line %s"
                                     % (path, rawline))
 
-    try:
+    with file_resolving(path) as fh:
         return builder(lazy_parser(fh))
-    finally:
-        fh.close()
 
 
 def build_journals_kb(knowledgebase):
@@ -666,8 +575,6 @@ def build_journals_kb(knowledgebase):
     # "seek terms" later, if they were not already explicitly added
     # by the KB:
     repl_terms = {}
-
-    print('Processing journals kb')
     for seek_phrase, repl in knowledgebase:
         # We match on a simplified line, thus dots are replaced
         # with spaces
@@ -707,8 +614,6 @@ def build_journals_kb(knowledgebase):
     # Sort the titles by string length (long - short)
     seek_phrases.sort(_cmp_bystrlen_reverse)
 
-    print('Processed journals kb')
-
     # return the raw knowledge base:
     return kb, standardised_titles, seek_phrases
 
@@ -723,4 +628,5 @@ def build_collaborations_kb(knowledgebase):
         pattern = pattern.replace('Collaboration', collaboration_pattern)
         re_pattern = "%s(%s)%s" % (prefix, pattern, suffix)
         kb[collab] = re.compile(re_pattern, re.I | re.U)
+
     return kb
