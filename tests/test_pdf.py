@@ -126,3 +126,11 @@ def test_extract_texkeys_from_pdf(pdf_files):
             u'ATLAScollaboration:2014ur'
             ]
     assert two_col_keys == expected
+
+
+def test_extract_texkeys_from_pdf_no_crash_on_incomplete_dest_coordinates(
+        pdf_files):
+    expected = []
+    result = extract_texkeys_from_pdf(pdf_files[2])
+
+    assert result == expected
