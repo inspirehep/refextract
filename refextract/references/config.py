@@ -26,6 +26,8 @@
 
 from __future__ import unicode_literals
 
+import os
+
 try:
     from shutil import which
 except ImportError:
@@ -35,8 +37,8 @@ except ImportError:
 import pkg_resources
 
 # Version number:
-CFG_PATH_GFILE = which("file")
-CFG_PATH_PDFTOTEXT = which("pdftotext")
+CFG_PATH_GFILE = os.environ.get('CFG_PATH_GFILE', which("file"))
+CFG_PATH_PDFTOTEXT = os.environ.get('CFG_PATH_PDFTOTEXT', which("pdftotext"))
 
 # Module config directory
 CFG_KBS_DIR = pkg_resources.resource_filename('refextract.references', 'kbs')
