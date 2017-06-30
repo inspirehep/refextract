@@ -28,6 +28,13 @@ from PyPDF2 import PdfFileReader
 from .regexs import re_reference_in_dest
 
 
+class IncompleteCoordinatesError(Exception):
+    """Exception raised when a named destination does not have all required
+    coordinates.
+    """
+    pass
+
+
 def extract_texkeys_from_pdf(pdf_file):
     """
     Extract the texkeys from the given PDF file
@@ -44,24 +51,28 @@ def extract_texkeys_from_pdf(pdf_file):
         # not all named destinations point to references
         refs = [dest for dest in destinations.iteritems()
                 if re_reference_in_dest.match(dest[0])]
-        if _destinations_in_two_columns(pdf, refs):
-            print("* PDF: Using two-column layout")
+        try:
+            if _destinations_in_two_columns(pdf, refs):
+                print("* PDF: Using two-column layout")
 
-            def sortfunc(dest_couple):
-                return _destination_position(pdf, dest_couple[1])
+                def sortfunc(dest_couple):
+                    return _destination_position(pdf, dest_couple[1])
 
-        else:
-            print("* PDF: Using single-column layout")
+            else:
+                print("* PDF: Using single-column layout")
 
-            def sortfunc(dest_couple):
-                (page, _, ypos, xpos) = _destination_position(pdf,
-                                                              dest_couple[1])
-                return (page, ypos, xpos)
+                def sortfunc(dest_couple):
+                    (page, _, ypos, xpos) = _destination_position(
+                        pdf, dest_couple[1])
+                    return (page, ypos, xpos)
 
-        refs.sort(key=sortfunc)
-        # extract the TeXkey from the named destination name
-        return [re_reference_in_dest.match(destname).group(1)
-                for (destname, _) in refs]
+            refs.sort(key=sortfunc)
+            # extract the TeXkey from the named destination name
+            return [re_reference_in_dest.match(destname).group(1)
+                    for (destname, _) in refs]
+        except IncompleteCoordinatesError:
+            print("* PDF: Impossible to determine layout, no TeXkeys returned")
+            return []
 
 
 def _destinations_in_two_columns(pdf, destinations, cutoff=3):
@@ -97,6 +108,8 @@ def _destination_position(pdf, destination):
     pagewidth = pdf.getPage(
         pdf.getDestinationPageNumber(destination)
         ).cropBox.lowerRight[0]
+    if not destination.left or not destination.top:
+        raise IncompleteCoordinatesError(destination)
     # assuming max 2 columns
     column = (2*destination.left) // pagewidth
     return (pdf.getDestinationPageNumber(destination),
