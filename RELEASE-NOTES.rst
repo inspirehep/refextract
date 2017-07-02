@@ -1,8 +1,8 @@
 ==============================
- refextract v0.2.0 is released
+ refextract v0.2.1 is released
 ==============================
 
-refextract v0.2.0 was released on 2017-06-26.
+refextract v0.2.1 was released on 2017-07-02.
 
 About
 -----
@@ -12,20 +12,13 @@ Small library for extracting references used in scholarly communication.
 What's new
 ----------
 
-- Substantial rewrite of the API. In particular:
+- Named destinations may not always have left and top coordinates. This case is
+  now handled gracefully: no TeXkeys are returned by ``extract_texkeys_from_pdf``
+  instead of raising an uncaught exception.
 
-  * ``extract_references_from_file``, ``extract_references_from_string``, and
-    ``extract_references_from_url`` now return a list of the references,
-    instead of an object with keys ``stats`` and ``references``.
-
-  * If the number of TeXkeys that were extracted from the PDF metadata matches
-    the number of references parsed by RefExtract, an extra ``texkey`` field is
-    added to each returned reference.
-
-  * The API now raises exceptions when it encounters an unrecoverable error.
-
-  * Finally, the API now returns the list of raw references on which
-    ``refextract`` worked.
+- Makes ``CFG_PATH_GFILE`` and ``CFG_PATH_PDFTOTEXT`` configurable through shell
+  variables, with fallback on the output of ``which``, in order to allow for
+  easier containerization.
 
 Installation
 ------------
