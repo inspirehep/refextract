@@ -24,6 +24,16 @@
 Changes
 =======
 
+Version 0.2.1 (2017-07-02)
+
+- Named destinations may not always have left and top coordinates. This case is
+  now handled gracefully: no TeXkeys are returned by ``extract_texkeys_from_pdf``
+  instead of raising an uncaught exception.
+
+- Makes ``CFG_PATH_GFILE`` and ``CFG_PATH_PDFTOTEXT`` configurable through
+  shell variables, with fallback on the output of ``which``, in order to allow
+  for easier containerization.
+
 Version 0.2.0 (2017-06-26)
 
 - Substantial rewrite of the API. In particular:
