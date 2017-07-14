@@ -134,3 +134,10 @@ def test_extract_texkeys_from_pdf_no_crash_on_incomplete_dest_coordinates(
     result = extract_texkeys_from_pdf(pdf_files[2])
 
     assert result == expected
+
+
+def test_extract_texkeys_from_pdf_no_crash_on_pydpf2_error(pdf_files):
+    expected = []
+    result = extract_texkeys_from_pdf(pdf_files[3])
+
+    assert result == expected

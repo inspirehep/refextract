@@ -21,9 +21,13 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+from __future__ import print_function
+
 import re
+import sys
 
 from PyPDF2 import PdfFileReader
+from PyPDF2.utils import PyPdfError
 
 from .regexs import re_reference_in_dest
 
@@ -46,8 +50,13 @@ def extract_texkeys_from_pdf(pdf_file):
     @return: list of all texkeys found in the PDF
     """
     with open(pdf_file, 'rb') as pdf_stream:
-        pdf = PdfFileReader(pdf_stream, strict=False)
-        destinations = pdf.getNamedDestinations()
+        try:
+            pdf = PdfFileReader(pdf_stream, strict=False)
+            destinations = pdf.getNamedDestinations()
+        except PyPdfError as exc:
+            print("* PDF: Internal PyPDF2 error, no TeXkeys returned.", exc,
+                  file=sys.stderr)
+            return []
         # not all named destinations point to references
         refs = [dest for dest in destinations.iteritems()
                 if re_reference_in_dest.match(dest[0])]
