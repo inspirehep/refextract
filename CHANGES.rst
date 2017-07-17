@@ -24,6 +24,10 @@
 Changes
 =======
 
+Version 0.2.2 (2017-07-17)
+
+- Handle pyPDF2 internal errors.
+
 Version 0.2.1 (2017-07-02)
 
 - Named destinations may not always have left and top coordinates. This case is
