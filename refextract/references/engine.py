@@ -628,11 +628,11 @@ def look_for_hdl_urls(citation_elements):
 
 def print_citations(splitted_citations, line_marker):
     print('* splitted_citations')
-    print('  * line marker %s' % line_marker)
+    print(u'  * line marker %s' % line_marker)
     for citation in splitted_citations:
         print("  * elements")
         for el in citation:
-            print('    * %s %s' % (el['type'], repr(el)))
+            print(u'    * %s %s' % (el['type'], repr(el)))
 
 
 def parse_reference_line(ref_line, kbs, bad_titles_count={}, linker_callback=None):
@@ -737,7 +737,7 @@ def search_for_book_in_misc(citation, kbs):
     """
     citation_year = year_from_citation(citation)
     for citation_element in citation:
-        print('* Searching for book title in: %s' % citation_element['misc_txt'])
+        print(u'* Searching for book title in: %s' % citation_element['misc_txt'])
         for title in kbs['books']:
             startIndex = find_substring_ignore_special_chars(citation_element['misc_txt'], title)
             if startIndex != -1:
@@ -761,7 +761,7 @@ def search_for_book_in_misc(citation, kbs):
                             book_found = True
 
                     if book_found:
-                        print('* Book found: %s' % title)
+                        print(u'* Book found: %s' % title)
                         book_element = {'type': 'BOOK',
                                         'misc_txt': '',
                                         'authors': book_authors,

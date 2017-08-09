@@ -500,7 +500,7 @@ def get_reference_section_beginning(fulltext):
     if sect_start:
         print('* title %r' % sect_start['title_string'])
         print('* marker %r' % sect_start['marker'])
-        print('* title_marker_same_line %s'
+        print(u'* title_marker_same_line %s'
               % sect_start['title_marker_same_line'])
     else:
         print('* could not find references section')

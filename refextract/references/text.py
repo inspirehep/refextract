@@ -200,7 +200,7 @@ def rebuild_reference_lines(ref_sectn, ref_line_marker_ptn):
             indentation_splitting = True
             ref_line_marker_ptn = ur'^[^\s]'
 
-    print('* references separator %s' % ref_line_marker_ptn)
+    print(u'* references separator %s' % ref_line_marker_ptn)
     p_ref_line_marker = re.compile(ref_line_marker_ptn, re.I | re.UNICODE)
 
     # Start from ref 1
