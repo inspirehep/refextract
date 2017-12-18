@@ -53,7 +53,7 @@ def extract_texkeys_from_pdf(pdf_file):
         try:
             pdf = PdfFileReader(pdf_stream, strict=False)
             destinations = pdf.getNamedDestinations()
-        except PyPdfError as exc:
+        except Exception as exc:
             print("* PDF: Internal PyPDF2 error, no TeXkeys returned.", exc,
                   file=sys.stderr)
             return []
