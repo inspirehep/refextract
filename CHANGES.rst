@@ -24,6 +24,12 @@
 Changes
 =======
 
+Version 0.2.3 (2017-12-19)
+
+- Handle all possible errors thrown by pyPDF2
+
+- Fix normalization of CLIC report numbers.
+
 Version 0.2.2 (2017-07-17)
 
 - Handle pyPDF2 internal errors.
