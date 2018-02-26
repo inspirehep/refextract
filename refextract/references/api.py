@@ -57,8 +57,7 @@ def extract_references_from_url(url, headers=None, chunk_size=1024, **kwargs):
     It returns a list of parsed references.
 
     It raises FullTextNotAvailableError if the URL gives a 404,
-    UnknownDocumentTypeError if it is not a PDF or plain text
-    and GarbageFullTextError if the fulltext extraction gives garbage.
+    UnknownDocumentTypeError if it is not a PDF or plain text.
 
     The standard reference format is: {title} {volume} ({year}) {page}.
 
@@ -109,9 +108,7 @@ def extract_references_from_file(path,
     The first parameter is the path to the file.
     It returns a list of parsed references.
     It raises FullTextNotAvailableError if the file does not exist,
-    UnknownDocumentTypeError if it is not a PDF or plain text
-    and GarbageFullTextError if the fulltext extraction gives garbage.
-
+    UnknownDocumentTypeError if it is not a PDF or plain text.
 
     The standard reference format is: {title} {volume} ({year}) {page}.
 

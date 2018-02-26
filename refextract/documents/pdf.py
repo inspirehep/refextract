@@ -43,7 +43,6 @@ import subprocess
 from six import iteritems
 
 from ..references.config import CFG_PATH_PDFTOTEXT
-from ..references.errors import GarbageFullTextError
 
 # a dictionary of undesirable characters and their replacements:
 UNDESIRABLE_CHAR_REPLACEMENTS = {
@@ -450,38 +449,11 @@ def replace_undesirable_characters(line):
     return line
 
 
-def pdftotext_conversion_is_bad(txtlines):
-    """Sometimes pdftotext performs a bad conversion which consists of many
-       spaces and garbage characters.
-       This method takes a list of strings obtained from a pdftotext conversion
-       and examines them to see if they are likely to be the result of a bad
-       conversion.
-       @param txtlines: (list) of unicode strings obtained from pdftotext
-        conversion.
-       @return: (integer) - 1 if bad conversion; 0 if good conversion.
-    """
-    # Numbers of 'words' and 'whitespaces' found in document:
-    numWords = numSpaces = 0
-    # whitespace character pattern:
-    p_space = re.compile(unicode(r'(\s)'), re.UNICODE)
-    # non-whitespace 'word' pattern:
-    p_noSpace = re.compile(unicode(r'(\S+)'), re.UNICODE)
-    for txtline in txtlines:
-        numWords = numWords + len(p_noSpace.findall(txtline.strip()))
-        numSpaces = numSpaces + len(p_space.findall(txtline.strip()))
-    if numSpaces >= (numWords * 3):
-        # Too many spaces - probably bad conversion
-        return True
-    else:
-        return False
-
-
 def convert_PDF_to_plaintext(fpath, keep_layout=False):
     """ Convert PDF to txt using pdftotext
 
     Take the path to a PDF file and run pdftotext for this file, capturing
     the output.
-    It raises GarbageFullTextError when this output is garbage.
     @param fpath: (string) path to the PDF file
     @return: (list) of unicode strings (contents of the PDF file translated
     into plaintext; each string is a line in the document.)
@@ -523,9 +495,5 @@ def convert_PDF_to_plaintext(fpath, keep_layout=False):
 
     print("* convert_PDF_to_plaintext found: "
           "%s lines of text" % len(doclines))
-
-    # finally, check conversion result not bad:
-    if pdftotext_conversion_is_bad(doclines):
-        raise GarbageFullTextError("Garbage fulltext in '{0}'".format(fpath))
 
     return doclines
