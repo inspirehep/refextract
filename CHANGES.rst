@@ -1,6 +1,6 @@
 ..
    This file is part of refextract
-   Copyright (C) 2015, 2016, 2017 CERN.
+   Copyright (C) 2015, 2016, 2017, 2018 CERN.
 
    refextract is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
@@ -23,6 +23,10 @@
 
 Changes
 =======
+
+Version 0.2.4 (2018-02-28)
+
+- Remove GarbageFullTextError.
 
 Version 0.2.3 (2017-12-19)
 

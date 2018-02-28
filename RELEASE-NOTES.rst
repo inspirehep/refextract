@@ -1,8 +1,8 @@
 ==============================
- refextract v0.2.3 is released
+ refextract v0.2.4 is released
 ==============================
 
-refextract v0.2.3 was released on 2017-12-19.
+refextract v0.2.4 was released on 2018-02-28.
 
 About
 -----
@@ -12,9 +12,7 @@ Small library for extracting references used in scholarly communication.
 What's new
 ----------
 
-- Handle all possible errors thrown by pyPDF2.
-
-- Fix normalization of CLIC report numbers.
+- Remove GarbageFullTextError.
 
 Installation
 ------------

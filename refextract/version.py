@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of refextract.
-# Copyright (C) 2015, 2016, 2017 CERN.
+# Copyright (C) 2015, 2016, 2017, 2018 CERN.
 #
 # refextract is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -29,4 +29,4 @@ and parsed by ``setup.py``.
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-__version__ = "0.2.3"
+__version__ = "0.2.4"
