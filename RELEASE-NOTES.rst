@@ -1,8 +1,8 @@
 ==============================
- refextract v0.2.4 is released
+ refextract v0.2.5 is released
 ==============================
 
-refextract v0.2.4 was released on 2018-02-28.
+refextract v0.2.5 was released on 2018-03-13.
 
 About
 -----
@@ -12,7 +12,7 @@ Small library for extracting references used in scholarly communication.
 What's new
 ----------
 
-- Remove GarbageFullTextError.
+- Handle all exceptions when extracting TeXkeys.
 
 Installation
 ------------

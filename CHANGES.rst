@@ -24,6 +24,10 @@
 Changes
 =======
 
+Version 0.2.5 (2018-03-13)
+
+- Handle all exceptions when extracting TeXkeys.
+
 Version 0.2.4 (2018-02-28)
 
 - Remove GarbageFullTextError.
