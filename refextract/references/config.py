@@ -37,7 +37,6 @@ except ImportError:
 import pkg_resources
 
 # Version number:
-CFG_PATH_GFILE = os.environ.get('CFG_PATH_GFILE', which('file'))
 CFG_PATH_PDFTOTEXT = os.environ.get('CFG_PATH_PDFTOTEXT', which('pdftotext'))
 
 # Module config directory

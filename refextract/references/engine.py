@@ -43,7 +43,6 @@ from .config import (
     CFG_REFEXTRACT_MARKER_CLOSING_AUTHOR_ETAL,
     CFG_REFEXTRACT_MARKER_CLOSING_TITLE,
     CFG_REFEXTRACT_MARKER_CLOSING_SERIES,
-    CFG_PATH_GFILE
 )
 
 from .errors import UnknownDocumentTypeError
