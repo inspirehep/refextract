@@ -79,8 +79,9 @@ def extract_texkeys_from_pdf(pdf_file):
             # extract the TeXkey from the named destination name
             return [re_reference_in_dest.match(destname).group(1)
                     for (destname, _) in refs]
-        except IncompleteCoordinatesError:
-            print("* PDF: Impossible to determine layout, no TeXkeys returned")
+        except Exception as exc:
+            print("* PDF: Impossible to determine layout, no TeXkeys returned",
+                  exc, file=sys.stderr)
             return []
 
 
