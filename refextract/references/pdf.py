@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of refextract.
-# Copyright (C) 2016 CERN.
+# Copyright (C) 2016, 2017, 2018 CERN.
 #
 # refextract is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -23,11 +23,9 @@
 
 from __future__ import print_function
 
-import re
 import sys
 
 from PyPDF2 import PdfFileReader
-from PyPDF2.utils import PyPdfError
 
 from .regexs import re_reference_in_dest
 
@@ -117,10 +115,10 @@ def _destination_position(pdf, destination):
     """
     pagewidth = pdf.getPage(
         pdf.getDestinationPageNumber(destination)
-        ).cropBox.lowerRight[0]
+    ).cropBox.lowerRight[0]
     if not destination.left or not destination.top:
         raise IncompleteCoordinatesError(destination)
     # assuming max 2 columns
-    column = (2*destination.left) // pagewidth
+    column = (2 * destination.left) // pagewidth
     return (pdf.getDestinationPageNumber(destination),
             column, -destination.top, destination.left)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of refextract.
-# Copyright (C) 2010, 2011, 2015, 2016 CERN.
+# Copyright (C) 2015, 2016, 2018 CERN.
 #
 # refextract is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -20,8 +20,6 @@
 # In applying this license, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
-# pylint: disable=C0103
 
 from __future__ import absolute_import, print_function, unicode_literals
 
@@ -349,6 +347,7 @@ def make_auth_regex_str(etal, initial_surname_author=None, surname_initial_autho
            's_i_author': surname_initial_author,
            'ed': re_ed_notation}
 
+
 # Standard et al ('and others') pattern for author recognition
 re_etal = ur"""[Ee][Tt](?:(?:(?:,|\.)\s*)|(?:(?:,|\.)?\s+))[Aa][Ll][,\.]?[,\.]?"""
 
@@ -465,9 +464,6 @@ def get_single_author_pattern():
 
 # Targets single author names
 # re_single_author_pattern = re.compile(get_single_author_pattern(), re.VERBOSE)
-
-
-# pylint: enable=C0103
 
 RE_AUTH = None
 RE_AUTH_NEAR_MISS = None

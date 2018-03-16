@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of refextract
-# Copyright (C) 2015, 2016 CERN.
+# Copyright (C) 2013, 2015, 2016, 2017, 2018 CERN.
 #
 # refextract is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -43,6 +43,7 @@ requirements = [
 
 test_requirements = [
     'coverage>=3.7.1',
+    'flake8~=3.0,>=3.5.0',
     'pytest>=2.7.0',
     'pytest-cov>=1.8.0',
     'pytest-pep8>=1.0.6',

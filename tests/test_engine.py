@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of refextract
-# Copyright (C) 2016 CERN.
+# Copyright (C) 2016, 2017, 2018 CERN.
 #
 # refextract is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -31,8 +31,6 @@ from refextract.references.engine import (
 )
 
 from refextract.references.errors import UnknownDocumentTypeError
-
-from refextract.references.text import wash_and_repair_reference_line
 
 
 def get_references(ref_line, override_kbs_files=None):

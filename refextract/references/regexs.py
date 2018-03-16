@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of refextract.
-# Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2015, 2016 CERN.
+# Copyright (C) 2013, 2015, 2016, 2018 CERN.
 #
 # refextract is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -64,6 +64,8 @@ re_opts = re.VERBOSE | re.UNICODE | re.IGNORECASE
 
 def compute_pos_patterns(patterns):
     return [re.compile(p, re_opts) for p in patterns]
+
+
 re_pos = compute_pos_patterns(re_pos_patterns)
 
 # Pattern for arxiv numbers
@@ -219,18 +221,23 @@ def compute_arxiv_re(report_pattern, report_number):
                            old_arxiv_numbers, re.U | re.I)
     return report_re, report_number
 
+
 RE_OLD_ARXIV = [compute_arxiv_re(*i) for i in iteritems(old_arxiv)]
 
 
 def compute_years(start_year=1991):
     current_year = datetime.now().year
     return '|'.join(str(y)[2:] for y in xrange(start_year, current_year + 1))
+
+
 arxiv_years = compute_years()
 arxiv_years_5digits = compute_years(2013)
 
 
 def compute_months():
     return '|'.join(str(y).zfill(2) for y in xrange(1, 13))
+
+
 arxiv_months = compute_months()
 
 re_new_arxiv = re.compile(ur""" # 9910.1234v9 [physics.ins-det]
@@ -773,6 +780,7 @@ def get_reference_line_marker_pattern(pattern):
     """
     return re.compile(u'(?P<mark>' + pattern + u')', re.I | re.UNICODE)
 
+
 re_reference_line_bracket_markers = get_reference_line_marker_pattern(
     ur'(?P<left>\[)\s*(?P<marknum>\d+)\s*(?P<right>\])'
 )
@@ -901,6 +909,7 @@ def regex_match_list(line, patterns):
         if m is not None:
             break
     return m
+
 
 # The different forms of arXiv notation
 re_arxiv_notation = re.compile(ur"""

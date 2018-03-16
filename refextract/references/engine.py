@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of refextract.
-# Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016 CERN.
+# Copyright (C) 2013, 2015, 2016, 2017, 2018 CERN.
 #
 # refextract is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -24,8 +24,6 @@
 """Main engine responsible for extracting references from PDF documents."""
 
 import re
-import os
-import subprocess
 
 from datetime import datetime
 from itertools import chain
