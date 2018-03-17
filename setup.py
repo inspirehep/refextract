@@ -48,7 +48,6 @@ test_requirements = [
     'flake8-future-import~=0.0,>=0.4.4',
     'pytest>=2.7.0',
     'pytest-cov>=1.8.0',
-    'pytest-pep8>=1.0.6',
     'responses>=0.5.0',
 ]
 
