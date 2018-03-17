@@ -44,7 +44,7 @@ script:
   - if [ "${TRAVIS_PYTHON_VERSION}" = "2.7" ]; then sphinx-build -qnNW docs docs/_build/html; fi
   - check-manifest
   - flake8 refextract tests
-  - python setup.py test
+  - py.test tests
 
 after_success:
   - coveralls
