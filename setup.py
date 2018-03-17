@@ -41,11 +41,10 @@ requirements = [
 ]
 
 test_requirements = [
-    'coverage>=3.7.1',
     'flake8~=3.0,>=3.5.0',
     'flake8-future-import~=0.0,>=0.4.4',
+    'pytest-cov~=2.0,>=2.5.1',
     'pytest>=2.7.0',
-    'pytest-cov>=1.8.0',
     'responses>=0.5.0',
 ]
 
