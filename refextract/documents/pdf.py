@@ -34,7 +34,7 @@ for and the characters that should be used to replace them.
 replace in plain-text.
 """
 
-from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import absolute_import, division, print_function
 
 import os
 import re

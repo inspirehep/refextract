@@ -21,8 +21,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-
 """Small library for extracting references used in scholarly communication."""
+
+from __future__ import absolute_import, division, print_function
 
 import os
 import sys
@@ -44,6 +45,7 @@ requirements = [
 test_requirements = [
     'coverage>=3.7.1',
     'flake8~=3.0,>=3.5.0',
+    'flake8-future-import~=0.0,>=0.4.4',
     'pytest>=2.7.0',
     'pytest-cov>=1.8.0',
     'pytest-pep8>=1.0.6',

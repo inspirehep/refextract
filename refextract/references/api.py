@@ -28,6 +28,7 @@ addition, there is an API call to return a parsed journal reference structure
 from a raw string.
 """
 
+from __future__ import absolute_import, division, print_function
 
 import os
 import sys

@@ -23,6 +23,8 @@
 
 """Various utilities to manipulate or clean text"""
 
+from __future__ import absolute_import, division, print_function
+
 import re
 from six.moves import xrange
 
