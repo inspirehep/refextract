@@ -25,9 +25,15 @@
 sudo: false
 
 language: python
-
+matrix:
+  allow_failures:
+    - python: '3.6'
+  fast_finish: true
+cache:
+  - pip
 python:
   - '2.7'
+  - '3.6'
 
 addons:
   apt:
@@ -37,7 +43,6 @@ addons:
 install:
   - pip install --upgrade pip
   - pip install coveralls check-manifest
-  - pip install pytest pytest-pep8 pytest-cov pytest-cache
   - pip install -e .[docs,tests]
 
 script:
