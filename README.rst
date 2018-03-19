@@ -118,6 +118,25 @@ Notes
 .. _`pdftotext`: http://linux.die.net/man/1/pdftotext
 
 
+Acknowledgments
+===============
+
+``refextract`` is based on code and ideas from the following people, who
+contributed to the ``docextract`` module in Invenio:
+
+- Alessio Deiana
+- Federico Poli
+- Gerrit Rindermann
+- Graham R. Armstrong
+- Grzegorz Szpura
+- Jan Aage Lavik
+- Javier Martin Montull
+- Micha Moskovic
+- Samuele Kaplun
+- Thorsten Schwander
+- Tibor Simko
+
+
 License
 =======
 

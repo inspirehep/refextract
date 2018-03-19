@@ -125,3 +125,7 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Build artifacts
+AUTHORS
+CHANGELOG

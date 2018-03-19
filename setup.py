@@ -25,66 +25,82 @@
 
 from __future__ import absolute_import, division, print_function
 
-import os
+from setuptools import find_packages, setup
 
-from setuptools import setup
+
+url = 'https://github.com/inspirehep/refextract'
 
 readme = open('README.rst').read()
-history = open('CHANGES.rst').read()
 
-requirements = [
-    'six>=1.7.2',
-    'requests>=2.8.1',
-    'unidecode>=0.4.18',
-    'python-magic>=0.4.12',
-    'PyPDF2>=1.26.0',
+setup_requires = [
+    'autosemver~=0.0,>=0.5.3',
 ]
 
-test_requirements = [
-    'flake8~=3.0,>=3.5.0',
+install_requires = [
+    'PyPDF2~=1.0,>=1.26.0',
+    'autosemver~=0.0,>=0.5.3',
+    'python-magic~=0.0,>=0.4.15',
+    'requests~=2.0,>=2.18.4',
+    'six~=1.0,>=1.10.0',
+    'unidecode~=1.0,>=1.0.22',
+]
+
+docs_require = [
+    'Sphinx~=1.0,>=1.7.1',
+]
+
+tests_require = [
     'flake8-future-import~=0.0,>=0.4.4',
+    'flake8~=3.0,>=3.5.0',
     'pytest-cov~=2.0,>=2.5.1',
-    'pytest>=2.7.0',
-    'responses>=0.5.0',
+    'pytest~=3.0,>=3.4.2',
+    'responses~=0.0,>=0.8.1',
 ]
 
-# Get the version string. Cannot be done with import!
-g = {}
-with open(os.path.join('refextract', 'version.py'), 'rt') as fp:
-    exec(fp.read(), g)
-    version = g['__version__']
+extras_require = {
+    'docs': docs_require,
+    'tests': tests_require,
+}
+
+extras_require['all'] = []
+for name, reqs in extras_require.items():
+    if name not in ['all']:
+        extras_require['all'].extend(reqs)
+
+packages = find_packages(exclude=['docs'])
 
 setup(
     name='refextract',
-    version=version,
-    description=__doc__,
-    long_description=readme + '\n\n' + history,
-    keywords='bibliographic references extraction text-mining',
+    autosemver={
+        'bugtracker_url': url + '/issues',
+    },
+    url=url,
     license='GPLv2',
     author='CERN',
     author_email='admin@inspirehep.net',
-    url='https://github.com/inspirehep/refextract',
-    packages=[
-        'refextract',
-    ],
-    zip_safe=False,
+    packages=packages,
     include_package_data=True,
+    zip_safe=False,
     platforms='any',
-    install_requires=requirements,
-    extras_require={
-        'docs': [
-            'Sphinx>=1.3',
-            'sphinx_rtd_theme>=0.1.7'
-        ],
-        'tests': test_requirements
-    },
+    description=__doc__,
+    long_description=readme,
+    setup_requires=setup_requires,
+    install_requires=install_requires,
+    tests_require=tests_require,
+    extras_require=extras_require,
     classifiers=[
+        'Development Status :: 4 - Beta',
+        'Environment :: Console',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
+        'Intended Audience :: Science/Research',
+        'License :: OSI Approved :: GNU General Public License v2 (GPLv2)',
         'Operating System :: OS Independent',
-        'Topic :: Software Development :: Libraries :: Python Modules',
         'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
+        'Topic :: Scientific/Engineering :: Information Analysis',
+        'Topic :: Software Development :: Libraries',
+        'Topic :: Software Development :: Libraries :: Python Modules',
+        'Topic :: Utilities',
     ],
-    tests_require=test_requirements,
 )
