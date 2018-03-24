@@ -30,7 +30,7 @@ from refextract.references import regexs
 
 def test_word():
     r = regexs._create_regex_pattern_add_optional_spaces_to_word_characters('ABC')
-    assert r == ur'A\s*B\s*C\s*'
+    assert r == r'A\s*B\s*C\s*'
 
 
 def test_reference_section_title_pattern():

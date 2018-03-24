@@ -25,65 +25,67 @@ from __future__ import absolute_import, division, print_function
 
 import re
 
-from urlparse import unquote
-
+import six
+from six.moves import urllib
 from unidecode import unidecode
 
-from .config import \
-    CFG_REFEXTRACT_MARKER_CLOSING_AUTHOR_ETAL, \
-    CFG_REFEXTRACT_MARKER_CLOSING_AUTHOR_INCL, \
-    CFG_REFEXTRACT_MARKER_CLOSING_AUTHOR_STND, \
-    CFG_REFEXTRACT_MARKER_CLOSING_TITLE_IBID, \
-    CFG_REFEXTRACT_MARKER_OPENING_TITLE_IBID, \
-    CFG_REFEXTRACT_MARKER_OPENING_COLLABORATION, \
-    CFG_REFEXTRACT_MARKER_CLOSING_COLLABORATION
-
-from ..documents.text import remove_and_record_multiple_spaces_in_line
-
-from .regexs import \
-    re_ibid, \
-    re_doi, \
-    re_raw_url, \
-    re_series_from_numeration, \
-    re_punctuation, \
-    re_correct_numeration_2nd_try_ptn1, \
-    re_correct_numeration_2nd_try_ptn2, \
-    re_correct_numeration_2nd_try_ptn3, \
-    re_correct_numeration_2nd_try_ptn4, \
-    re_numeration_nucphys_vol_page_yr, \
-    re_numeration_vol_subvol_nucphys_yr_page, \
-    re_numeration_nucphys_vol_yr_page, \
-    re_multiple_hyphens, \
-    re_numeration_vol_page_yr, \
-    re_numeration_vol_yr_page, \
-    re_numeration_vol_nucphys_series_yr_page, \
-    re_numeration_vol_series_nucphys_page_yr, \
-    re_numeration_vol_nucphys_series_page_yr, \
-    re_html_tagged_url, \
-    re_numeration_yr_vol_page, \
-    re_numeration_vol_nucphys_page_yr, \
-    re_wash_volume_tag, \
-    re_numeration_vol_nucphys_yr_subvol_page, \
-    re_quoted, \
-    re_isbn, \
-    re_arxiv, \
-    re_arxiv_5digits, \
-    re_new_arxiv, \
-    re_new_arxiv_5digits, \
-    re_pos, \
-    re_pos_year_num, \
-    re_series_from_numeration_after_volume, \
-    RE_OLD_ARXIV, \
-    RE_ARXIV_CATCHUP, \
-    RE_ATLAS_CONF_PRE_2010, \
-    RE_ATLAS_CONF_POST_2010
-
+from .config import (
+    CFG_REFEXTRACT_MARKER_CLOSING_AUTHOR_ETAL,
+    CFG_REFEXTRACT_MARKER_CLOSING_AUTHOR_INCL,
+    CFG_REFEXTRACT_MARKER_CLOSING_AUTHOR_STND,
+    CFG_REFEXTRACT_MARKER_CLOSING_COLLABORATION,
+    CFG_REFEXTRACT_MARKER_CLOSING_TITLE_IBID,
+    CFG_REFEXTRACT_MARKER_OPENING_COLLABORATION,
+    CFG_REFEXTRACT_MARKER_OPENING_TITLE_IBID,
+)
+from .regexs import (
+    RE_ARXIV_CATCHUP,
+    RE_ATLAS_CONF_POST_2010,
+    RE_ATLAS_CONF_PRE_2010,
+    RE_OLD_ARXIV,
+    re_arxiv,
+    re_arxiv_5digits,
+    re_correct_numeration_2nd_try_ptn1,
+    re_correct_numeration_2nd_try_ptn2,
+    re_correct_numeration_2nd_try_ptn3,
+    re_correct_numeration_2nd_try_ptn4,
+    re_doi,
+    re_html_tagged_url,
+    re_ibid,
+    re_isbn,
+    re_multiple_hyphens,
+    re_new_arxiv,
+    re_new_arxiv_5digits,
+    re_numeration_nucphys_vol_page_yr,
+    re_numeration_nucphys_vol_yr_page,
+    re_numeration_vol_nucphys_page_yr,
+    re_numeration_vol_nucphys_series_page_yr,
+    re_numeration_vol_nucphys_series_yr_page,
+    re_numeration_vol_nucphys_yr_subvol_page,
+    re_numeration_vol_page_yr,
+    re_numeration_vol_series_nucphys_page_yr,
+    re_numeration_vol_subvol_nucphys_yr_page,
+    re_numeration_vol_yr_page,
+    re_numeration_yr_vol_page,
+    re_pos,
+    re_pos_year_num,
+    re_punctuation,
+    re_quoted,
+    re_raw_url,
+    re_series_from_numeration,
+    re_series_from_numeration_after_volume,
+    re_wash_volume_tag,
+)
 from ..authors.regexs import (
-    get_author_regexps,
     etal_matches,
+    get_author_regexps,
     re_ed_notation,
-    re_etal)
-from ..documents.text import wash_line
+    re_etal,
+)
+from ..documents.text import (
+    remove_and_record_multiple_spaces_in_line,
+    wash_line,
+)
 
 
 def tag_reference_line(line, kbs, record_titles_count):
@@ -344,7 +346,7 @@ def wash_volume_tag(line):
 
 def tag_isbn(line):
     """Tag books ISBN"""
-    return re_isbn.sub(ur'<cds.ISBN>\g<code></cds.ISBN>', line)
+    return re_isbn.sub(r'<cds.ISBN>\g<code></cds.ISBN>', line)
 
 
 def tag_quoted_text(line):
@@ -354,7 +356,7 @@ def tag_quoted_text(line):
     associate we record.
     We also use titles for recognising books.
     """
-    return re_quoted.sub(ur'<cds.QUOTED>\g<title></cds.QUOTED>', line)
+    return re_quoted.sub(r'<cds.QUOTED>\g<title></cds.QUOTED>', line)
 
 
 def tag_arxiv(line):
@@ -391,10 +393,10 @@ def tag_arxiv_more(line):
     * hep-th/1234567
     * arXiv:1022111 [hep-ph] which transforms to hep-ph/1022111
     """
-    line = RE_ARXIV_CATCHUP.sub(ur"\g<suffix>/\g<year>\g<month>\g<num>", line)
+    line = RE_ARXIV_CATCHUP.sub(r"\g<suffix>/\g<year>\g<month>\g<num>", line)
 
     for report_re, report_repl in RE_OLD_ARXIV:
-        report_number = report_repl + ur"/\g<num>"
+        report_number = report_repl + r"/\g<num>"
         line = report_re.sub(
             u'<cds.REPORTNUMBER>' + report_number + u'</cds.REPORTNUMBER>',
             line
@@ -438,9 +440,9 @@ def tag_pos_volume(line):
 
 def tag_atlas_conf(line):
     line = RE_ATLAS_CONF_PRE_2010.sub(
-        ur'<cds.REPORTNUMBER>ATL-CONF-\g<code></cds.REPORTNUMBER>', line)
+        r'<cds.REPORTNUMBER>ATL-CONF-\g<code></cds.REPORTNUMBER>', line)
     line = RE_ATLAS_CONF_POST_2010.sub(
-        ur'<cds.REPORTNUMBER>ATLAS-CONF-\g<code></cds.REPORTNUMBER>', line)
+        r'<cds.REPORTNUMBER>ATLAS-CONF-\g<code></cds.REPORTNUMBER>', line)
     return line
 
 
@@ -849,7 +851,7 @@ def strip_tags(line):
     # author content can be checked for underscores later on
     # Note that we don't have embedded tags this is why
     # we can do this
-    re_tag = re.compile(ur'<cds\.[A-Z]+>[^<]*</cds\.[A-Z]+>|<cds\.[A-Z]+ />',
+    re_tag = re.compile(r'<cds\.[A-Z]+>[^<]*</cds\.[A-Z]+>|<cds\.[A-Z]+ />',
                         re.UNICODE)
     for m in re_tag.finditer(line):
         chars_count = m.end() - m.start()
@@ -868,7 +870,7 @@ def identify_and_tag_collaborations(line, collaborations_kb):
        which won't influence the reference splitting heuristics
        (used when looking at mulitple <AUTH> tags in a line).
     """
-    for dummy_collab, re_collab in collaborations_kb.iteritems():
+    for dummy_collab, re_collab in six.iteritems(collaborations_kb):
         matches = re_collab.finditer(strip_tags(line))
 
         for match in reversed(list(matches)):
@@ -1284,7 +1286,7 @@ def identify_publishers(line, kb_publishers):
     matches_repl = {}  # standardised report numbers matched
     # at given locations in line
 
-    for abbrev, info in kb_publishers.iteritems():
+    for abbrev, info in six.iteritems(kb_publishers):
         for match in info['pattern'].finditer(line):
             # record the matched non-standard version of the publisher:
             matches_repl[match.start(0)] = abbrev
@@ -1425,7 +1427,7 @@ def identify_and_tag_DOI(line):
         # Get the actual DOI string (remove the url part of the doi string)
         doi_phrase = match.group('doi')
         if '%2f' in doi_phrase.lower():
-            doi_phrase = unquote(doi_phrase)
+            doi_phrase = urllib.parse.unquote(doi_phrase)
 
         # Replace the entire matched doi with a tag
         line = line[0:start] + "<cds.DOI />" + line[end:]
