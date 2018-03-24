@@ -26,20 +26,21 @@
 from __future__ import absolute_import, division, print_function
 
 import re
+
 from six.moves import xrange
 
-re_space_comma = re.compile(ur'\s,', re.UNICODE)
-re_space_semicolon = re.compile(ur'\s;', re.UNICODE)
-re_space_period = re.compile(ur'\s\.', re.UNICODE)
-re_colon_space_colon = re.compile(ur':\s:', re.UNICODE)
-re_comma_space_colon = re.compile(ur',\s:', re.UNICODE)
-re_space_closing_square_bracket = re.compile(ur'\s\]', re.UNICODE)
-re_opening_square_bracket_space = re.compile(ur'\[\s', re.UNICODE)
+re_space_comma = re.compile(r'\s,', re.UNICODE)
+re_space_semicolon = re.compile(r'\s;', re.UNICODE)
+re_space_period = re.compile(r'\s\.', re.UNICODE)
+re_colon_space_colon = re.compile(r':\s:', re.UNICODE)
+re_comma_space_colon = re.compile(r',\s:', re.UNICODE)
+re_space_closing_square_bracket = re.compile(r'\s\]', re.UNICODE)
+re_opening_square_bracket_space = re.compile(r'\[\s', re.UNICODE)
 re_hyphens = re.compile(
-    ur'(\\255|\u02D7|\u0335|\u0336|\u2212|\u002D|\uFE63|\uFF0D)', re.UNICODE)
-re_multiple_space = re.compile(ur'\s{2,}', re.UNICODE)
+    r'(\\255|\u02D7|\u0335|\u0336|\u2212|\u002D|\uFE63|\uFF0D)', re.UNICODE)
+re_multiple_space = re.compile(r'\s{2,}', re.UNICODE)
 
-re_group_captured_multiple_space = re.compile(ur'(\s{2,})', re.UNICODE)
+re_group_captured_multiple_space = re.compile(r'(\s{2,})', re.UNICODE)
 
 
 def get_url_repair_patterns():
@@ -50,38 +51,38 @@ def get_url_repair_patterns():
         various broken URLs.
     """
     file_types_list = [
-        ur'h\s*t\s*m',          # htm
-        ur'h\s*t\s*m\s*l',      # html
-        ur't\s*x\s*t'           # txt
-        ur'p\s*h\s*p'           # php
-        ur'a\s*s\s*p\s*'        # asp
-        ur'j\s*s\s*p',          # jsp
-        ur'p\s*y',              # py (python)
-        ur'p\s*l',              # pl (perl)
-        ur'x\s*m\s*l',          # xml
-        ur'j\s*p\s*g',          # jpg
-        ur'g\s*i\s*f'           # gif
-        ur'm\s*o\s*v'           # mov
-        ur's\s*w\s*f'           # swf
-        ur'p\s*d\s*f'           # pdf
-        ur'p\s*s'               # ps
-        ur'd\s*o\s*c',          # doc
-        ur't\s*e\s*x',          # tex
-        ur's\s*h\s*t\s*m\s*l',  # shtml
+        r'h\s*t\s*m',          # htm
+        r'h\s*t\s*m\s*l',      # html
+        r't\s*x\s*t'           # txt
+        r'p\s*h\s*p'           # php
+        r'a\s*s\s*p\s*'        # asp
+        r'j\s*s\s*p',          # jsp
+        r'p\s*y',              # py (python)
+        r'p\s*l',              # pl (perl)
+        r'x\s*m\s*l',          # xml
+        r'j\s*p\s*g',          # jpg
+        r'g\s*i\s*f'           # gif
+        r'm\s*o\s*v'           # mov
+        r's\s*w\s*f'           # swf
+        r'p\s*d\s*f'           # pdf
+        r'p\s*s'               # ps
+        r'd\s*o\s*c',          # doc
+        r't\s*e\s*x',          # tex
+        r's\s*h\s*t\s*m\s*l',  # shtml
     ]
 
     pattern_list = [
-        ur'(h\s*t\s*t\s*p\s*\:\s*\/\s*\/)',
-        ur'(f\s*t\s*p\s*\:\s*\/\s*\/\s*)',
-        ur'((http|ftp):\/\/\s*[\w\d])',
-        ur'((http|ftp):\/\/([\w\d\s\._\-])+?\s*\/)',
-        ur'((http|ftp):\/\/([\w\d\_\.\-])+\/(([\w\d\_\s\.\-])+?\/)+)',
-        ur'((http|ftp):\/\/([\w\d\_\.\-])+\/(([\w\d\_\s\.\-])+?\/)*([\w\d\_\s\-]+\.\s?[\w\d]+))',
+        r'(h\s*t\s*t\s*p\s*\:\s*\/\s*\/)',
+        r'(f\s*t\s*p\s*\:\s*\/\s*\/\s*)',
+        r'((http|ftp):\/\/\s*[\w\d])',
+        r'((http|ftp):\/\/([\w\d\s\._\-])+?\s*\/)',
+        r'((http|ftp):\/\/([\w\d\_\.\-])+\/(([\w\d\_\s\.\-])+?\/)+)',
+        r'((http|ftp):\/\/([\w\d\_\.\-])+\/(([\w\d\_\s\.\-])+?\/)*([\w\d\_\s\-]+\.\s?[\w\d]+))',
     ]
     pattern_list = [re.compile(p, re.I | re.UNICODE) for p in pattern_list]
 
     # some possible endings for URLs:
-    p = ur'((http|ftp):\/\/([\w\d\_\.\-])+\/(([\w\d\_\.\-])+?\/)*([\w\d\_\-]+\.%s))'
+    p = r'((http|ftp):\/\/([\w\d\_\.\-])+\/(([\w\d\_\.\-])+?\/)*([\w\d\_\-]+\.%s))'
     for extension in file_types_list:
         p_url = re.compile(p % extension, re.I | re.UNICODE)
         pattern_list.append(p_url)
@@ -243,7 +244,7 @@ def get_page_break_positions(docbody):
         position (in the document body) of a page-break.
     """
     page_break_posns = []
-    p_break = re.compile(ur'^\s*\f\s*$', re.UNICODE)
+    p_break = re.compile(r'^\s*\f\s*$', re.UNICODE)
     num_document_lines = len(docbody)
     for i in xrange(num_document_lines):
         if p_break.match(docbody[i]) is not None:
@@ -264,7 +265,7 @@ def get_number_header_lines(docbody, page_break_posns):
     remaining_breaks = len(page_break_posns) - 1
     num_header_lines = empty_line = 0
     # pattern to search for a word in a line:
-    p_wordSearch = re.compile(ur'([A-Za-z0-9-]+)', re.UNICODE)
+    p_wordSearch = re.compile(r'([A-Za-z0-9-]+)', re.UNICODE)
     if remaining_breaks > 2:
         if remaining_breaks > 3:
             # Only check odd page headers

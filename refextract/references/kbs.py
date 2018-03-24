@@ -23,22 +23,21 @@
 
 from __future__ import absolute_import, division, print_function
 
-import re
-import six
-import csv
 import codecs
 import contextlib
-
+import csv
+import re
 from hashlib import md5
-from six import iteritems
+
+import six
 
 from .config import CFG_REFEXTRACT_KBS
 from .regexs import (
-    re_kb_line,
-    re_regexp_character_class,
-    re_extract_quoted_text,
     re_extract_char_class,
+    re_extract_quoted_text,
+    re_kb_line,
     re_punctuation,
+    re_regexp_character_class,
 )
 from ..documents.text import re_group_captured_multiple_space
 
@@ -122,7 +121,7 @@ def make_cache_key(custom_kbs_files=None):
     Then _inspire is appended if we are an INSPIRE site.
     """
     if custom_kbs_files:
-        serialized_args = ('%s=%s' % v for v in iteritems(custom_kbs_files))
+        serialized_args = ('%s=%s' % v for v in six.iteritems(custom_kbs_files))
         serialized_args = ';'.join(serialized_args)
     else:
         serialized_args = "default"
@@ -309,9 +308,9 @@ def build_reportnum_kb(fpath):
             # complete regex:
             # will be in the style "(categ)-(numatn1|numatn2|numatn3|...)"
             for classification in preprint_classifications:
-                search_pattern_str = ur'(?:^|[^a-zA-Z0-9\/\.\-])([\[\(]?(?P<categ>' \
-                                     + classification[0].strip() + u')' \
-                                     + numeration_regexp + ur'[\]\)]?)'
+                search_pattern_str = r'(?:^|[^a-zA-Z0-9\/\.\-])([\[\(]?(?P<categ>' \
+                                     + classification[0].strip() + r')' \
+                                     + numeration_regexp + r'[\]\)]?)'
 
                 re_search_pattern = re.compile(search_pattern_str,
                                                re.UNICODE)
@@ -339,14 +338,14 @@ def build_reportnum_kb(fpath):
     # read from the KB
 
     # pattern to recognise an institute name line in the KB
-    re_institute_name = re.compile(ur'^\*{5}\s*(.+)\s*\*{5}$', re.UNICODE)
+    re_institute_name = re.compile(r'^\*{5}\s*(.+)\s*\*{5}$', re.UNICODE)
 
     # pattern to recognise an institute preprint categ line in the KB
     re_preprint_classification = \
-        re.compile(ur'^\s*(\w.*)\s*---\s*(\w.*)\s*$', re.UNICODE)
+        re.compile(r'^\s*(\w.*)\s*---\s*(\w.*)\s*$', re.UNICODE)
 
     # pattern to recognise a preprint numeration-style line in KB
-    re_numeration_pattern = re.compile(ur'^\<(.+)\>$', re.UNICODE)
+    re_numeration_pattern = re.compile(r'^\<(.+)\>$', re.UNICODE)
 
     kb_line_num = 0    # when making the dictionary of patterns, which is
     # keyed by the category search string, this counter
@@ -466,7 +465,7 @@ def build_publishers_kb(fpath):
     with file_resolving(fpath, reader=csv.reader, lineterminator='\n') as fh:
         publishers = {}
         for line in fh:
-            pattern = re.compile(ur'(\b|^)%s(\b|$)' % line[0], re.I | re.U)
+            pattern = re.compile(r'(\b|^)%s(\b|$)' % line[0], re.I | re.U)
             publishers[line[0]] = {'pattern': pattern, 'repl': line[1]}
 
     return publishers
@@ -530,8 +529,8 @@ def load_kb_from_file(path, builder):
             if m_kb_line:  # good KB line
                 yield m_kb_line.group('seek'), m_kb_line.group('repl')
             else:
-                raise StandardError("Badly formatted kb '%s' at line %s"
-                                    % (path, rawline))
+                raise Exception("Badly formatted kb '%s' at line %s"
+                                % (path, rawline))
 
     with file_resolving(path) as fh:
         return builder(lazy_parser(fh))
@@ -587,7 +586,7 @@ def build_journals_kb(knowledgebase):
 
         # add the phrase from the KB if the 'seek' phrase is longer
         # compile the seek phrase into a pattern:
-        seek_ptn = re.compile(ur'(?<!\w)(%s)\W' % re.escape(seek_phrase),
+        seek_ptn = re.compile(r'(?<!\w)(%s)\W' % re.escape(seek_phrase),
                               re.UNICODE)
 
         kb[seek_phrase] = seek_ptn
@@ -605,7 +604,7 @@ def build_journals_kb(knowledgebase):
         if raw_repl_phrase not in kb:
             # The replace-phrase was not in the KB as a seek phrase
             # It should be added.
-            pattern = ur'(?<!\/)\b(%s)[^A-Z0-9]' % re.escape(raw_repl_phrase)
+            pattern = r'(?<!\/)\b(%s)[^A-Z0-9]' % re.escape(raw_repl_phrase)
             seek_ptn = re.compile(pattern, re.U)
             kb[raw_repl_phrase] = seek_ptn
             standardised_titles[raw_repl_phrase] = repl_term
@@ -621,9 +620,9 @@ def build_journals_kb(knowledgebase):
 def build_collaborations_kb(knowledgebase):
     kb = {}
     for pattern, collab in knowledgebase:
-        prefix = ur"(?:^|[\(\"\[\s]|(?<=\W))\s*(?:(?:the|and)\s+)?"
-        collaboration_pattern = ur"(?:\s*coll(?:aborations?|\.)?)?"
-        suffix = ur"(?=$|[><\]\)\"\s.,:])"
+        prefix = r"(?:^|[\(\"\[\s]|(?<=\W))\s*(?:(?:the|and)\s+)?"
+        collaboration_pattern = r"(?:\s*coll(?:aborations?|\.)?)?"
+        suffix = r"(?=$|[><\]\)\"\s.,:])"
         pattern = pattern.replace(' ', '\s')
         pattern = pattern.replace('Collaboration', collaboration_pattern)
         re_pattern = "%s(%s)%s" % (prefix, pattern, suffix)

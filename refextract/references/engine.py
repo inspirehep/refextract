@@ -26,49 +26,47 @@
 from __future__ import absolute_import, division, print_function
 
 import re
-
 from datetime import datetime
 from itertools import chain
 
 import magic
 
 from .config import (
-    CFG_REFEXTRACT_MARKER_CLOSING_REPORT_NUM,
+    CFG_REFEXTRACT_MARKER_CLOSING_AUTHOR_ETAL,
     CFG_REFEXTRACT_MARKER_CLOSING_AUTHOR_INCL,
     CFG_REFEXTRACT_MARKER_CLOSING_AUTHOR_STND,
+    CFG_REFEXTRACT_MARKER_CLOSING_PAGE,
+    CFG_REFEXTRACT_MARKER_CLOSING_REPORT_NUM,
+    CFG_REFEXTRACT_MARKER_CLOSING_SERIES,
+    CFG_REFEXTRACT_MARKER_CLOSING_TITLE,
+    CFG_REFEXTRACT_MARKER_CLOSING_TITLE_IBID,
     CFG_REFEXTRACT_MARKER_CLOSING_VOLUME,
     CFG_REFEXTRACT_MARKER_CLOSING_YEAR,
-    CFG_REFEXTRACT_MARKER_CLOSING_PAGE,
-    CFG_REFEXTRACT_MARKER_CLOSING_TITLE_IBID,
-    CFG_REFEXTRACT_MARKER_CLOSING_AUTHOR_ETAL,
-    CFG_REFEXTRACT_MARKER_CLOSING_TITLE,
-    CFG_REFEXTRACT_MARKER_CLOSING_SERIES,
 )
-
 from .errors import UnknownDocumentTypeError
-
-from .tag import (
-    tag_reference_line,
-    sum_2_dictionaries,
-    identify_and_tag_DOI,
-    identify_and_tag_URLs,
-    find_numeration,
-    extract_series_from_volume
-)
-from .text import wash_and_repair_reference_line
-from .record import build_references
-from ..documents.pdf import convert_PDF_to_plaintext
 from .kbs import get_kbs
+from .record import build_references
 from .regexs import (
     get_reference_line_numeration_marker_patterns,
-    regex_match_list,
-    re_tagged_citation,
+    re_hdl,
     re_numeration_no_ibid_txt,
-    re_roman_numbers,
     re_recognised_numeration_for_title_plus_series,
-    remove_year,
+    re_roman_numbers,
+    re_tagged_citation,
     re_year_in_misc_txt,
-    re_hdl)
+    regex_match_list,
+    remove_year,
+)
+from .tag import (
+    extract_series_from_volume,
+    find_numeration,
+    identify_and_tag_DOI,
+    identify_and_tag_URLs,
+    sum_2_dictionaries,
+    tag_reference_line,
+)
+from .text import wash_and_repair_reference_line
+from ..documents.pdf import convert_PDF_to_plaintext
 from ..version import __version__ as version
 
 
@@ -171,7 +169,7 @@ def format_report_number(citation_elements):
 
     e.g. CERN-LCHH2003-01 to CERN-LHCC-2003-01
     """
-    re_report = re.compile(ur'^(?P<name>[A-Z-]+)(?P<nums>[\d-]+)$', re.UNICODE)
+    re_report = re.compile(r'^(?P<name>[A-Z-]+)(?P<nums>[\d-]+)$', re.UNICODE)
     for el in citation_elements:
         if el['type'] == 'REPORTNUMBER':
             m = re_report.match(el['report_num'])
@@ -270,7 +268,7 @@ def mangle_volume(citation_elements):
 
     e.g. transforms 100B to B100
     """
-    volume_re = re.compile(ur"(\d+)([A-Z])", re.U | re.I)
+    volume_re = re.compile(r"(\d+)([A-Z])", re.U | re.I)
     for el in citation_elements:
         if el['type'] == 'JOURNAL':
             matches = volume_re.match(el['volume'])
@@ -1367,7 +1365,7 @@ def remove_leading_garbage_lines_from_reference_section(ref_sectn):
        @return: (list) of strings - the reference section without leading
         blank lines or email addresses.
     """
-    p_email = re.compile(ur'^\s*e\-?mail', re.UNICODE)
+    p_email = re.compile(r'^\s*e\-?mail', re.UNICODE)
     while ref_sectn and (ref_sectn[0].isspace() or p_email.match(ref_sectn[0])):
         ref_sectn.pop(0)
     return ref_sectn

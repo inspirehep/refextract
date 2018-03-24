@@ -40,7 +40,7 @@ import os
 import re
 import subprocess
 
-from six import iteritems
+import six
 
 from ..references.config import CFG_PATH_PDFTOTEXT
 
@@ -440,7 +440,7 @@ def replace_undesirable_characters(line):
     for bad_string, replacement in UNDESIRABLE_STRING_REPLACEMENTS:
         line = line.replace(bad_string, replacement)
 
-    for bad_char, replacement in iteritems(UNDESIRABLE_CHAR_REPLACEMENTS):
+    for bad_char, replacement in six.iteritems(UNDESIRABLE_CHAR_REPLACEMENTS):
         line = line.replace(bad_char, replacement)
 
     return line
@@ -467,7 +467,7 @@ def convert_PDF_to_plaintext(fpath, keep_layout=False):
     # If this pattern is matched, we want to split the page-break into
     # its own line because we rely upon this for trying to strip headers
     # and footers, and for some other pattern matching.
-    p_break_in_line = re.compile(ur'^\s*\f(.+)$', re.UNICODE)
+    p_break_in_line = re.compile(r'^\s*\f(.+)$', re.UNICODE)
     # build pdftotext command:
     cmd_pdftotext = [CFG_PATH_PDFTOTEXT, layout_option, "-q",
                      "-enc", "UTF-8", fpath, "-"]

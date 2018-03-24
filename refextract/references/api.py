@@ -32,11 +32,12 @@ from __future__ import absolute_import, division, print_function
 
 import os
 import sys
-import requests
-import magic
-
 from tempfile import mkstemp
-from itertools import izip
+
+import magic
+import requests
+import six
+from six.moves import zip
 
 from .engine import (
     get_kbs,
@@ -45,8 +46,10 @@ from .engine import (
     parse_references,
 )
 from .errors import FullTextNotAvailableError
-from .find import (find_numeration_in_body,
-                   get_reference_section_beginning)
+from .find import (
+    find_numeration_in_body,
+    get_reference_section_beginning,
+)
 from .pdf import extract_texkeys_from_pdf
 from .text import extract_references_from_fulltext, rebuild_reference_lines
 
@@ -93,7 +96,7 @@ def extract_references_from_url(url, headers=None, chunk_size=1024, **kwargs):
                 f.write(chunk)
         references = extract_references_from_file(filepath, **kwargs)
     except requests.exceptions.HTTPError:
-        raise FullTextNotAvailableError("URL not found: '{0}'".format(url)), None, sys.exc_info()[2]
+        six.reraise(FullTextNotAvailableError("URL not found: '{0}'".format(url)), None, sys.exc_info()[2])
     finally:
         os.remove(filepath)
     return references
@@ -146,7 +149,7 @@ def extract_references_from_file(path,
     if magic.from_file(path, mime=True) == "application/pdf":
         texkeys = extract_texkeys_from_pdf(path)
         if len(texkeys) == len(parsed_refs):
-            parsed_refs = [dict(ref, texkey=[key]) for ref, key in izip(parsed_refs, texkeys)]
+            parsed_refs = [dict(ref, texkey=[key]) for ref, key in zip(parsed_refs, texkeys)]
 
     return parsed_refs
 
