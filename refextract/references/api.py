@@ -77,7 +77,7 @@ def extract_references_from_url(url, headers=None, chunk_size=1024, **kwargs):
     """
     # Get temporary filepath to download to
     filename, filepath = mkstemp(
-        suffix="_{0}".format(os.path.basename(url)),
+        suffix=u"_{0}".format(os.path.basename(url)),
     )
     os.close(filename)
 
@@ -93,7 +93,7 @@ def extract_references_from_url(url, headers=None, chunk_size=1024, **kwargs):
                 f.write(chunk)
         references = extract_references_from_file(filepath, **kwargs)
     except requests.exceptions.HTTPError:
-        raise FullTextNotAvailableError("URL not found: '{0}'".format(url)), None, sys.exc_info()[2]
+        raise FullTextNotAvailableError(u"URL not found: '{0}'".format(url)), None, sys.exc_info()[2]
     finally:
         os.remove(filepath)
     return references
@@ -127,7 +127,7 @@ def extract_references_from_file(path,
 
     """
     if not os.path.isfile(path):
-        raise FullTextNotAvailableError("File not found: '{0}'".format(path))
+        raise FullTextNotAvailableError(u"File not found: '{0}'".format(path))
 
     docbody = get_plaintext_document_body(path)
     reflines, dummy, dummy = extract_references_from_fulltext(docbody)
