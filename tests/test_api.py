@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of refextract
-# Copyright (C) 2016 CERN.
+# Copyright (C) 2016, 2018 CERN.
 #
 # refextract is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -21,9 +21,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""The Refextract unit test suite"""
-
-import os
+from __future__ import absolute_import, division, print_function
 
 import pytest
 import responses
@@ -134,6 +132,7 @@ def test_extract_references_from_file(pdf_files):
     assert len(r) == 36
     with pytest.raises(FullTextNotAvailableError):
         extract_references_from_file(pdf_files[0] + "error")
+
 
 @responses.activate
 def test_extract_references_from_url(pdf_files):

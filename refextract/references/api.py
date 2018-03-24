@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of refextract.
-# Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016 CERN.
+# Copyright (C) 2013, 2015, 2016, 2018 CERN.
 #
 # refextract is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -28,6 +28,7 @@ addition, there is an API call to return a parsed journal reference structure
 from a raw string.
 """
 
+from __future__ import absolute_import, division, print_function
 
 import os
 import sys
@@ -37,16 +38,16 @@ import magic
 from tempfile import mkstemp
 from itertools import izip
 
-from .engine import (get_kbs,
-                     get_plaintext_document_body,
-                     parse_reference_line,
-                     parse_references,
-                     parse_tagged_reference_line)
+from .engine import (
+    get_kbs,
+    get_plaintext_document_body,
+    parse_reference_line,
+    parse_references,
+)
 from .errors import FullTextNotAvailableError
 from .find import (find_numeration_in_body,
                    get_reference_section_beginning)
 from .pdf import extract_texkeys_from_pdf
-from .tag import tag_reference_line
 from .text import extract_references_from_fulltext, rebuild_reference_lines
 
 
@@ -91,7 +92,7 @@ def extract_references_from_url(url, headers=None, chunk_size=1024, **kwargs):
             for chunk in req.iter_content(chunk_size):
                 f.write(chunk)
         references = extract_references_from_file(filepath, **kwargs)
-    except requests.exceptions.HTTPError as e:
+    except requests.exceptions.HTTPError:
         raise FullTextNotAvailableError("URL not found: '{0}'".format(url)), None, sys.exc_info()[2]
     finally:
         os.remove(filepath)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of refextract.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016, 2017, 2018 CERN.
 #
 # refextract is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
@@ -22,42 +22,43 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
+notifications:
+  email: false
+
 sudo: false
-
-language: python
-
-python:
-  - '2.7'
 
 addons:
   apt:
     packages:
-      poppler-utils
+      - poppler-utils
+
+language: python
+
+cache:
+  pip: true
+
+python:
+  - 2.7
+
+before_install:
+  - travis_retry pip install --upgrade pip setuptools
+  - travis_retry pip install coveralls
 
 install:
-  - pip install --upgrade pip
-  - pip install coveralls check-manifest
-  - pip install pytest pytest-pep8 pytest-cov pytest-cache
-  - pip install -e .[docs,tests]
+  - travis_retry pip install -e .[docs,tests]
 
 script:
-  - if [ "${TRAVIS_PYTHON_VERSION}" = "2.7" ]; then sphinx-build -qnNW docs docs/_build/html; fi
-  - check-manifest
-  - python setup.py test
+  - ./run-tests.sh
 
 after_success:
   - coveralls
-
-notifications:
-  email: false
 
 deploy:
   provider: pypi
   user: inspirehep
   password:
-    secure: VRWpn7B2QAtyNmQ3chD2Hi4lZNbQUB/aFx/p+hh/YN2W1/PiUSR7HuFyMw0fEdarDm7zTEUf576E58XWK6my9C1vVKssXQ43GnPVEk9ASau7GJN0Fnz+m3LJQze+ogiAeYVStVCxvZ/U6GU1LhwOV9WkZ5SyKzmXDkKdkPSBTJjkudK7D89hmx9m9gOq3mXWq6VisShHmO39uBtKxhWOYWfyOdfoB2jqpdT3AWZhjcbiVYGcRY5+GNL6WLLSB1Z97afW/DYVXP1IIU0ogJI9TaNl9ZmOJiN36+0LoLg+USikOXMECqqHT8MaYJ1+qP1wqy/kzJLujh6P2+hEeaSJalqbHxVDA4BybxsWnWDVGeYDCKiV+xtRpkD7OH+a2y8kCLe2Fx7Kgw3Z7zBoE/3q7ge2o9j0zSgrHQkTZhZGgdhkOdu2OEaZLTcVK+ekqkc/YbEBgCUWM7ltxz78FhfLSa18e0ZuIZTqoByLxuuKolwVBHAL+W7r6auRiT4jmtRn6Bll/oIZ/p71euWSLy20vB293e0/cZfXuGt/x+D5nu1R/yyjKcDnPesR82g3wyJgqlIiEij8FhvdH1QMqCtqKp+HUv0eOicrJiFYiMXhHAQZcY4KQBlgfx0wv43eV+SxX2RNHONqrHP6TgxVoQT3yOPrspwEi+oVsjp8Pp5ZxZg=
+    secure: "VRWpn7B2QAtyNmQ3chD2Hi4lZNbQUB/aFx/p+hh/YN2W1/PiUSR7HuFyMw0fEdarDm7zTEUf576E58XWK6my9C1vVKssXQ43GnPVEk9ASau7GJN0Fnz+m3LJQze+ogiAeYVStVCxvZ/U6GU1LhwOV9WkZ5SyKzmXDkKdkPSBTJjkudK7D89hmx9m9gOq3mXWq6VisShHmO39uBtKxhWOYWfyOdfoB2jqpdT3AWZhjcbiVYGcRY5+GNL6WLLSB1Z97afW/DYVXP1IIU0ogJI9TaNl9ZmOJiN36+0LoLg+USikOXMECqqHT8MaYJ1+qP1wqy/kzJLujh6P2+hEeaSJalqbHxVDA4BybxsWnWDVGeYDCKiV+xtRpkD7OH+a2y8kCLe2Fx7Kgw3Z7zBoE/3q7ge2o9j0zSgrHQkTZhZGgdhkOdu2OEaZLTcVK+ekqkc/YbEBgCUWM7ltxz78FhfLSa18e0ZuIZTqoByLxuuKolwVBHAL+W7r6auRiT4jmtRn6Bll/oIZ/p71euWSLy20vB293e0/cZfXuGt/x+D5nu1R/yyjKcDnPesR82g3wyJgqlIiEij8FhvdH1QMqCtqKp+HUv0eOicrJiFYiMXhHAQZcY4KQBlgfx0wv43eV+SxX2RNHONqrHP6TgxVoQT3yOPrspwEi+oVsjp8Pp5ZxZg="
   on:
-    tags: true
-    distributions: sdist bdist_wheel
-    repo: inspirehep/refextract
     branch: master
+    python: 2.7
+  distribution: sdist

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of refextract.
-# Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2015, 2016 CERN.
+# Copyright (C) 2013, 2015, 2016, 2018 CERN.
 #
 # refextract is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -34,7 +34,7 @@ for and the characters that should be used to replace them.
 replace in plain-text.
 """
 
-from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import absolute_import, division, print_function
 
 import os
 import re
@@ -238,9 +238,6 @@ UNDESIRABLE_CHAR_REPLACEMENTS = {
     u'\u001F': u"",  # INFORMATION SEPARATOR ONE (unit separator)
     # \r -> remove it
     u'\r': u"",
-    # Strange parantheses - change for normal:
-    u'\x1c': u'(',
-    u'\x1d': u')',
     # Some ff from tex:
     u'\u0013\u0010': u'\u00ED',
     u'\x0b': u'ff',
@@ -459,7 +456,7 @@ def convert_PDF_to_plaintext(fpath, keep_layout=False):
     into plaintext; each string is a line in the document.)
     """
     if not os.path.isfile(CFG_PATH_PDFTOTEXT):
-        raise FileNotFoundError('Missing pdftotext executable')
+        raise IOError('Missing pdftotext executable')
 
     if keep_layout:
         layout_option = "-layout"

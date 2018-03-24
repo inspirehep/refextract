@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # This file is part of refextract
-# Copyright (C) 2015, 2016 CERN.
+# Copyright (C) 2015, 2018 CERN.
 #
 # refextract is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -21,6 +21,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-pep257 refextract && \
-sphinx-build -qnNW docs docs/_build/html && \
-python setup.py test
+set -e
+
+flake8 refextract tests
+py.test tests
+sphinx-build -qnNW docs docs/_build/html

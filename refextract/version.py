@@ -21,12 +21,11 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Version information for refextract.
+"""The version of refextract."""
 
-This file is imported by ``refextract.__init__``,
-and parsed by ``setup.py``.
-"""
+from __future__ import absolute_import, division, print_function
 
-from __future__ import absolute_import, print_function, unicode_literals
+from autosemver.packaging import get_current_version
 
-__version__ = "0.2.5"
+
+__version__ = get_current_version(project_name='refextract')

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of refextract.
-# Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2015, 2016 CERN.
+# Copyright (C) 2013, 2015, 2016, 2018 CERN.
 #
 # refextract is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -22,6 +22,8 @@
 # or submit itself to any jurisdiction.
 
 """Various utilities to manipulate or clean text"""
+
+from __future__ import absolute_import, division, print_function
 
 import re
 from six.moves import xrange
@@ -91,6 +93,7 @@ def get_url_repair_patterns():
     pattern_list.append(p_url)
 
     return pattern_list
+
 
 # a list of patterns used to try to repair broken URLs within reference lines:
 re_list_url_repair_patterns = get_url_repair_patterns()
