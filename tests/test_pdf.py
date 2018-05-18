@@ -146,6 +146,6 @@ def test_extract_texkeys_from_pdf_no_crash_on_pydpf2_error(pdf_files):
 
 def test_extract_texkeys_from_pdf_no_crash_on_other_exceptions(pdf_files):
     expected = []
-    result = extract_texkeys_from_pdf(pdf_files[4])
+    result = extract_texkeys_from_pdf(pdf_files[5])
 
     assert result == expected

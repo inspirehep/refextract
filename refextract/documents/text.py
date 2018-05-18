@@ -291,9 +291,12 @@ def get_number_header_lines(docbody, page_break_posns):
                                               num_header_lines + 1)])
             cur_break = cur_break + next_head
             while (cur_break < remaining_breaks) and keep_checking:
+                lineno = page_break_posns[cur_break] + num_header_lines + 1
+                if lineno >= len(docbody):
+                    keep_checking = 0
+                    break
                 grps_thisLineWords = \
-                    p_wordSearch.findall(docbody[(page_break_posns[cur_break] +
-                                                  num_header_lines + 1)])
+                    p_wordSearch.findall(docbody[lineno])
                 if empty_line:
                     if len(grps_thisLineWords) != 0:
                         # This line should be empty, but isn't
