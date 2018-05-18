@@ -23,6 +23,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+from refextract import extract_references_from_file
 from refextract.references.text import (
     rebuild_reference_lines,
 )
@@ -68,3 +69,7 @@ def test_2_lines_together():
         u"[1] hello hello2",
         u"[2] foo",
     ]
+
+
+def test_get_number_header_lines_does_not_crash_on_final_empty_page(pdf_files):
+    assert extract_references_from_file(pdf_files[4])
