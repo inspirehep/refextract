@@ -23,6 +23,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+import logging
 import re
 
 from ..documents.pdf import replace_undesirable_characters
@@ -35,6 +36,8 @@ from ..documents.text import (
 
 from .config import CFG_REFEXTRACT_MAX_LINES
 from .find import find_end_of_reference_section, get_reference_section_beginning
+
+LOGGER = logging.getLogger(__name__)
 
 
 def extract_references_from_fulltext(fulltext):
@@ -60,8 +63,7 @@ def extract_references_from_fulltext(fulltext):
         # No References
         refs = []
         status = 4
-        print("* extract_references_from_fulltext: "
-              "ref_sect_start is None")
+        LOGGER.debug(u"extract_references_from_fulltext: ref_sect_start is None")
     else:
         # If a reference section was found, however weak
         ref_sect_end = \
@@ -73,8 +75,7 @@ def extract_references_from_fulltext(fulltext):
             # No End to refs? Not safe to extract
             refs = []
             status = 5
-            print("* extract_references_from_fulltext: "
-                  "no end to refs!")
+            LOGGER.debug(u"extract_references_from_fulltext: no end to refs!")
         else:
             # If the end of the reference section was found.. start extraction
             refs = get_reference_lines(fulltext,
@@ -202,7 +203,7 @@ def rebuild_reference_lines(ref_sectn, ref_line_marker_ptn):
             indentation_splitting = True
             ref_line_marker_ptn = ur'^[^\s]'
 
-    print('* references separator %s' % ref_line_marker_ptn)
+    LOGGER.debug(u"references separator %s", ref_line_marker_ptn)
     p_ref_line_marker = re.compile(ref_line_marker_ptn, re.I | re.UNICODE)
 
     # Start from ref 1

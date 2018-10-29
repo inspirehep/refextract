@@ -23,12 +23,14 @@
 
 from __future__ import absolute_import, division, print_function
 
+import logging
 import re
-import sys
 
 from six.moves import xrange
 
 from ..references.config import CFG_REFEXTRACT_KBS
+
+LOGGER = logging.getLogger(__name__)
 
 
 def get_author_affiliation_numeration_str(punct=None):
@@ -415,19 +417,14 @@ def make_collaborations_regex_str():
         fh = open(fpath, "r")
     except IOError:
         # problem opening KB for reading, or problem while reading from it:
-        emsg = """Error: Could not build knowledge base containing """ \
-               """author patterns - failed """ \
-               """to read from KB %(kb)s.\n""" \
-               % {'kb': fpath}
-        print(emsg, sys.stderr, verbose=0)
+        LOGGER.debug(u"Error: Could not build knowledge base containing author patterns - failed to read from KB %s s.\n", fpath)
         raise IOError("Error: Unable to open collaborations kb '%s'" % fpath)
 
     for line_num, rawline in enumerate(fh):
         try:
             rawline = rawline.decode("utf-8")
         except UnicodeError:
-            print("*** Unicode problems in %s for line %d"
-                  % (fpath, line_num), sys.stderr, verbose=0)
+            LOGGER.debug(u"Unicode problems in %s for line %d", fpath, line_num)
             raise UnicodeError(
                 "Error: Unable to parse collaboration kb (line: %s)" % str(line_num))
         if rawline.strip() and rawline[0].strip() != '#':

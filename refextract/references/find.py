@@ -25,6 +25,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+import logging
 import re
 
 from .regexs import \
@@ -37,6 +38,8 @@ from .regexs import \
     re_reference_line_dot_markers, \
     re_reference_line_number_markers, \
     re_num
+
+LOGGER = logging.getLogger(__name__)
 
 
 def find_reference_section(docbody):
@@ -500,10 +503,10 @@ def get_reference_section_beginning(fulltext):
                     sect_start['how_found_start'] = 4
 
     if sect_start:
-        print('* title %r' % sect_start['title_string'])
-        print('* marker %r' % sect_start['marker'])
-        print('* title_marker_same_line %s'
-              % sect_start['title_marker_same_line'])
+        LOGGER.debug(u"title %r", sect_start['title_string'])
+        LOGGER.debug(u"marker %r", sect_start['marker'])
+        LOGGER.debug(u"title_marker_same_line %s", sect_start['title_marker_same_line'])
+
     else:
-        print('* could not find references section')
+        LOGGER.debug(u"could not find references section")
     return sect_start

@@ -23,11 +23,14 @@
 
 from __future__ import absolute_import, division, print_function
 
-import sys
+import logging
 
 from PyPDF2 import PdfFileReader
 
 from .regexs import re_reference_in_dest
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 class IncompleteCoordinatesError(Exception):
@@ -51,22 +54,21 @@ def extract_texkeys_from_pdf(pdf_file):
         try:
             pdf = PdfFileReader(pdf_stream, strict=False)
             destinations = pdf.getNamedDestinations()
-        except Exception as exc:
-            print("* PDF: Internal PyPDF2 error, no TeXkeys returned.", exc,
-                  file=sys.stderr)
+        except Exception:
+            LOGGER.debug(u"PDF: Internal PyPDF2 error, no TeXkeys returned.")
             return []
         # not all named destinations point to references
         refs = [dest for dest in destinations.iteritems()
                 if re_reference_in_dest.match(dest[0])]
         try:
             if _destinations_in_two_columns(pdf, refs):
-                print("* PDF: Using two-column layout")
+                LOGGER.debug(u"PDF: Using two-column layout")
 
                 def sortfunc(dest_couple):
                     return _destination_position(pdf, dest_couple[1])
 
             else:
-                print("* PDF: Using single-column layout")
+                LOGGER.debug(u"PDF: Using single-column layout")
 
                 def sortfunc(dest_couple):
                     (page, _, ypos, xpos) = _destination_position(
@@ -77,9 +79,8 @@ def extract_texkeys_from_pdf(pdf_file):
             # extract the TeXkey from the named destination name
             return [re_reference_in_dest.match(destname).group(1)
                     for (destname, _) in refs]
-        except Exception as exc:
-            print("* PDF: Impossible to determine layout, no TeXkeys returned",
-                  exc, file=sys.stderr)
+        except Exception:
+            LOGGER.debug(u"PDF: Impossible to determine layout, no TeXkeys returned")
             return []
 
 

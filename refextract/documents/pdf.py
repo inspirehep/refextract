@@ -36,6 +36,7 @@ replace in plain-text.
 
 from __future__ import absolute_import, division, print_function
 
+import logging
 import os
 import re
 import subprocess
@@ -43,6 +44,8 @@ import subprocess
 from six import iteritems
 
 from ..references.config import CFG_PATH_PDFTOTEXT
+
+LOGGER = logging.getLogger(__name__)
 
 # a dictionary of undesirable characters and their replacements:
 UNDESIRABLE_CHAR_REPLACEMENTS = {
@@ -471,7 +474,8 @@ def convert_PDF_to_plaintext(fpath, keep_layout=False):
     # build pdftotext command:
     cmd_pdftotext = [CFG_PATH_PDFTOTEXT, layout_option, "-q",
                      "-enc", "UTF-8", fpath, "-"]
-    print("* %s" % ' '.join(cmd_pdftotext))
+
+    LOGGER.debug(u"%s", ' '.join(cmd_pdftotext))
     # open pipe to pdftotext:
     pipe_pdftotext = subprocess.Popen(cmd_pdftotext, stdout=subprocess.PIPE)
 
@@ -490,7 +494,6 @@ def convert_PDF_to_plaintext(fpath, keep_layout=False):
             doclines.append(u"\f")
             doclines.append(m_break_in_line.group(1))
 
-    print("* convert_PDF_to_plaintext found: "
-          "%s lines of text" % len(doclines))
+    LOGGER.debug(u"convert_PDF_to_plaintext found: %s lines of text", len(doclines))
 
     return doclines
