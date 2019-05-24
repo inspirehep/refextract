@@ -38,6 +38,7 @@ FERMILAB DESIGN ---FERMILAB-Design
 FERMILABDESIGN  ---FERMILAB-Design
 FERMILAB THESIS ---FERMILAB-Thesis
 FERMILAB MASTERS---FERMILAB-Masters
+FERMILAB PROPOSAL  ---FERMILAB-PROPOSAL
 
 *****Fermilab DØ notes*****
 <s9?9?9?9>
@@ -48,39 +49,38 @@ DØ NOTE---DØ-Note
 <s9?9?9?9>
 
 CDF                       ---CDF
-CDF-ANAL-ELECTROWEAK-CDFR ---CDF-ANAL-ELECTROWEAK-CDFR
-CDF-ANAL-EXOTIC-CDFR      ---CDF-ANAL-EXOTIC-CDFR
-CDF-ANAL-EXOTIC-PUBLIC    ---CDF-ANAL-EXOTIC-PUBLIC
-CDF-ANAL-JET-PUBLIC       ---CDF-ANAL-JET-PUBLIC
-CDF-ANAL-TOP-CDFR         ---CDF-ANAL-TOP-CDFR
-CDF-ANAL-TOP-PUBLIC       ---CDF-ANAL-TOP-PUBLIC
-CDF-DOC-CDF-CDFR          ---CDF-DOC-CDF-CDFR
-CDF-DOC-CDF-PUBLIC        ---CDF-DOC-CDF-PUBLIC
-CDF-DOC-PLUG-UPGR-CDFR    ---CDF-DOC-PLUG-UPGR-CDFR
-CDF-NOTE                  ---CDF-NOTE
-CDF-PHYS-BOTTOM-PUBLIC    ---CDF-PHYS-BOTTOM-PUBLIC
-CDF-PUB                   ---CDF-PUB
-CDF-PUB-BOTTOM-CDFR       ---CDF-PUB-BOTTOM-CDFR
-CDF-PUB-BOTTOM-PUBLIC     ---CDF-PUB-BOTTOM-PUBLIC
-CDF-PUB-CDF-PUBLIC        ---CDF-PUB-CDF-PUBLIC
-CDF-PUB-ELECTROWEAK-CDFR  ---CDF-PUB-ELECTROWEAK-CDFR
-CDF-PUB-ELECTROWEAK-PUBLIC---CDF-PUB-ELECTROWEAK-PUBLIC
-CDF-PUB-EXOTIC-CDFR       ---CDF-PUB-EXOTIC-CDFR
-CDF-PUB-EXOTIC-PUBLIC     ---CDF-PUB-EXOTIC-PUBLIC
-CDF-PUB-HEAVYFLAVOR-PUBLIC---CDF-PUB-HEAVYFLAVOR-PUBLIC
-CDF-PUB-JET-CDFR          ---CDF-PUB-JET-CDFR
-CDF-PUB-JET-PUBLIC        ---CDF-PUB-JET-PUBLIC
-CDF-PUB-MIN-BIAS-PUBLIC   ---CDF-PUB-MIN-BIAS-PUBLIC
-CDF-PUB-PLUG-UPGR-PUBLIC  ---CDF-PUB-PLUG-UPGR-PUBLIC
-CDF-PUB-PUBLIC            ---CDF-PUB-PUBLIC
-CDF-PUB-SEC-VTX-PUBLIC    ---CDF-PUB-SEC-VTX-PUBLIC
-CDF-PUB-SEC_VTX-PUBLIC    ---CDF-PUB-SEC_VTX-PUBLIC
-CDF-PUB-TOP-CDFR          ---CDF-PUB-TOP-CDFR
-CDF-PUB-TOP-PUBLIC        ---CDF-PUB-TOP-PUBLIC
-CDF-THESIS-BOTTOM-PUBLIC  ---CDF-THESIS-BOTTOM-PUBLIC
-CDF-THESIS-CDF-PUBLIC     ---CDF-THESIS-CDF-PUBLIC
-CDF-THESIS-TOP-PUBLIC     ---CDF-THESIS-TOP-PUBLIC
-CDF-TOP-PUBLIC            ---CDF-TOP-PUBLIC
+CDF ANAL ELECTROWEAK CDFR ---CDF-ANAL-ELECTROWEAK-CDFR
+CDF ANAL EXOTIC CDFR      ---CDF-ANAL-EXOTIC-CDFR
+CDF ANAL EXOTIC PUBLIC    ---CDF-ANAL-EXOTIC-PUBLIC
+CDF ANAL JET PUBLIC       ---CDF-ANAL-JET-PUBLIC
+CDF ANAL TOP CDFR         ---CDF-ANAL-TOP-CDFR
+CDF ANAL TOP PUBLIC       ---CDF-ANAL-TOP-PUBLIC
+CDF DOC CDF CDFR          ---CDF-DOC-CDF-CDFR
+CDF DOC CDF PUBLIC        ---CDF-DOC-CDF-PUBLIC
+CDF DOC PLUG UPGR CDFR    ---CDF-DOC-PLUG-UPGR-CDFR
+CDF NOTE                  ---CDF-NOTE
+CDF PHYS BOTTOM PUBLIC    ---CDF-PHYS-BOTTOM-PUBLIC
+CDF PUB                   ---CDF-PUB
+CDF PUB BOTTOM CDFR       ---CDF-PUB-BOTTOM-CDFR
+CDF PUB BOTTOM PUBLIC     ---CDF-PUB-BOTTOM-PUBLIC
+CDF PUB CDF PUBLIC        ---CDF-PUB-CDF-PUBLIC
+CDF PUB ELECTROWEAK CDFR  ---CDF-PUB-ELECTROWEAK-CDFR
+CDF PUB ELECTROWEAK PUBLIC---CDF-PUB-ELECTROWEAK-PUBLIC
+CDF PUB EXOTIC CDFR       ---CDF-PUB-EXOTIC-CDFR
+CDF PUB EXOTIC PUBLIC     ---CDF-PUB-EXOTIC-PUBLIC
+CDF PUB HEAVYFLAVOR PUBLIC---CDF-PUB-HEAVYFLAVOR-PUBLIC
+CDF PUB JET CDFR          ---CDF-PUB-JET-CDFR
+CDF PUB JET PUBLIC        ---CDF-PUB-JET-PUBLIC
+CDF PUB MIN BIAS PUBLIC   ---CDF-PUB-MIN-BIAS-PUBLIC
+CDF PUB PLUG UPGR PUBLIC  ---CDF-PUB-PLUG-UPGR-PUBLIC
+CDF PUB PUBLIC            ---CDF-PUB-PUBLIC
+CDF PUB SEC VTX PUBLIC    ---CDF-PUB-SEC-VTX-PUBLIC
+CDF PUB TOP CDFR          ---CDF-PUB-TOP-CDFR
+CDF PUB TOP PUBLIC        ---CDF-PUB-TOP-PUBLIC
+CDF THESIS BOTTOM PUBLIC  ---CDF-THESIS-BOTTOM-PUBLIC
+CDF THESIS CDF PUBLIC     ---CDF-THESIS-CDF-PUBLIC
+CDF THESIS TOP PUBLIC     ---CDF-THESIS-TOP-PUBLIC
+CDF TOP PUBLIC            ---CDF-TOP-PUBLIC
 
 
 *****CERN*****
@@ -146,7 +146,6 @@ ATL SOFT PROC          ---ATL-SOFT-PROC
 ATL IS EN              ---ATL-IS-EN
 ATL IS QA              ---ATL-IS-QA
 ATL LARG PUB           ---ATL-LARG-PUB
-ATL COM LARG           ---ATL-COM-LARG
 TL COM LARG            ---ATL-COM-LARG
 ATLCOM LARG            ---ATL-COM-LARG
 ATL MAGNET PUB         ---ATL-MAGNET-PUB
@@ -175,7 +174,6 @@ CERN ATL DAQ           ---CERN-ATL-DAQ
 CERN ATL SOFT          ---CERN-ATL-SOFT
 CERN ATL SOFT INT      ---CERN-ATL-SOFT-INT
 CERN ATL SOFT PUB      ---CERN-ATL-SOFT-PUB
-CERN ATS               ---CERN-ATS
 CERNATS                ---CERN-ATS
 CERN ATS NOTE          ---CERN-ATS-NOTE
 CERNATS NOTE           ---CERN-ATS-NOTE
@@ -268,13 +266,19 @@ CMS PAS EWK            ---CMS-PAS-EWK
 CMS PAS BTV            ---CMS-PAS-BTV
 CMS PAS FWD            ---CMS-PAS-FWD
 CMS PAS TRK            ---CMS-PAS-TRK
-CMS PAS SMP            ---CMS-PAS-SMP
 CMS PAS PFT            ---CMS-PAS-PFT
 CMS PAS MUO            ---CMS-PAS-MUO
 CMS PAS JME            ---CMS-PAS-JME
 CMS PAS EGM            ---CMS-PAS-EGM
 CMS PAS DIF            ---CMS-PAS-DIF
 CMS PAS B2G            ---CMS-PAS-B2G
+CMS PAS LUM            ---CMS-PAS-LUM
+CMS PAS TAU            ---CMS-PAS-TAU
+CMS PAS GEN            ---CMS-PAS-GEN
+CMS PAS FTR            ---CMS-PAS-FTR
+CMS PAS FSQ            ---CMS-PAS-FSQ
+CMS PAS SBM            ---CMS-PAS-SBM
+CMS PAS PPS            ---CMS-PAS-PPS
 ATLTILECAL PUB         ---ATLTILECAL-PUB
 ATLAS TECH PUB         ---ATLAS-TECH-PUB
 TLCOM MAGNET           ---TLCOM-MAGNET
@@ -324,11 +328,17 @@ CERN ACC NOTE          ---CERN-ACC-NOTE
 <syys9?9?9>
 <syyyys9?9?9>
 
-KEK CP        ---KEK-CP
-KEK INT       ---KEK-Internal
-KEK INTERNAL  ---KEK-Internal
-KEK PREPRINT  ---KEK-Preprint
-KEK TH	      ---KEK-TH
+KEK CP               ---KEK-CP
+KEK INT              ---KEK-Internal
+KEK INTERNAL         ---KEK-Internal
+KEK PREPRINT         ---KEK-Preprint
+KEK TH               ---KEK-TH
+KEK COSMO            ---KEK-COSMO
+KEK PROCEEDINGS      ---KEK-PROCEEDINGS
+KEK REPORT           ---KEK-REPORT
+KEK PROGRESS REPORT  ---KEK-PROGRESS-REPORT
+KEK ACCELERATOR      ---KEK-ACCELERATOR
+KEK                  ---KEK
 
 
 *****DESY*****
@@ -352,7 +362,6 @@ TESLA FEL       ---DESY-TESLA-FEL
 
 DESY F      ---DESY-F
 
-
 *****SLAC*****
 <s9?9?9?9>
 <syys9?9>
@@ -362,18 +371,63 @@ SLAC PUB	---SLAC-PUB
 SLAC R		---SLAC-R
 SLAC TN		---SLAC-TN
 SLAC WP		---SLAC-WP
+SLAC CN		---SLAC-CN
+SLAC            ---SLAC
+SLAC BABAR NOTE ---SLAC-BABAR-NOTE
+SLAC TRANS      ---SLAC-TRANS
+SLAC PROPOSAL E   ---SLAC-PROPOSAL-E
+SLAC PROPOSAL BC  ---SLAC-PROPOSAL-BC
+SLAC PROPOSAL SP  ---SLAC-PROPOSAL-SP
+SLAC PROPOSAL NE  ---SLAC-PROPOSAL-NE
+SLAC PROPOSAL SLC ---SLAC-PROPOSAL-SLC
+SLAC SSRL       ---SLAC-SSRL
+SLAC ABC        ---SLAC-ABC
+SLAC AAS        ---SLAC-AAS
+
+*****SLAC different format*****
+<syyyys999>
+
+SLAC-REPRINT    ---SLAC-REPRINT
+
+*****SLAC different format*****
+<syys999?>
+<s99?s99>
+
+SLAC PEP II AP NOTE ---SLAC-PEP-II-AP-NOTE
+SLAC PEP II ME NOTE ---SLAC-PEP-II-ME-NOTE
+SLAC PEP II EE NOTE ---SLAC-PEP-II-EE-NOTE
+SLAC BABAR THESIS   ---SLAC-BABAR-THESIS
+SLAC BABAR TALK     ---SLAC-BABAR-TALK
+SLAC SSRL           ---SLAC-SSRL
 
 
 *****Berkeley Lab*****
-<s9?9?9?9?9>
-LBNL         ---LBNL
+<s999?9?9?sREV>
+<s99999A>
+<s999?9?9?>
+
+LBL           ---LBL
+LBL PUB       ---LBL-PUB
+LNBL          ---LBNL
+LBNL PUB      ---LBNL-PUB
 
 
 
 *****Argonne National Laboratory*****
 <syys9?9>
+<s99999?9?>
 
 ANL HEP TR   ---ANL-HEP-TR
+ANL HEP PR   ---ANL-HEP-PR
+ANL HEP CP   ---ANL-HEP-CP
+ANL          ---ANL
+
+*****Argonne National Laboratory*****
+<s99999?syyyy>
+<s99999?sTHsyyyy>
+<s99999?sTHsyy>
+
+ANL PHY      ---ANL PHY
 
 
 *****Antares*****
@@ -385,6 +439,8 @@ ANTARES OPMO  ---ANTARES-Opmo
 
 *****LIGO*****
 <sTyy9999s00sa>
+<sP9999999?>
+<sDOCUMENTsP9999999?>
 
 LIGO          ---LIGO
 
@@ -419,13 +475,14 @@ IHEP EP       ---IHEP-EP
 IHEP TH       ---IHEP-TH
 
 *****IPAC*****
-<syyyysaaaaa9?9?9>
+<syyyysaaaa?a?a?9?9?9>
 
 IPAC          ---IPAC
+PAC           ---PAC
 
 *****JINR*****
-<[EP]9?9syys9?9?9>
-<[EP]9?9syyyys9?9?9>
+<s[EPDR]9?9syys9?9?9>
+<s[EPDR]9?9syyyys9?9?9>
 
 JINR          ---JINR
 
@@ -446,3 +503,271 @@ MPP           ---MPP
 NIKHEF        ---NIKHEF
 RAL TR        ---RAL-TR
 SLS TME TA    ---SLS-TME-TA
+
+*****UMI different format*****
+<s99999sMC>
+<s99999>
+
+UMI NQ        ---UMI-NQ
+UMI NR        ---UMI-NR
+UMI MR        ---UMI-MR
+UMI MQ        ---UMI-MQ
+UMI NA        ---UMI-NA
+
+*****UMI*****
+<s99s99999sMC>
+<s999s99999sX>
+<s9s999s99999s9>
+<s999s99999s9>
+<s99s99999?9?>
+
+UMI           ---UMI
+
+
+*****Brookhaven*****
+<s999?9?9?9?>
+<s999999?syyyysJA>
+<s999999?syyyysCP>
+<s999999?syyyysIR>
+<s999999?syyyysJAM>
+
+BNL              ---BNL
+BNL AADD         ---BNL-AADD
+BNL AD RHIC      ---BNL-AD-RHIC
+
+*****Brookhaven different format*****
+<syys99?>
+
+BNL HET          ---BNL-HET
+BNL NT           ---BNL-NT
+BNL CRISP        ---BNL-CRISP
+
+*****MIT*****
+<s999?9?9?>
+<syys999>
+MIT CTP            ---MIT-CTP
+MIT LNS            ---MIT-LNS
+
+****IHEP*****
+<syys99?9?>
+
+IFVE               ---IFVE
+
+*****Los Alamos*****
+<syys99?9?9?>
+
+LA UR              ---LA-UR
+
+*****Los Alamos different format*****
+<s9999?9?sMS>
+<s9999?9?sPR>
+<s9999?9?s[TCM]>
+
+LA                ---LA
+
+*****Valencia IFIC*****
+<syys99?9?9?>
+
+IFIC              ---IFIC
+
+
+*****CalTech*****
+<syyyys99?9?9?>
+<s69s99?99>
+
+CALT             ---CALT
+CALT TH          ---CALT-TH
+
+*****Yukawa Institute*****
+<syys99?9?>
+
+YITP             ---YITP
+YITP SB          ---YITP-SB
+YITP U           ---YITP-U
+
+*****Yukawa Institute different notation*****
+<s999?9?>
+
+YITP K           ---YITP-K
+
+*****TRIUMF*****
+<syys99?9?A>
+<syys99?9?>
+
+TRI PP            ---TRI-PP
+
+*****Durham U. IPPP*****
+<syys99?9?>
+
+IPPP              ---IPPP
+
+
+*****ITEP*****
+<s99?9?syy>
+<syyyys999?>
+
+ITEP TH           ---ITEP-TH
+ITEP LAT          ---ITEP-LAT
+ITEP PH           ---ITEP-PH
+ITEP M            ---ITEP-M
+ITEP YM           ---ITEP-YM
+ITEP              ---ITEP
+
+*****Korea Inst. Advanced Study*****
+<99999?9?>
+
+KIAS P          ---KIAS-P
+KIAS Q          ---KIAS-Q
+
+*****Tokyo Inst. Tech.*****
+<s999?>
+<s999?-NP>
+
+TIT HEP         ---TIT-HEP
+
+*****Lyon*****
+<s999?9?>
+<syyyys99?9?>
+<syys99?9?>
+
+LYCEN           ---LYCEN
+LYCEN T         ---LYCEN-T
+
+*****UCLA****
+<99?9?9?>
+
+UCRHEP T        ---UCRHEP-T
+
+*****ProQuest*****
+<s99999999?9?9?>
+
+PROQUEST        ---PROQUEST
+
+*****Zurich*****
+<s99?syy>
+
+ZU TH           ---ZU-TH
+
+*****collection of different rn with just a number*****
+<s99?9?9?9?9?>
+
+BABAR BAD NOTE  ---BABAR-BAD-NOTE
+BABAR BAIS      ---BABAR-BAIS
+BABAR NOTE      ---BABAR-NOTE
+BABAR           ---BABAR
+KUNS            ---KUNS
+UCRL AGM        ---UCRL-AGM
+UCRL TRANS      ---UCRL-TRANS
+UCRL AGM P      ---UCRL-AGM-P
+UCRL JC         ---UCRL-JC
+UCRL JRNL       ---UCRL-JRNL
+UCRL LR         ---UCRL-LR
+UCRL ID         ---UCRL-ID
+UCRL ERAN       ---UCRL-ERAN
+UCRL PROC       ---UCRL-PROC
+UCRL            ---UCRL
+PUPT            ---PUPT
+INS TH          ---INS-TH
+INS J           ---INS-J
+INS NUMA        ---INS-NUMA
+INS TL          ---INS-TL
+INS             ---INS
+CU TP           ---CU-TP
+CU NPL          ---CU-NPL
+BROWN HET       ---BROWN-HET
+SSC N           ---SSC-N
+SSC MAG         ---SSC-MAG
+SSC GR          ---SSC-GR
+SSC SR          ---SSC-SR
+SSC LOG         ---SSC-LOG
+SSC PC          ---SSC-PC
+SSC SDE         ---SSC-SDE
+SSC PAC         ---SSC-PAC
+SSC EOI         ---SSC-EOI
+SSC TN          ---SSC-TN
+SSC SDC         ---SSC-SDC
+SSCL PREPRINT   ---SSCL-PREPRINT
+SSCL SR         ---SSCL-SR
+SSCL N          ---SSCL-N
+SSCL            ---SSCL
+SSC             ---SSC
+LTH             ---LTH
+UTHEP           ---UTHEP
+OU HET          ---OU-HET
+OU TAP          ---OU-TAP
+RIMS            ---RIMS
+UAB FT          ---UAB-FT
+UAB LFAE        ---UAB-LFAE
+MURA            ---MURA
+OITS            ---OITS
+IUHET           ---IUHET
+UT HET          ---UT-HET
+STEWARD         ---STEWARD
+HUPD            ---HUPD
+BRX TH          ---BRX-TH
+MAD PH          ---MAD-PH
+MAD TH          ---MAD-TH
+COLO HEP        ---COLO-HEP
+RIFP            ---RIFP
+ESO             ---ESO
+ESO TP          ---ESO-TP
+UCID            ---UCID
+RBRC            ---RBRC
+PTP PTM         ---PTP-PTM
+PEP PROPOSAL    ---PEP-PROPOSAL
+PEP             ---PEP
+CFA             ---CFA
+AAT             ---AAT
+OCU PHYS        ---OCU-PHYS
+OCU HEP         ---OCU-HEP
+OCU             ---OCU
+FSU HEP         ---FSU-HEP
+IFUSP P         ---IFUSP-P
+USM TH          ---USM-TH
+RIKEN AF NP     ---RIKEN-AF-NP
+RIKEN QHP       ---RIKEN-QHP
+RIKEN TH        ---RIKEN-TH
+RIKEN MP        ---RIKEN-MP
+RIKEN ITHEMS REPORT   ---RIKEN-ITHEMS-REPORT
+RIKEN STAMP     ---RIKEN-STAMP
+RIKEN NC NP     ---RIKEN-NC-NP
+NUB             ---NUB
+OCHA PP         ---OCHA-PP
+WROCLAW         ---WROCLAW
+TMUP HEL        ---TMUP-HEL
+ISSP A          ---ISSP-A
+UMHEP           ---UMHEP
+CLNS            ---CLNS
+PEP PTM         ---PEP-PTM
+ATL M PN        ---ATL-M-PN
+JHU TIPAC       ---JHU-TIPAC
+UTAP            ---UTAP
+MSUHEP          ---MSUHEP
+BELLE CONF      ---BELLE-CONF
+CHIBA EP        ---CHIBA-EP
+ATL I PN        ---ATL-I-PN
+IS J            ---IS-J
+CEA N           ---CEA-N
+HEPL            ---HEPL
+IRAM            ---IRAM
+CRM             ---CRM
+UTF             ---UTF
+
+*****collection of different rn with two year digits and a number*****
+<syys99?9?9?9?>
+
+PUPT            ---PUPT
+UTHEP           ---UTHEP
+JLAB THY        ---JLAB-THY
+JLAB PHY        ---JLAB-PHY
+JLAB ACC        ---JLAB-ACC
+JLAB ACP        ---JLAB-ACP
+JLAB ACT        ---JLAB-ACT
+JLAB ACO        ---JLAB-ACO
+JLAB ACE        ---JLAB-ACE
+JLAB FEL        ---JLAB-FEL
+JLAB IT         ---JLAB-IT
+IASSNS HEP      ---IASSNS-HEP
+IASSNS AST      ---IASSNS-AST
+HU TFT          ---HU-TFT
+
