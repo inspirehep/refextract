@@ -118,6 +118,80 @@ def test_extra_a_in_report_number():
     assert references[0]['linemarker'] == [u'14']
 
 
+def test_fermi_report_number_AD_APC():
+    ref_line = u'[8] V. Lebedev et al. (PIP-II Collaboration), The PIP-II Conceptual Design Report, FERMILAB-TM-2649-AD-APC (2017).'
+    res = get_references(ref_line)
+    references = res[0]
+    assert references[0]['reportnumber'] == [u'FERMILAB-TM-2649-AD-APC']
+    assert references[0]['linemarker'] == [u'8']
+
+
+def test_fermi_report_number_AD_APC_TD():
+    ref_line = u'[9] G. Ambrosio et al., Fermilab Report Fermilab-FN-0954-AD-APC-TD (2013).'
+    res = get_references(ref_line)
+    references = res[0]
+    assert references[0]['reportnumber'] == [u'FERMILAB-FN-0954-AD-APC-TD']
+    assert references[0]['linemarker'] == [u'9']
+
+
+def test_fermi_report_number_no_suffix():
+    ref_line = u'[8] T.  H.  Nicol,  "TESLA  Test  Cell  Cryostat  Support  Post  Thermal  and Structural Analysis, "FERMILAB-TM-1794, Fermilab, 1992.'
+    res = get_references(ref_line)
+    references = res[0]
+    assert references[0]['reportnumber'] == [u'FERMILAB-TM-1794']
+    assert references[0]['linemarker'] == [u'8']
+
+
+def test_fermi_report_number_mulitple():
+    ref_line = u'[17] ILC Collaboration, G. Aaronset al., ILC Reference Design Report Volume 1 - Executive Summary, FERMILAB-DESIGN-2007-03, FERMILAB-PUB-07-794-E, arXiv:0712.1950 [physics.acc-ph].'
+    res = get_references(ref_line)
+    references = res[0]
+    assert references[0]['reportnumber'] == [
+        u'FERMILAB-Design-2007-03',
+        u'FERMILAB-Pub-07-794-E',
+        u'arXiv:0712.1950 [physics.acc-ph]'
+    ]
+    assert references[0]['linemarker'] == [u'17']
+
+
+def test_not_fermi_report_number():
+    ref_line = u'[17]  S.-h. Lee, C. DeTar, H. Na, and D. Mohler (Fermilab Lattice, MILC), (2014), arXiv:1411.1389 [hep-lat].'
+    res = get_references(ref_line)
+    references = res[0]
+    assert references[0]['reportnumber'] == [u'arXiv:1411.1389 [hep-lat]']
+    assert references[0]['linemarker'] == [u'17']
+
+
+def test_d0_cdf_note_report_number():
+    ref_line = u'[7] CDF and D0 Collaborations, CDF Note 9787, D0 Note 5928 (2009); T. Aaltonenet al. (CDF Collaboration), Phys. Rev. Lett.100, 161802 (2008);'
+    res = get_references(ref_line)
+    references = res[0]
+    assert references[0]['reportnumber'] == [
+        u'CDF-NOTE-9787',
+        u'D0-Note-5928'
+    ]
+    assert references[0]['linemarker'] == [u'7']
+
+
+def test_d0_symbol_report_number():
+    ref_line = u'[71] J. Estrada, C. Garcia, B. Hoeneisen, and P. Rubinov, "MCM II and the Trip chip," FERMILAB-TM-2226 (DØ note 4009), 2002.'
+    res = get_references(ref_line)
+    references = res[0]
+    assert references[0]['reportnumber'] == [
+        u'FERMILAB-TM-2226',
+        u'D0-Note-4009'
+    ]
+    assert references[0]['linemarker'] == [u'71']
+
+
+def test_d0_conf_note_report_number():
+    ref_line = u'[4]  D0 Collaboration, D0 Note 6417-CONF (2015)'
+    res = get_references(ref_line)
+    references = res[0]
+    assert references[0]['reportnumber'] == [u'D0-Note-6417-CONF']
+    assert references[0]['linemarker'] == [u'4']
+
+
 def test_get_plaintext_document_body(tmpdir):
     input = [u"Some text\n", u"on multiple lines\n"]
     f = tmpdir.join("plain.txt")
