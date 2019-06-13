@@ -154,6 +154,22 @@ def test_fermi_report_number_mulitple():
     assert references[0]['linemarker'] == [u'17']
 
 
+def test_fermi_report_number_ESH():
+    ref_line = u'[11] T. Sanami, Applicability of a Bonner Sphere technique for pulsed neutron in 120 GeV proton facility, in Proceedings of the 22nd Workshop on Radiation Detectors and Their Uses, pp. 148-159, FERMILAB-CONF-08-203-AD-APC-E-ESH (2008).'
+    res = get_references(ref_line)
+    references = res[0]
+    assert references[0]['reportnumber'] == [u'FERMILAB-Conf-08-203-AD-APC-E-ESH']
+    assert references[0]['linemarker'] == [u'11']
+
+
+def test_fermi_report_number_wdrs():
+    ref_line = u'[5] M. Bardeen & M. Wayne, E-Labs - Learning with Authentic Data, FERMILAB-CONF-16-205-WDRS (2016).'
+    res = get_references(ref_line)
+    references = res[0]
+    assert references[0]['reportnumber'] == [u'FERMILAB-Conf-16-205-WDRS']
+    assert references[0]['linemarker'] == [u'5']
+
+
 def test_not_fermi_report_number():
     ref_line = u'[17]  S.-h. Lee, C. DeTar, H. Na, and D. Mohler (Fermilab Lattice, MILC), (2014), arXiv:1411.1389 [hep-lat].'
     res = get_references(ref_line)
