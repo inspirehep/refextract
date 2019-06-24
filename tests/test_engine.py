@@ -208,6 +208,64 @@ def test_d0_conf_note_report_number():
     assert references[0]['linemarker'] == [u'4']
 
 
+def test_doi_4_digit():
+    ref_line = u'[32]  E. Armengaud, et al., JINST 10(05), P05007 (2015). doi:10.1088/1748-0221/10/05/P05007.'
+    res = get_references(ref_line)
+    references = res[0]
+    expected = [
+        {
+            'author': [u'E. Armengaud, et al.'],
+            'doi': [u'doi:10.1088/1748-0221/10/05/P05007'],
+            'journal_page': [u'P05007'],
+            'journal_reference': [u'JINST 10 (2015) P05007'],
+            'journal_title': [u'JINST'],
+            'journal_volume': [u'10'],
+            'journal_year': [u'2015'],
+            'linemarker': [u'32'],
+            'raw_ref': [ref_line],
+            'year': [u'2015'],
+        }
+    ]
+    assert references == expected
+
+
+def test_doi_5_digit_multi():
+    ref_line = u'38 R. Aaij et al. (LHCb Collaboration), "Measurement of charged particle multiplicities in pp collisions at ps = 7 TeV in the forward region", Eur. Phys. J. C (2012) 72: 1947. DOI: 10.1140/epjc/s10052-012-1947-8. HepData DOI: 10.17182/hepdata.65435.'
+    res = get_references(ref_line)
+    references = res[0]
+    expected = [
+        {
+            'author': [u'R. Aaij et al.'],
+            'misc': [u'(LHCb Collaboration)'],
+            'title': [u'Measurement of charged particle multiplicities in pp collisions at ps = 7 TeV in the forward region'],
+            'doi': [u'doi:10.1140/epjc/s10052-012-1947-8'],
+            'journal_page': [u'1947'],
+            'journal_reference': [u'Eur. Phys. J. C 72 (2012) 1947'],
+            'journal_title': [u'Eur. Phys. J. C'],
+            'journal_volume': [u'72'],
+            'journal_year': [u'2012'],
+            'linemarker': [u'38'],
+            'year': [u'2012'],
+            'raw_ref': [ref_line],
+        },
+        {
+            'misc': [u'HepData'],
+            'doi': [u'doi:10.17182/hepdata.65435'],
+            'linemarker': [u'38'],
+            'raw_ref': [ref_line],
+        }
+    ]
+    assert references == expected
+
+
+def test_doi_subdivisions():
+    ref_line = u'[10] A. Smith et al., "Introduction to Particle Physics", 2017, Springer Publishing, ISBN: 97881925212214, DOI: 10.978.819252/12214.'
+    res = get_references(ref_line)
+    references = res[0]
+    assert references[0]['doi'] == [u'doi:10.978.819252/12214']
+    assert references[0]['linemarker'] == [u'10']
+
+
 def test_get_plaintext_document_body(tmpdir):
     input = [u"Some text\n", u"on multiple lines\n"]
     f = tmpdir.join("plain.txt")
