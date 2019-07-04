@@ -659,7 +659,8 @@ re_doi = (re.compile(ur"""
     ((\(?[Dd][Oo][Ii](\s)*\)?:?(\s)*)       # 'doi:' or 'doi' or '(doi)' (upper or lower case)
     |(https?://(dx\.)?doi\.org\/))?         # or 'http://(dx.)doi.org/'  (neither has to be present)
     (?P<doi>10\.                            # 10.                        (mandatory for DOI's)
-    \d{4}                                   # [0-9] x4
+    \d{3,7}                                 # [0-9] x 3-7
+    (\.\w+)*                                # subdivisions separated by . (doesn't have to be present)
     (/|%2f)                                 # / (possibly urlencoded)
     [\w\-_:;\(\)/\.<>]+                     # any character
     [\w\-_:;\(\)/<>])                       # any character excluding a full stop
