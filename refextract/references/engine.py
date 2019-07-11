@@ -584,11 +584,13 @@ def add_recid_elements(splitted_citations):
 
 
 def arxiv_urls_to_report_numbers(citation_elements):
-    arxiv_url_prefix = 'http://arxiv.org/abs/'
+    arxiv_url_prefix = re.compile('^https?:\/\/(?:(?:cn\.|de\.|in\.|lanl\.)?arxiv\.org|xxx\.lanl\.gov)\/(?:abs|pdf)\/(\S+\d{4})(?:v\d{1,2})?(?:\.pdf)?', re.UNICODE | re.IGNORECASE)
     for el in citation_elements:
-        if el['type'] == 'URL' and el['url_string'].startswith(arxiv_url_prefix):
-            el['type'] = 'REPORTNUMBER'
-            el['report_num'] = el['url_string'].replace(arxiv_url_prefix, 'arXiv:')
+        if el['type'] == 'URL' and el['url_string']:
+            matchobj = arxiv_url_prefix.match(el['url_string'])
+            if matchobj:
+                el['type'] = 'REPORTNUMBER'
+                el['report_num'] = 'arXiv:' + matchobj.group(1)
 
 
 def look_for_hdl(citation_elements):

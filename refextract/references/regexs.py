@@ -68,20 +68,26 @@ re_pos = compute_pos_patterns(re_pos_patterns)
 
 # Pattern for arxiv numbers
 # arxiv 9910-1234v9 [physics.ins-det]
-re_arxiv = re.compile(r"""
-    ARXIV[\s:-]*(?P<year>\d{2})-?(?P<month>\d{2})
-    [\s.-]*(?P<num>\d{4})(?!\d)(?:[\s-]*V(?P<version>\d))?
+re_arxiv = re.compile(r"""(?:(?:https?://(?:www\.)?arxiv\.org/(?:abs|pdf)/)|
+    (?:https?://(?:xxx\.)?lanl\.gov/(?:abs|pdf)/)|
+    (?:ARXIV[\s:-]*))(?P<year>\d{2})-?(?P<month>\d{2})
+    [\s.-]*(?P<num>\d{4})(?!\d)(?:[\s-]*V(?P<version>\d{1,2}))?
+    (?:\.pdf)?
     \s*(?P<suffix>\[[A-Z.-]+\])? """, re.VERBOSE | re.UNICODE | re.IGNORECASE)
 
-re_arxiv_5digits = re.compile(r"""
-    ARXIV[\s:-]*(?P<year>(1[3-9]|[2-8][0-9]))-?(?P<month>(0[1-9]|1[0-2]))
-    [\s.-]*(?P<num>\d{5})(?!\d)(?:[\s-]*V(?P<version>\d))?
+re_arxiv_5digits = re.compile(r"""(?:(?:https?://(?:www\.)?arxiv\.org/(?:abs|pdf)/)|
+    (?:https?://(?:xxx\.)?lanl\.gov/(?:abs|pdf)/)|
+    (?:ARXIV[\s:-]*))(?P<year>(1[3-9]|[2-8][0-9]))-?(?P<month>(0[1-9]|1[0-2]))
+    [\s.-]*(?P<num>\d{5})(?!\d)
+    (?:[\s-]*V(?P<version>\d{1,2}))?
+    (?:\.pdf)?
     \s*(?P<suffix>\[[A-Z.-]+\])? """, re.VERBOSE | re.UNICODE | re.IGNORECASE)
 
 # Pattern for arxiv numbers catchup
 # arxiv:9910-123 [physics.ins-det]
-RE_ARXIV_CATCHUP = re.compile(r"""
-    ARXIV[\s:-]*(?P<year>\d{2})-?(?P<month>\d{2})
+RE_ARXIV_CATCHUP = re.compile(r"""(?:(?:https?://(?:www\.)?arxiv\.org/(?:abs|pdf)/)|
+    (?:https?://(?:xxx\.)?lanl\.gov/(?:abs|pdf)/)|
+    (?:ARXIV[\s:-]*))(?P<year>\d{2})-?(?P<month>\d{2})
     [\s.-]*(?P<num>\d{3})
     \s*\[(?P<suffix>[A-Z.-]+)\]""", re.VERBOSE | re.UNICODE | re.IGNORECASE)
 
