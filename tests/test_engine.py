@@ -266,6 +266,17 @@ def test_doi_subdivisions():
     assert references[0]['linemarker'] == [u'10']
 
 
+def test_ptep_page():
+    ref_line = u'[MS18] O. Morikawa and H. Suzuki, Numerical study of the N = 2 Landau-Ginzburg model, PTEP 2018 (2018) 083B05, arXiv:1805.10735'
+    res = get_references(ref_line)
+    references = res[0]
+    assert references[0]['journal_page'] == [u'083B05']
+    assert references[0]['journal_reference'] == [u'PTEP 2018 (2018) 083B05']
+    assert references[0]['journal_title'] == [u'PTEP']
+    assert references[0]['journal_volume'] == [u'2018']
+    assert references[0]['journal_year'] == [u'2018']
+
+
 def test_get_plaintext_document_body(tmpdir):
     input = [u"Some text\n", u"on multiple lines\n"]
     f = tmpdir.join("plain.txt")

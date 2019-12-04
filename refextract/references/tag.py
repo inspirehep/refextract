@@ -474,7 +474,7 @@ def find_numeration_more(line):
             return {'year': info.get('year', None),
                     'series': series,
                     'volume': info['vol_num'],
-                    'page': info['page'] or info['jinst_page'],
+                    'page': info['page'] or info['jinst_page'] or info['ptep_page'],
                     'page_end': info['page_end'],
                     'len': len(info['aftertitle'])}
 

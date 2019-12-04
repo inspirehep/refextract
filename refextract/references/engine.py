@@ -164,7 +164,6 @@ def handle_special_journals(citation_elements, kbs):
             if el['page'].isdigit():
                 # JHEP and JCAP have always pages 3 digits long
                 el['page'] = '%03d' % int(el['page'])
-
     return citation_elements
 
 
@@ -520,7 +519,8 @@ def look_for_implied_ibids(splitted_citations):
                                    'title': current_journal['title'],
                                    'volume': volume,
                                    'year': numeration['year'],
-                                   'page': numeration['page'] or numeration['jinst_page'],
+                                   'page': numeration['page'] or numeration['jinst_page'] or \
+                                           numeration['ptep_page'],
                                    'page_end': numeration['page_end'],
                                    'is_ibid': True,
                                    'extra_ibids': []}

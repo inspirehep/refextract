@@ -469,7 +469,8 @@ re_page_prefix = ur"[pP]?[p]?\.?\s?"  # Starting page num: optional Pp.
 re_page_num = ur"[RL]?\w?\d+[cC]?"    # pagenum with optional R/L
 re_page_sep = ur"\s*-\s*"             # optional separator between pagenums
 re_jinst_page = ur'(?P<jinst_page>[pP]\d{5}\d*)'
-re_page = ur"(%s|%s)" % (re_jinst_page, re_page_prefix +
+re_ptep_page = ur'(?P<ptep_page>\d{3}[A-Z]\d{2})'
+re_page = ur"(%s|%s|%s)" % (re_jinst_page, re_ptep_page, re_page_prefix +
                          u"(?P<page>" + re_page_num + u")(?:" + re_page_sep +
                          u"(?P<page_end>" + re_page_num + u"))?")
 
