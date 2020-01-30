@@ -208,6 +208,56 @@ def test_d0_conf_note_report_number():
     assert references[0]['linemarker'] == [u'4']
 
 
+def test_fermilab_proposal_report_number():
+    ref_line = u'7. A Proposal to Measure νμ → νe Oscillations and νgm Disappearance at the Fermilab Booster: BooNEE. Church, et al. (Eds.), Fermilab Proposal 898 (1997)'
+    res = get_references(ref_line)
+    references = res[0]
+    assert references[0]['reportnumber'] == [u'FERMILAB-Proposal-898']
+    assert references[0]['linemarker'] == [u'7']
+
+
+def test_false_fermilab_proposal_report_number():
+    ref_line = u'[10] T. Roberts, et al., 1976, Fermilab proposal neutron - deuteron elastic scattering'
+    res = get_references(ref_line)
+    references = res[0]
+    expected = [
+        {
+            'author': [u'T. Roberts, et al.'],
+            'linemarker': [u'10'],
+            'misc': [u'Fermilab proposal neutron - deuteron elastic scattering'],
+            'year':[u'1976'],
+            'raw_ref': [ref_line],
+        }
+    ]
+    assert references == expected
+
+
+def test_microboone_note_report_number():
+    ref_line = u'[9] The MicroBooNE Collaboration. Space Charge Effect Measurements and Corrections. MICROBOONE-NOTE-1018-PUB, 2016. URL http://www-microboone.fnal.gov/publications/publicnotes/index.html.'
+    res = get_references(ref_line)
+    references = res[0]
+    assert references[0]['reportnumber'] == [u'MICROBOONE-NOTE-1018-PUB']
+    assert references[0]['linemarker'] == [u'9']
+
+
+def test_microboone_fale_report_numbr():
+    ref_line = u'[40] MicroBooNE, LAr1-ND, ICARUS-WA104 collaboration, M. Antonello et al., A Proposal for a Three Detector Short-Baseline Neutrino Oscillation Program in the Fermilab Booster Neutrino Beam, 1503.01520.'
+    res = get_references(ref_line)
+    references = res[0]
+    expected = [
+        {
+            'author': [u'M. Antonello et al.'],
+            'linemarker': [u'40'],
+            'misc': [u'MicroBooNE, LAr1-ND, ICARUS-WA104 collaboration',
+                     u'A Proposal',
+                     u'for a Three Detector Short-Baseline Neutrino Oscillation Program in the Fermilab Booster Neutrino Beam'],
+            'raw_ref': [ref_line],
+            'reportnumber': [u'arXiv:1503.01520'],
+        }
+    ]
+    assert references == expected
+
+
 def test_doi_4_digit():
     ref_line = u'[32]  E. Armengaud, et al., JINST 10(05), P05007 (2015). doi:10.1088/1748-0221/10/05/P05007.'
     res = get_references(ref_line)
