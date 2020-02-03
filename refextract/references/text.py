@@ -21,8 +21,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-from __future__ import absolute_import, division, print_function
-
 import logging
 import re
 
@@ -144,7 +142,7 @@ def get_reference_lines(docbody,
 
 def match_pagination(ref_line):
     """Remove footer pagination from references lines"""
-    pattern = ur'\(?\[?(\d{1,4})\]?\)?\.?\s*$'
+    pattern = r'\(?\[?(\d{1,4})\]?\)?\.?\s*$'
     re_footer = re.compile(pattern, re.UNICODE)
     match = re_footer.match(ref_line)
     if match:
@@ -154,7 +152,7 @@ def match_pagination(ref_line):
 
 def strip_footer(ref_lines, section_title):
     """Remove footer title from references lines"""
-    pattern = ur'\(?\[?\d{0,4}\]?\)?\.?\s*%s\s*$' % re.escape(section_title)
+    pattern = r'\(?\[?\d{0,4}\]?\)?\.?\s*%s\s*$' % re.escape(section_title)
     re_footer = re.compile(pattern, re.UNICODE)
     return [l for l in ref_lines if not re_footer.match(l)]
 
@@ -191,7 +189,7 @@ def rebuild_reference_lines(ref_sectn, ref_line_marker_ptn):
     if not ref_line_marker_ptn:
         if test_for_blank_lines_separating_reference_lines(ref_sectn):
             # Use blank lines to separate ref lines
-            ref_line_marker_ptn = ur'^\s*$'
+            ref_line_marker_ptn = r'^\s*$'
         else:
             # No ref line dividers
             # We are guessing this the format:
@@ -201,7 +199,7 @@ def rebuild_reference_lines(ref_sectn, ref_line_marker_ptn):
             #      etc
             # We split when there's no identation
             indentation_splitting = True
-            ref_line_marker_ptn = ur'^[^\s]'
+            ref_line_marker_ptn = r'^[^\s]'
 
     LOGGER.debug(u"references separator %s", ref_line_marker_ptn)
     p_ref_line_marker = re.compile(ref_line_marker_ptn, re.I | re.UNICODE)
@@ -220,8 +218,8 @@ def rebuild_reference_lines(ref_sectn, ref_line_marker_ptn):
             working_line = join_lines(working_line, l.strip())
         return working_line.rstrip()
 
-    lower_case_start = re.compile(ur'[a-z]')
-    continuing_line_markers = re.compile(ur'[,&-]$')
+    lower_case_start = re.compile(r'[a-z]')
+    continuing_line_markers = re.compile(r'[,&-]$')
 
     for line in ref_sectn:
         # Can't find a good way to distinguish between
@@ -308,7 +306,7 @@ def wash_and_repair_reference_line(line):
     line = replace_undesirable_characters(line)
     # Replace "<title>," with "<title>",
     # common typing mistake
-    line = re.sub(ur'"([^"]+),"', ur'"\g<1>",', line)
+    line = re.sub(r'"([^"]+),"', r'"\g<1>",', line)
     line = replace_undesirable_characters(line)
     # Remove instances of multiple spaces from line, replacing with a
     # single space:

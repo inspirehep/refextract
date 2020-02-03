@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of refextract.
-# Copyright (C) 2013, 2015, 2016, 2017, 2018 CERN.
+# Copyright (C) 2013, 2015, 2016, 2017, 2018, 2020 CERN.
 #
 # refextract is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -22,8 +22,6 @@
 # or submit itself to any jurisdiction.
 
 """Main engine responsible for extracting references from PDF documents."""
-
-from __future__ import absolute_import, division, print_function
 
 import logging
 import re
@@ -173,7 +171,7 @@ def format_report_number(citation_elements):
 
     e.g. CERN-LCHH2003-01 to CERN-LHCC-2003-01
     """
-    re_report = re.compile(ur'^(?P<name>[A-Z-]+)(?P<nums>[\d-]+)$', re.UNICODE)
+    re_report = re.compile(r'^(?P<name>[A-Z-]+)(?P<nums>[\d-]+)$', re.UNICODE)
     for el in citation_elements:
         if el['type'] == 'REPORTNUMBER':
             m = re_report.match(el['report_num'])
@@ -272,7 +270,7 @@ def mangle_volume(citation_elements):
 
     e.g. transforms 100B to B100
     """
-    volume_re = re.compile(ur"(\d+)([A-Z])", re.U | re.I)
+    volume_re = re.compile(r"(\d+)([A-Z])", re.U | re.I)
     for el in citation_elements:
         if el['type'] == 'JOURNAL':
             matches = volume_re.match(el['volume'])
@@ -1369,7 +1367,7 @@ def remove_leading_garbage_lines_from_reference_section(ref_sectn):
        @return: (list) of strings - the reference section without leading
         blank lines or email addresses.
     """
-    p_email = re.compile(ur'^\s*e\-?mail', re.UNICODE)
+    p_email = re.compile(r'^\s*e\-?mail', re.UNICODE)
     while ref_sectn and (ref_sectn[0].isspace() or p_email.match(ref_sectn[0])):
         ref_sectn.pop(0)
     return ref_sectn
@@ -1397,7 +1395,7 @@ def get_plaintext_document_body(fpath, keep_layout=False):
 
     if mime_type == "text/plain":
         with open(fpath, "r") as f:
-            textbody = [line.decode("utf-8") for line in f.readlines()]
+            textbody = f.readlines()
 
     elif mime_type == "application/pdf":
         textbody = convert_PDF_to_plaintext(fpath, keep_layout)

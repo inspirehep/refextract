@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of refextract.
-# Copyright (C) 2016, 2017, 2018 CERN.
+# Copyright (C) 2016, 2017, 2018, 2020 CERN.
 #
 # refextract is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -20,8 +20,6 @@
 # In applying this license, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
-from __future__ import absolute_import, division, print_function
 
 import logging
 
@@ -58,7 +56,7 @@ def extract_texkeys_from_pdf(pdf_file):
             LOGGER.debug(u"PDF: Internal PyPDF2 error, no TeXkeys returned.")
             return []
         # not all named destinations point to references
-        refs = [dest for dest in destinations.iteritems()
+        refs = [dest for dest in destinations.items()
                 if re_reference_in_dest.match(dest[0])]
         try:
             if _destinations_in_two_columns(pdf, refs):

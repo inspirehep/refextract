@@ -21,12 +21,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-from __future__ import absolute_import, division, print_function
-
 import logging
 import re
-
-from six.moves import xrange
 
 from ..references.config import CFG_REFEXTRACT_KBS
 
@@ -70,13 +66,13 @@ UPPERCASE_RE = None
 def get_uppercase_re():
     global UPPERCASE_RE
     if not UPPERCASE_RE:
-        letter_re = re.compile(ur'(\w)', re.U)
-        letters = set(unichr(n) for n in xrange(1, 0x10000))
-        letters -= set(u'%s' % n for n in xrange(0, 10))
+        letter_re = re.compile(r'(\w)', re.U)
+        letters = set(chr(n) for n in range(1, 0x10000))
+        letters -= set(f'{n}' for n in range(0, 10))
         letters -= set(['_'])
         uppercase_letters = set(c.upper()
                                 for c in letters if letter_re.match(c))
-        UPPERCASE_RE = ur'[%s]' % ''.join(uppercase_letters)
+        UPPERCASE_RE = r'[%s]' % ''.join(uppercase_letters)
     return UPPERCASE_RE
 
 
@@ -95,7 +91,7 @@ def get_initial_surname_author_pattern(incl_numeration=False):
     else:
         append_num_re = ""
 
-    return ur"""
+    return r"""
     (?:
         (?:%(uppercase_re)s\w{2,20}\s+)?                     ## Optionally a first name before the initials
 
@@ -146,7 +142,7 @@ def get_surname_initial_author_pattern(incl_numeration=False):
     else:
         append_num_re = ""
 
-    return ur"""
+    return r"""
     (?:
         (?:
             (?!%(invalid_prefixes)s)                             ## Invalid prefixes to avoid
@@ -264,7 +260,7 @@ def make_auth_regex_str(etal, initial_surname_author=None, surname_initial_autho
     # The regex returned has around 100 named groups already (max), so any new groups must be
     # started using '?:'
 
-    return ur"""
+    return r"""
      (?:^|\s+|\()                                                     ## Must be the start of the line, or a space (or an opening bracket in very few cases)
      (?P<es>                                                        ## Look for editor notation before the author
       (?:(?:(?:[Ee][Dd]s?|[Ee]dited|[Ee]ditors?)((?:\.\s?)|(?:\.?\s)))                    ## 'eds?. '     | 'ed '      | 'ed.'
@@ -351,7 +347,7 @@ def make_auth_regex_str(etal, initial_surname_author=None, surname_initial_autho
 
 
 # Standard et al ('and others') pattern for author recognition
-re_etal = ur"""[Ee][Tt](?:(?:(?:,|\.)\s*)|(?:(?:,|\.)?\s+))[Aa][Ll][,\.]?[,\.]?"""
+re_etal = r"""[Ee][Tt](?:(?:(?:,|\.)\s*)|(?:(?:,|\.)?\s+))[Aa][Ll][,\.]?[,\.]?"""
 
 # Finding an et. al, before author names indicates a bad match!!!
 # I.e. could be a title match... ignore it
@@ -365,8 +361,8 @@ etal_matches = (
 )
 
 # Editor notation: 'eds?.' | 'ed.' | 'ed'
-re_ed_text = ur"(?:[Ee][Dd]|[Ee]dited|[Ee]ditor)\.?"
-re_ed_notation = ur"""
+re_ed_text = r"(?:[Ee][Dd]|[Ee]dited|[Ee]ditor)\.?"
+re_ed_notation = r"""
     (?:
         \(?
         %(text)s
@@ -378,7 +374,7 @@ re_ed_notation = ur"""
 
 # Used as a weak mechanism to classify possible authors above identified affiliations
 # (start) Firstname SurnamePrefix Surname (end)
-re_ambig_auth = re.compile(ur"^\s*[A-Z][^\s_<>0-9]+\s+([^\s_<>0-9]{1,3}\.?\s+)?[A-Z][^\s_<>0-9]+\s*$",
+re_ambig_auth = re.compile(r"^\s*[A-Z][^\s_<>0-9]+\s+([^\s_<>0-9]{1,3}\.?\s+)?[A-Z][^\s_<>0-9]+\s*$",
                            re.UNICODE)
 
 # Obtain the compiled expression which includes the proper author numeration
@@ -392,7 +388,7 @@ re_ambig_auth = re.compile(ur"^\s*[A-Z][^\s_<>0-9]+\s+([^\s_<>0-9]{1,3}\.?\s+)?[
 
 # Used to obtain authors chained by connectives across multiple lines
 re_comma_or_and_at_start = re.compile(
-    ur"^(,|((,\s*)?[Aa][Nn][Dd]|&))\s", re.UNICODE)
+    r"^(,|((,\s*)?[Aa][Nn][Dd]|&))\s", re.UNICODE)
 
 
 def make_collaborations_regex_str():
@@ -405,7 +401,7 @@ def make_collaborations_regex_str():
         """Strip the line, replace spaces with 'backslash s' and append 'the'
         to the start and 's' to the end. Add the prepared line to the list of
         extra kb authors."""
-        s = ur"(?:the\s)?" + s.strip().replace(u' ', ur'\s') + u"s?"
+        s = r"(?:the\s)?" + s.strip().replace(u' ', r'\s') + u"s?"
         auths.append(s)
 
     # Build the 'or'd regular expression of the author lines in the author
@@ -432,15 +428,15 @@ def make_collaborations_regex_str():
             # Shorten collaboration to 'coll'
             if rawline.lower().endswith('collaboration\n'):
                 coll_version = rawline[:rawline.lower().find(
-                    u'collaboration\n')] + ur"coll[\.\,]"
+                    u'collaboration\n')] + r"coll[\.\,]"
                 add_to_auth_list(
                     coll_version.strip().replace(' ', r'\s') + u"s?")
 
     author_match_re = ""
     if len(auths) > 0:
         author_match_re = u'|'.join([u"(?:" + a + u")" for a in auths])
-        author_match_re = ur"(?:(?:[\(\"]?(?P<extra_auth>" + \
-            author_match_re + ur")[\)\"]?[\,\.]?\s?(?:and\s)?)+)"
+        author_match_re = r"(?:(?:[\(\"]?(?P<extra_auth>" + \
+            author_match_re + r")[\)\"]?[\,\.]?\s?(?:and\s)?)+)"
 
     return author_match_re
 
@@ -481,7 +477,7 @@ def get_author_regexps():
         # PLEASE use this pattern only against space stripped text.
         # IF a bad_and was found (from above).. do re.search using this pattern
         # ELIF an auth-misc-auth combo was hit, do re.match using this pattern
-        re_weaker_author = ur"""
+        re_weaker_author = r"""
               ## look closely for initials, and less closely at the last name.
               (?:([A-Z]((\.\s?)|(\.?\s+)|(\-))){1,5}
               (?:[^\s_<>0-9]+(?:(?:[,\.]\s*)|(?:[,\.]?\s+)))+)"""

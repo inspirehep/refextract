@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of refextract.
-# Copyright (C) 2013, 2015, 2016, 2018 CERN.
+# Copyright (C) 2013, 2015, 2016, 2018, 2020 CERN.
 #
 # refextract is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -28,15 +28,11 @@ addition, there is an API call to return a parsed journal reference structure
 from a raw string.
 """
 
-from __future__ import absolute_import, division, print_function
-
 import os
-import sys
 import requests
 import magic
 
 from tempfile import mkstemp
-from itertools import izip
 
 from .engine import (
     get_kbs,
@@ -92,8 +88,8 @@ def extract_references_from_url(url, headers=None, chunk_size=1024, **kwargs):
             for chunk in req.iter_content(chunk_size):
                 f.write(chunk)
         references = extract_references_from_file(filepath, **kwargs)
-    except requests.exceptions.HTTPError:
-        raise FullTextNotAvailableError(u"URL not found: '{0}'".format(url)), None, sys.exc_info()[2]
+    except requests.exceptions.HTTPError as exc:
+        raise FullTextNotAvailableError(f"URL not found: '{url}'") from exc
     finally:
         os.remove(filepath)
     return references
@@ -146,7 +142,7 @@ def extract_references_from_file(path,
     if magic.from_file(path, mime=True) == "application/pdf":
         texkeys = extract_texkeys_from_pdf(path)
         if len(texkeys) == len(parsed_refs):
-            parsed_refs = [dict(ref, texkey=[key]) for ref, key in izip(parsed_refs, texkeys)]
+            parsed_refs = [dict(ref, texkey=[key]) for ref, key in zip(parsed_refs, texkeys)]
 
     return parsed_refs
 

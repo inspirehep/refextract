@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of refextract.
-# Copyright (C) 2013, 2015, 2016, 2018 CERN.
+# Copyright (C) 2013, 2015, 2016, 2018, 2020 CERN.
 #
 # refextract is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -34,14 +34,10 @@ for and the characters that should be used to replace them.
 replace in plain-text.
 """
 
-from __future__ import absolute_import, division, print_function
-
 import logging
 import os
 import re
 import subprocess
-
-from six import iteritems
 
 from ..references.config import CFG_PATH_PDFTOTEXT
 
@@ -443,7 +439,7 @@ def replace_undesirable_characters(line):
     for bad_string, replacement in UNDESIRABLE_STRING_REPLACEMENTS:
         line = line.replace(bad_string, replacement)
 
-    for bad_char, replacement in iteritems(UNDESIRABLE_CHAR_REPLACEMENTS):
+    for bad_char, replacement in UNDESIRABLE_CHAR_REPLACEMENTS.items():
         line = line.replace(bad_char, replacement)
 
     return line
@@ -470,7 +466,7 @@ def convert_PDF_to_plaintext(fpath, keep_layout=False):
     # If this pattern is matched, we want to split the page-break into
     # its own line because we rely upon this for trying to strip headers
     # and footers, and for some other pattern matching.
-    p_break_in_line = re.compile(ur'^\s*\f(.+)$', re.UNICODE)
+    p_break_in_line = re.compile(r'^\s*\f(.+)$', re.UNICODE)
     # build pdftotext command:
     cmd_pdftotext = [CFG_PATH_PDFTOTEXT, layout_option, "-q",
                      "-enc", "UTF-8", fpath, "-"]
@@ -478,7 +474,6 @@ def convert_PDF_to_plaintext(fpath, keep_layout=False):
     LOGGER.debug(u"%s", ' '.join(cmd_pdftotext))
     # open pipe to pdftotext:
     pipe_pdftotext = subprocess.Popen(cmd_pdftotext, stdout=subprocess.PIPE)
-
     # read back results:
     for docline in pipe_pdftotext.stdout:
         unicodeline = docline.decode("utf-8")
