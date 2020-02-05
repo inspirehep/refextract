@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of refextract.
-# Copyright (C) 2015, 2016, 2017, 2018 CERN.
+# Copyright (C) 2015, 2016, 2017, 2018, 2020 CERN.
 #
 # refextract is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -22,8 +22,6 @@
 # or submit itself to any jurisdiction.
 
 """The version of refextract."""
-
-from __future__ import absolute_import, division, print_function
 
 from autosemver.packaging import get_current_version
 

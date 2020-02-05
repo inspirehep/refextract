@@ -21,8 +21,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-from __future__ import absolute_import, division, print_function
-
 import re
 import six
 import csv
@@ -30,7 +28,6 @@ import codecs
 import contextlib
 
 from hashlib import md5
-from six import iteritems
 
 from .config import CFG_REFEXTRACT_KBS
 from .regexs import (
@@ -48,7 +45,7 @@ def file_resolving(fpath, reader=None, **kwargs):
     if isinstance(fpath, six.string_types):
         fh = codecs.open(fpath, encoding='utf-8')
         if reader:
-            yield reader(fh, delimiter=kwargs.pop('delimiter', b'|'), lineterminator=kwargs.pop('lineterminator', ';'))
+            yield reader(fh, delimiter=kwargs.pop('delimiter', '|'), lineterminator=kwargs.pop('lineterminator', ';'))
         else:
             yield fh
 
@@ -122,11 +119,11 @@ def make_cache_key(custom_kbs_files=None):
     Then _inspire is appended if we are an INSPIRE site.
     """
     if custom_kbs_files:
-        serialized_args = ('%s=%s' % v for v in iteritems(custom_kbs_files))
+        serialized_args = ('%s=%s' % v for v in custom_kbs_files.items())
         serialized_args = ';'.join(serialized_args)
     else:
         serialized_args = "default"
-    cache_key = md5(serialized_args).digest()
+    cache_key = md5(serialized_args.encode('utf-8')).digest()
     return cache_key
 
 
@@ -141,20 +138,11 @@ def order_reportnum_patterns_bylen(numeration_patterns):
        @return: (list) of tuples, where each tuple contains a pattern and
         its length.
     """
-    def _compfunc_bylen(a, b):
-        """Compares regexp patterns by the length of the pattern-text.
-        """
-        if a[0] < b[0]:
-            return 1
-        elif a[0] == b[0]:
-            return 0
-        else:
-            return -1
     pattern_list = []
     for pattern in numeration_patterns:
         base_pattern = re_regexp_character_class.sub('1', pattern)
         pattern_list.append((len(base_pattern), pattern))
-    pattern_list.sort(_compfunc_bylen)
+    pattern_list.sort(key=lambda x: x[0], reverse=True)
     return pattern_list
 
 
@@ -309,9 +297,9 @@ def build_reportnum_kb(fpath):
             # complete regex:
             # will be in the style "(categ)-(numatn1|numatn2|numatn3|...)"
             for classification in preprint_classifications:
-                search_pattern_str = ur'(?:^|[^a-zA-Z0-9\/\.\-])([\[\(]?(?P<categ>' \
+                search_pattern_str = r'(?:^|[^a-zA-Z0-9\/\.\-])([\[\(]?(?P<categ>' \
                                      + classification[0].strip() + u')' \
-                                     + numeration_regexp + ur'[\]\)]?)'
+                                     + numeration_regexp + r'[\]\)]?)'
 
                 re_search_pattern = re.compile(search_pattern_str,
                                                re.UNICODE)
@@ -339,14 +327,14 @@ def build_reportnum_kb(fpath):
     # read from the KB
 
     # pattern to recognise an institute name line in the KB
-    re_institute_name = re.compile(ur'^\*{5}\s*(.+)\s*\*{5}$', re.UNICODE)
+    re_institute_name = re.compile(r'^\*{5}\s*(.+)\s*\*{5}$', re.UNICODE)
 
     # pattern to recognise an institute preprint categ line in the KB
     re_preprint_classification = \
-        re.compile(ur'^\s*(\w.*)\s*---\s*(\w.*)\s*$', re.UNICODE)
+        re.compile(r'^\s*(\w.*)\s*---\s*(\w.*)\s*$', re.UNICODE)
 
     # pattern to recognise a preprint numeration-style line in KB
-    re_numeration_pattern = re.compile(ur'^\<(.+)\>$', re.UNICODE)
+    re_numeration_pattern = re.compile(r'^\<(.+)\>$', re.UNICODE)
 
     kb_line_num = 0    # when making the dictionary of patterns, which is
     # keyed by the category search string, this counter
@@ -415,23 +403,6 @@ def build_reportnum_kb(fpath):
             standardised_preprint_reference_categories)
 
 
-def _cmp_bystrlen_reverse(a, b):
-    """A private "cmp" function to be used by the "sort" function of a
-       list when ordering the titles found in a knowledge base by string-
-       length - LONGEST -> SHORTEST.
-       @param a: (string)
-       @param b: (string)
-       @return: (integer) - 0 if len(a) == len(b); 1 if len(a) < len(b);
-        -1 if len(a) > len(b);
-    """
-    if len(a) > len(b):
-        return -1
-    elif len(a) < len(b):
-        return 1
-    else:
-        return 0
-
-
 def build_special_journals_kb(fpath):
     """Load special journals database from file
 
@@ -466,7 +437,7 @@ def build_publishers_kb(fpath):
     with file_resolving(fpath, reader=csv.reader, lineterminator='\n') as fh:
         publishers = {}
         for line in fh:
-            pattern = re.compile(ur'(\b|^)%s(\b|$)' % line[0], re.I | re.U)
+            pattern = re.compile(r'(\b|^)%s(\b|$)' % line[0], re.I | re.U)
             publishers[line[0]] = {'pattern': pattern, 'repl': line[1]}
 
     return publishers
@@ -530,8 +501,7 @@ def load_kb_from_file(path, builder):
             if m_kb_line:  # good KB line
                 yield m_kb_line.group('seek'), m_kb_line.group('repl')
             else:
-                raise StandardError("Badly formatted kb '%s' at line %s"
-                                    % (path, rawline))
+                raise ValueError("Badly formatted kb '%s' at line %s" % (path, rawline))
 
     with file_resolving(path) as fh:
         return builder(lazy_parser(fh))
@@ -587,7 +557,7 @@ def build_journals_kb(knowledgebase):
 
         # add the phrase from the KB if the 'seek' phrase is longer
         # compile the seek phrase into a pattern:
-        seek_ptn = re.compile(ur'(?<!\w)(%s)\W' % re.escape(seek_phrase),
+        seek_ptn = re.compile(r'(?<!\w)(%s)\W' % re.escape(seek_phrase),
                               re.UNICODE)
 
         kb[seek_phrase] = seek_ptn
@@ -605,14 +575,14 @@ def build_journals_kb(knowledgebase):
         if raw_repl_phrase not in kb:
             # The replace-phrase was not in the KB as a seek phrase
             # It should be added.
-            pattern = ur'(?<!\/)\b(%s)[^A-Z0-9]' % re.escape(raw_repl_phrase)
+            pattern = r'(?<!\/)\b(%s)[^A-Z0-9]' % re.escape(raw_repl_phrase)
             seek_ptn = re.compile(pattern, re.U)
             kb[raw_repl_phrase] = seek_ptn
             standardised_titles[raw_repl_phrase] = repl_term
             seek_phrases.append(raw_repl_phrase)
 
     # Sort the titles by string length (long - short)
-    seek_phrases.sort(_cmp_bystrlen_reverse)
+    seek_phrases.sort(key=len, reverse=True)
 
     # return the raw knowledge base:
     return kb, standardised_titles, seek_phrases
@@ -621,10 +591,10 @@ def build_journals_kb(knowledgebase):
 def build_collaborations_kb(knowledgebase):
     kb = {}
     for pattern, collab in knowledgebase:
-        prefix = ur"(?:^|[\(\"\[\s]|(?<=\W))\s*(?:(?:the|and)\s+)?"
-        collaboration_pattern = ur"(?:\s*coll(?:aborations?|\.)?)?"
-        suffix = ur"(?=$|[><\]\)\"\s.,:])"
-        pattern = pattern.replace(' ', '\s')
+        prefix = r"(?:^|[\(\"\[\s]|(?<=\W))\s*(?:(?:the|and)\s+)?"
+        collaboration_pattern = r"(?:\s*coll(?:aborations?|\.)?)?"
+        suffix = r"(?=$|[><\]\)\"\s.,:])"
+        pattern = pattern.replace(' ', r'\s')
         pattern = pattern.replace('Collaboration', collaboration_pattern)
         re_pattern = "%s(%s)%s" % (prefix, pattern, suffix)
         kb[collab] = re.compile(re_pattern, re.I | re.U)

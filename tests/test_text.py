@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of refextract
-# Copyright (C) 2016, 2018 CERN.
+# Copyright (C) 2016, 2018, 2020 CERN.
 #
 # refextract is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -21,8 +21,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-from __future__ import absolute_import, division, print_function
-
 from refextract import extract_references_from_file
 from refextract.references.text import (
     rebuild_reference_lines,
@@ -30,7 +28,7 @@ from refextract.references.text import (
 
 
 def test_simple():
-    marker_pattern = ur"^\s*(?P<mark>\[\s*(?P<marknum>\d+)\s*\])"
+    marker_pattern = r"^\s*(?P<mark>\[\s*(?P<marknum>\d+)\s*\])"
     refs = [
         u"[1] hello",
         u"hello2",
@@ -44,7 +42,7 @@ def test_simple():
 
 
 def test_pagination_non_removal():
-    marker_pattern = ur"^\s*(?P<mark>\[\s*(?P<marknum>\d+)\s*\])"
+    marker_pattern = r"^\s*(?P<mark>\[\s*(?P<marknum>\d+)\s*\])"
     refs = [
         u"[1] hello",
         u"hello2",
@@ -59,7 +57,7 @@ def test_pagination_non_removal():
 
 
 def test_2_lines_together():
-    marker_pattern = ur"\s*(?P<mark>\[\s*(?P<marknum>\d+)\s*\])"
+    marker_pattern = r"\s*(?P<mark>\[\s*(?P<marknum>\d+)\s*\])"
     refs = [
         u"[1] hello",
         u"hello2 [2] foo",

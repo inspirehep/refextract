@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of refextract
-# Copyright (C) 2016, 2018 CERN.
+# Copyright (C) 2016, 2018, 2020 CERN.
 #
 # refextract is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -21,8 +21,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-from __future__ import absolute_import, division, print_function
-
 import re
 
 from refextract.references import regexs
@@ -30,7 +28,7 @@ from refextract.references import regexs
 
 def test_word():
     r = regexs._create_regex_pattern_add_optional_spaces_to_word_characters('ABC')
-    assert r == ur'A\s*B\s*C\s*'
+    assert r == r'A\s*B\s*C\s*'
 
 
 def test_reference_section_title_pattern():
