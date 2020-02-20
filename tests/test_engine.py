@@ -258,6 +258,14 @@ def test_microboone_fale_report_numbr():
     assert references == expected
 
 
+def test_slac_report_number_5_digits():
+    ref_line = u'[25] Proton-nucleus scattering approximations and implications for LHC crystal collimation, Report No. SLAC-PUB14030, https://www.slac.stanford.edu/cgi-wrap/getdoc/slac-pub-14030.pdf. REDUCTION OF 400 GeV=c SLOW EXTRACTION \u2026 PHYS. REV. ACCEL. BEAMS 23, 023501 (2020) 023501-13'
+    res = get_references(ref_line)
+    references = res[0]
+    assert references[0]['reportnumber'] == [u'SLAC-PUB-14030']
+    assert references[0]['linemarker'] == [u'25']
+
+
 def test_doi_4_digit():
     ref_line = u'[32]  E. Armengaud, et al., JINST 10(05), P05007 (2015). doi:10.1088/1748-0221/10/05/P05007.'
     res = get_references(ref_line)

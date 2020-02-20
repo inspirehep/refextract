@@ -158,3 +158,12 @@ def test_extract_references_from_url(pdf_files):
             content_type='text/plain',
         )
         extract_references_from_url(url)
+
+
+def test_long_registrant_dois(pdf_files):
+    """ DOIs with 5 digit registrant code """
+    r = extract_references_from_file(pdf_files[6])
+    assert len(r) == 6
+    for ref in r[1:]:
+        assert 'doi' in ref
+        assert ref.get('doi')[0].startswith(u'doi:10.18429/JACoW')
