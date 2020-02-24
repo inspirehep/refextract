@@ -62,3 +62,13 @@ deploy:
     branch: master
     python: 2.7
   distribution: sdist
+
+deploy:
+  provider: pypi
+  user: inspirehep
+  password:
+    secure: "VRWpn7B2QAtyNmQ3chD2Hi4lZNbQUB/aFx/p+hh/YN2W1/PiUSR7HuFyMw0fEdarDm7zTEUf576E58XWK6my9C1vVKssXQ43GnPVEk9ASau7GJN0Fnz+m3LJQze+ogiAeYVStVCxvZ/U6GU1LhwOV9WkZ5SyKzmXDkKdkPSBTJjkudK7D89hmx9m9gOq3mXWq6VisShHmO39uBtKxhWOYWfyOdfoB2jqpdT3AWZhjcbiVYGcRY5+GNL6WLLSB1Z97afW/DYVXP1IIU0ogJI9TaNl9ZmOJiN36+0LoLg+USikOXMECqqHT8MaYJ1+qP1wqy/kzJLujh6P2+hEeaSJalqbHxVDA4BybxsWnWDVGeYDCKiV+xtRpkD7OH+a2y8kCLe2Fx7Kgw3Z7zBoE/3q7ge2o9j0zSgrHQkTZhZGgdhkOdu2OEaZLTcVK+ekqkc/YbEBgCUWM7ltxz78FhfLSa18e0ZuIZTqoByLxuuKolwVBHAL+W7r6auRiT4jmtRn6Bll/oIZ/p71euWSLy20vB293e0/cZfXuGt/x+D5nu1R/yyjKcDnPesR82g3wyJgqlIiEij8FhvdH1QMqCtqKp+HUv0eOicrJiFYiMXhHAQZcY4KQBlgfx0wv43eV+SxX2RNHONqrHP6TgxVoQT3yOPrspwEi+oVsjp8Pp5ZxZg="
+  on:
+    branch: maintenance/0.2.18
+    python: 2.7
+  distribution: sdist
