@@ -35,6 +35,7 @@ import magic
 
 from .config import (
     CFG_REFEXTRACT_MARKER_CLOSING_REPORT_NUM,
+    CFG_REFEXTRACT_MARKER_CLOSING_ARXIV,
     CFG_REFEXTRACT_MARKER_CLOSING_AUTHOR_INCL,
     CFG_REFEXTRACT_MARKER_CLOSING_AUTHOR_STND,
     CFG_REFEXTRACT_MARKER_CLOSING_VOLUME,
@@ -1091,6 +1092,35 @@ def parse_tagged_reference_line(line_marker,
                 identified_citation_element = {'type': "REPORTNUMBER",
                                                'misc_txt': cur_misc_txt,
                                                'report_num': report_num}
+                count_reportnum += 1
+                cur_misc_txt = u""
+
+        elif tag_type == "ARXIV":
+
+            # This tag is an arXiv eprint:
+
+            # extract the institutional report-number from the line:
+            idx_closing_tag = processed_line.find(CFG_REFEXTRACT_MARKER_CLOSING_ARXIV,
+                                                  tag_match_end)
+            # Sanity check - did we find a closing report-number tag?
+            if idx_closing_tag == -1:
+                # no closing </cds.ARXIV> tag found - strip the opening tag and move past this
+                # recognised arXiv as it is unreliable:
+                processed_line = processed_line[tag_match_end:]
+                identified_citation_element = None
+            else:
+                # closing tag was found
+                report_num = processed_line[tag_match_end:idx_closing_tag]
+                # now trim this matched institutional report-number
+                # and its tags from the start of the line:
+                ending_tag_pos = idx_closing_tag \
+                    + len(CFG_REFEXTRACT_MARKER_CLOSING_ARXIV)
+                processed_line = processed_line[ending_tag_pos:]
+
+                identified_citation_element = {'type': "REPORTNUMBER",
+                                               'misc_txt': cur_misc_txt,
+                                               'report_num': report_num,
+                                               'is_arxiv': True}
                 count_reportnum += 1
                 cur_misc_txt = u""
 

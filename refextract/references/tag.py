@@ -373,9 +373,9 @@ def tag_arxiv(line):
             groups['suffix'] = ' ' + groups['suffix']
         else:
             groups['suffix'] = ''
-        return u'<cds.REPORTNUMBER>arXiv:%(year)s'\
+        return u'<cds.ARXIV>arXiv:%(year)s'\
             u'%(month)s.%(num)s%(suffix)s' \
-            u'</cds.REPORTNUMBER>' % groups
+            u'</cds.ARXIV>' % groups
 
     line = re_arxiv_5digits.sub(tagger, line)
     line = re_arxiv.sub(tagger, line)
@@ -396,7 +396,7 @@ def tag_arxiv_more(line):
     for report_re, report_repl in RE_OLD_ARXIV:
         report_number = report_repl + ur"/\g<num>"
         line = report_re.sub(
-            u'<cds.REPORTNUMBER>' + report_number + u'</cds.REPORTNUMBER>',
+            u'<cds.ARXIV>' + report_number + u'</cds.ARXIV>',
             line
         )
     return line
