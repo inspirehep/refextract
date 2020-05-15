@@ -283,19 +283,6 @@ def mangle_volume(citation_elements):
     return citation_elements
 
 
-def balance_authors(splitted_citations, new_elements):
-    if not splitted_citations:
-        return
-
-    last_citation = splitted_citations[-1]
-    current_citation = new_elements
-
-    if last_citation[-1]['type'] == 'AUTH' \
-            and sum([1 for cit in last_citation if cit['type'] == 'AUTH']) > 1:
-        el = last_citation.pop()
-        current_citation.insert(0, el)
-
-
 def associate_recids(citation_elements, linker_callback):
     for el in citation_elements:
         try:
@@ -305,93 +292,71 @@ def associate_recids(citation_elements, linker_callback):
     return citation_elements
 
 
-def split_citations(citation_elements):
-    """Split a citation line in multiple citations
+def split_needed(next_el, current_types, last_type):
+    repeatable_if_adjacent = {"REPORTNUMBER", "COLLABORATION"}
+    next_type = "ARXIV" if next_el.get("is_arxiv") else next_el["type"]
 
-    We handle the case where the author has put 2 citations in the same line
-    but split with ; or some other method.
+    return (
+        next_type in current_types - repeatable_if_adjacent
+        or (last_type == next_type and next_type not in repeatable_if_adjacent)
+    )
+
+
+def postpone_last_auth(current_citation, num_auth):
+    if num_auth == 0:
+        return None
+
+    if num_auth == 1:
+        func = current_citation.__getitem__
+    else:
+        func = current_citation.pop
+
+    for idx, el in enumerate(reversed(current_citation), 1):
+        if el["type"] == "AUTH":
+            return func(-idx)
+
+
+def split_citations_iter(citation_elements):
+    """Generator splitting a citation line into multiple citations.
+
+    This needs to be done when there are citations to several papers on the
+    same line, and uses the simple heuristic that if some non-repeatable fields
+    are repeated, then they signal the start of a new citation. Some additional
+    care is taken to handle authors correctly.
     """
-    splitted_citations = []
-    new_elements = []
-    current_recid = None
-    current_doi = None
-
-    def check_ibid(current_elements, trigger_el):
-        for el in new_elements:
-            if el['type'] == 'AUTH':
-                return
-
-        # Check for ibid
-        if trigger_el.get('is_ibid', False):
-            if splitted_citations:
-                els = chain(reversed(current_elements),
-                            reversed(splitted_citations[-1]))
-            else:
-                els = reversed(current_elements)
-            for el in els:
-                if el['type'] == 'AUTH':
-                    new_elements.append(el.copy())
-                    break
-
-    def start_new_citation():
-        """Start new citation"""
-        splitted_citations.append(new_elements[:])
-        del new_elements[:]
+    current_citation = []
+    current_types = set()
+    last_type = None
+    num_auth = 0
+    postponed_auth = None
 
     for el in citation_elements:
-        try:
-            el_recid = el['recid']
-        except KeyError:
-            el_recid = None
+        if split_needed(el, current_types, last_type):
+            if postponed_auth:
+                current_citation.insert(0, postponed_auth)
+                num_auth += 1
+            postponed_auth = postpone_last_auth(current_citation, num_auth)
+            yield current_citation
+            current_citation = []
+            current_types = set()
+            last_type = None
+            num_auth = 0
 
-        if current_recid and el_recid and current_recid == el_recid:
-            # Do not start a new citation
-            pass
-        elif current_recid and el_recid and current_recid != el_recid \
-                or current_doi and el['type'] == 'DOI' and \
-                current_doi != el['doi_string']:
-            start_new_citation()
-            # Some authors may be found in the previous citation
-            balance_authors(splitted_citations, new_elements)
-        elif ';' in el['misc_txt']:
-            misc_txt, el['misc_txt'] = el['misc_txt'].split(';', 1)
-            if misc_txt:
-                new_elements.append({'type': 'MISC',
-                                     'misc_txt': misc_txt})
-            start_new_citation()
-            # In case el['recid'] is None, we want to reset it
-            # because we are starting a new reference
-            current_recid = el_recid
-            while ';' in el['misc_txt']:
-                misc_txt, el['misc_txt'] = el['misc_txt'].split(';', 1)
-                if misc_txt:
-                    new_elements.append({'type': 'MISC',
-                                         'misc_txt': misc_txt})
-                    start_new_citation()
-                    current_recid = None
+        current_citation.append(el)
 
-        if el_recid:
-            current_recid = el_recid
+        if el["type"] == "MISC":
+            continue
+        if el["type"] == "AUTH":
+            num_auth += 1
+            # detection of authors has many false positives, don't take them
+            # into account for splitting
+            continue
+        last_type = "ARXIV" if el.get("is_arxiv") else el["type"]
+        current_types.add(last_type)
 
-        if el['type'] == 'DOI':
-            current_doi = el['doi_string']
-
-        check_ibid(new_elements, el)
-        new_elements.append(el)
-
-    splitted_citations.append(new_elements)
-
-    return [el for el in splitted_citations if not empty_citation(el)]
-
-
-def empty_citation(citation):
-    els_to_remove = ('MISC', )
-    for el in citation:
-        if el['type'] not in els_to_remove:
-            return False
-        if el['misc_txt']:
-            return False
-    return True
+    if postponed_auth:
+        current_citation.insert(0, postponed_auth)
+    yield current_citation
 
 
 def valid_citation(citation):
@@ -686,7 +651,7 @@ def parse_reference_line(ref_line, kbs, bad_titles_count={}, linker_callback=Non
         associate_recids(citation_elements, linker_callback)
 
     # Split the reference in multiple ones if needed
-    splitted_citations = split_citations(citation_elements)
+    splitted_citations = list(split_citations_iter(citation_elements))
 
     # Look for implied ibids
     look_for_implied_ibids(splitted_citations)
