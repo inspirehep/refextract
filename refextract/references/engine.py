@@ -29,7 +29,6 @@ import logging
 import re
 
 from datetime import datetime
-from itertools import chain
 
 import magic
 
@@ -299,8 +298,8 @@ def split_needed(next_el, current_types, last_type):
     if ";" in next_el["misc_txt"]:
         return "semicolon"
     if (
-        next_type in current_types - repeatable_if_adjacent
-        or (last_type == next_type and next_type not in repeatable_if_adjacent)
+        next_type in current_types - repeatable_if_adjacent or
+        (last_type == next_type and next_type not in repeatable_if_adjacent)
     ):
         return "repeated field"
     return None
@@ -342,8 +341,8 @@ def split_citations_iter(citation_elements):
                 misc, el["misc_txt"] = el["misc_txt"].split(";", 1)
                 current_citation.append({"type": "MISC", "misc_txt": misc})
             if postponed_auth and (
-                num_auth == 0
-                or prev_split_reason == "repeated field"
+                num_auth == 0 or
+                prev_split_reason == "repeated field"
             ):
                 current_citation.insert(0, postponed_auth)
                 num_auth += 1
@@ -369,8 +368,8 @@ def split_citations_iter(citation_elements):
         current_types.add(last_type)
 
     if postponed_auth and (
-        num_auth == 0
-        or prev_split_reason == "repeated field"
+        num_auth == 0 or
+        prev_split_reason == "repeated field"
     ):
         current_citation.insert(0, postponed_auth)
     yield current_citation
