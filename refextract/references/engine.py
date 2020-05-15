@@ -296,10 +296,14 @@ def split_needed(next_el, current_types, last_type):
     repeatable_if_adjacent = {"REPORTNUMBER", "COLLABORATION"}
     next_type = "ARXIV" if next_el.get("is_arxiv") else next_el["type"]
 
-    return (
+    if ";" in next_el["misc_txt"]:
+        return "semicolon"
+    if (
         next_type in current_types - repeatable_if_adjacent
         or (last_type == next_type and next_type not in repeatable_if_adjacent)
-    )
+    ):
+        return "repeated field"
+    return None
 
 
 def postpone_last_auth(current_citation, num_auth):
@@ -329,18 +333,28 @@ def split_citations_iter(citation_elements):
     last_type = None
     num_auth = 0
     postponed_auth = None
+    prev_split_reason = None
 
     for el in citation_elements:
-        if split_needed(el, current_types, last_type):
-            if postponed_auth:
+        split_reason = split_needed(el, current_types, last_type)
+        if split_reason:
+            if split_reason == "semicolon":
+                misc, el["misc_txt"] = el["misc_txt"].split(";", 1)
+                current_citation.append({"type": "MISC", "misc_txt": misc})
+            if postponed_auth and (
+                num_auth == 0
+                or prev_split_reason == "repeated field"
+            ):
                 current_citation.insert(0, postponed_auth)
                 num_auth += 1
             postponed_auth = postpone_last_auth(current_citation, num_auth)
             yield current_citation
+
             current_citation = []
             current_types = set()
             last_type = None
             num_auth = 0
+            prev_split_reason = split_reason
 
         current_citation.append(el)
 
@@ -354,7 +368,10 @@ def split_citations_iter(citation_elements):
         last_type = "ARXIV" if el.get("is_arxiv") else el["type"]
         current_types.add(last_type)
 
-    if postponed_auth:
+    if postponed_auth and (
+        num_auth == 0
+        or prev_split_reason == "repeated field"
+    ):
         current_citation.insert(0, postponed_auth)
     yield current_citation
 

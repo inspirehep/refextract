@@ -354,7 +354,6 @@ def test_reference_split():
             'journal_volume': [u'317'],
             'journal_year': [u'1993'],
             'linemarker': [u'7'],
-            'misc': [u';'],
             'raw_ref': ['[7] J. Ellis et al., Phys. Lett. B 212, 375 (1988); H. Ejiri et al., Phys. Lett. B 317, 14 (1993).'],
             'year': [u'1993']
         }
@@ -424,7 +423,6 @@ def test_reference_split_handles_repeated_fields():
     ]
 
 
-@pytest.mark.xfail(reason="No repeated fields")
 def test_reference_split_handles_semicolon():
     ref_line = "[7] Y.   Nara,   A.   Ohnishi,   and   H.   Stocker,arXiv:1601.07692 [hep-ph]; V. P. Konchakovski, W.Cassing, Yu. B. Ivanov and V. D. Toneev, Phys.Rev.C 90, 014903 (2014);"
     res = get_references(ref_line)
