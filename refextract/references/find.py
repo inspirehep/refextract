@@ -323,8 +323,8 @@ def find_reference_section_no_title_generic(docbody, marker_patterns):
             else:
                 # Check for number 2
                 found = False
-                for l in zone_to_check:
-                    mark_match2 = regex_match_list(l.strip(), marker_patterns)
+                for line_ in zone_to_check:
+                    mark_match2 = regex_match_list(line_.strip(), marker_patterns)
                     if mark_match2 and mark_match2.group('marknum') == '2':
                         found = True
                         break

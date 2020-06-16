@@ -305,6 +305,7 @@ def test_doi_5_digit_multi():
             'raw_ref': [ref_line],
         },
         {
+            'author': [u'R. Aaij et al.'],
             'misc': [u'HepData'],
             'doi': [u'doi:10.17182/hepdata.65435'],
             'linemarker': [u'38'],
@@ -334,3 +335,102 @@ def test_get_plaintext_document_body(tmpdir):
         f.write(html)
         get_plaintext_document_body(str(f))
     assert 'text/html' in excinfo.value.args
+
+
+def test_reference_split():
+    ref_line = "[7] J. Ellis et al., Phys. Lett. B 212, 375 (1988); H. Ejiri et al., Phys. Lett. B 317, 14 (1993)."
+    res = get_references(ref_line)
+    references = res[0]
+    expected = [
+        {
+            'journal_title': [u'Phys. Lett. B'],
+            'author': [u'J. Ellis et al.'],
+            'year': [u'1988'],
+            'journal_volume': [u'212'],
+            'journal_reference': [u'Phys. Lett. B 212 (1988) 375'],
+            'journal_year': [u'1988'],
+            'linemarker': [u'7'],
+            'raw_ref': ['[7] J. Ellis et al., Phys. Lett. B 212, 375 (1988); H. Ejiri et al., Phys. Lett. B 317, 14 (1993).'], 'journal_page': [u'375']
+        },
+        {
+            'author': [u'H. Ejiri et al.'],
+            'journal_page': [u'14'],
+            'journal_reference': [u'Phys. Lett. B 317 (1993) 14'],
+            'journal_title': [u'Phys. Lett. B'],
+            'journal_volume': [u'317'],
+            'journal_year': [u'1993'],
+            'linemarker': [u'7'],
+            'raw_ref': ['[7] J. Ellis et al., Phys. Lett. B 212, 375 (1988); H. Ejiri et al., Phys. Lett. B 317, 14 (1993).'],
+            'year': [u'1993']
+        }
+    ]
+    assert references == expected
+
+
+def test_reference_split_ibid():
+    ref_line = """[17] See for example: Hagelin J S, Kelley S and Tanaka T 1994 Nucl. Phys. B 415 (1994) 293. Moroi T 1996
+Phys. Rev. D 53 6565 [Erratum-ibid. D 56 (1997) 4424] (Preprint hep-ph/9512396)."""
+    res = get_references(ref_line)
+    references = res[0]
+    assert len(references) == 3
+    assert references[2]['journal_title'] == [u'Phys. Rev. D']
+    assert references[2]['journal_volume'] == [u'D56']
+    assert references[2]['journal_page'] == [u'4424']
+    assert references[2]['journal_year'] == [u'1997']
+
+
+def test_reference_split_handles_authors_correctly():
+    ref_line = "[27] K. P. Das and R. C. Hwa, Phys. Lett.B 68, (1977) 459; Erratum Phys. Lett.B 73(1978) 504; D. Mol-nar and S. A. Voloshin, Phys. Rev. Lett.91(2003) 092301; V. Greco, C.M. Ko and P. Levai, Phys.Rev.C 68(2003) 034904; B. Zhang, Lie-Wen Chen and C. M. Ko, Phys.Rev.C 72(2005) 024906. R. J. Fries et al.Ann. Rev. Nucl. Part. Sci.58, (2008)177."
+    res = get_references(ref_line)
+    references = res[0]
+    authors = [ref["author"] for ref in references]
+    expected = [
+        ["K. P. Das and R. C. Hwa"],
+        ["K. P. Das and R. C. Hwa"],
+        ["D. Mol-nar and S. A. Voloshin"],
+        ["V. Greco, C.M. Ko and P. Levai"],
+        ["B. Zhang"],
+        ["R. J. Fries et al."],
+    ]
+    assert authors == expected
+
+
+def test_reference_split_handles_repeated_fields():
+    ref_line = u"[20] A. Buchel, \u201cFinite temperature resolution of the Klebanov-Tseytlin singularity,\u201d Nucl. Phys. B 600, 219 (2001) [hep-th/0011146]. A. Buchel, C. P. Herzog, I. R. Klebanov, L. A. Pando Zayas and A. A. Tseytlin, \u201cNonextremal gravity duals for fractional D-3 branes on the conifold,\u201d JHEP 0104 (2001) 033 [hep-th/0102105]."
+    res = get_references(ref_line)
+    references = res[0]
+    assert references == [
+        {
+            'author': [u'A. Buchel'],
+            'journal_page': [u'219'],
+            'journal_reference': [u'Nucl. Phys. B 600 (2001) 219'],
+            'journal_title': [u'Nucl. Phys. B'],
+            'journal_volume': [u'600'],
+            'journal_year': [u'2001'],
+            'linemarker': [u'20'],
+            'raw_ref': [u'[20] A. Buchel, \u201cFinite temperature resolution of the Klebanov-Tseytlin singularity,\u201d Nucl. Phys. B 600, 219 (2001) [hep-th/0011146]. A. Buchel, C. P. Herzog, I. R. Klebanov, L. A. Pando Zayas and A. A. Tseytlin, \u201cNonextremal gravity duals for fractional D-3 branes on the conifold,\u201d JHEP 0104 (2001) 033 [hep-th/0102105].'],
+            'reportnumber': [u'hep-th/0011146'],
+            'title': [u'Finite temperature resolution of the Klebanov-Tseytlin singularity'],
+            'year': [u'2001']
+        },
+        {
+            'author': [u'A. Buchel, C. P. Herzog, I. R. Klebanov, L. A. Pando Zayas and A. A. Tseytlin'],
+            'journal_page': [u'033'],
+            'journal_reference': [u'J. High Energy Phys. 0104 (2001) 033'],
+            'journal_title': [u'J. High Energy Phys.'],
+            'journal_volume': [u'0104'],
+            'journal_year': [u'2001'],
+            'linemarker': [u'20'],
+            'raw_ref': [u'[20] A. Buchel, \u201cFinite temperature resolution of the Klebanov-Tseytlin singularity,\u201d Nucl. Phys. B 600, 219 (2001) [hep-th/0011146]. A. Buchel, C. P. Herzog, I. R. Klebanov, L. A. Pando Zayas and A. A. Tseytlin, \u201cNonextremal gravity duals for fractional D-3 branes on the conifold,\u201d JHEP 0104 (2001) 033 [hep-th/0102105].'],
+            'reportnumber': [u'hep-th/0102105'],
+            'title': [u'Nonextremal gravity duals for fractional D-3 branes on the conifold'],
+            'year': [u'2001']
+        }
+    ]
+
+
+def test_reference_split_handles_semicolon():
+    ref_line = "[7] Y.   Nara,   A.   Ohnishi,   and   H.   Stocker,arXiv:1601.07692 [hep-ph]; V. P. Konchakovski, W.Cassing, Yu. B. Ivanov and V. D. Toneev, Phys.Rev.C 90, 014903 (2014);"
+    res = get_references(ref_line)
+    references = res[0]
+    assert len(references) == 2

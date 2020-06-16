@@ -367,6 +367,7 @@ re_tagged_citation = re.compile(r"""
           |YR                    ## or a YR tag
           |PG                    ## or a PG tag
           |REPORTNUMBER          ## or a REPORTNUMBER tag
+          |ARXIV                 ## or a ARXIV tag
           |SER                   ## or a SER tag
           |URL                   ## or a URL tag
           |DOI                   ## or a DOI tag

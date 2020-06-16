@@ -154,7 +154,7 @@ def strip_footer(ref_lines, section_title):
     """Remove footer title from references lines"""
     pattern = r'\(?\[?\d{0,4}\]?\)?\.?\s*%s\s*$' % re.escape(section_title)
     re_footer = re.compile(pattern, re.UNICODE)
-    return [l for l in ref_lines if not re_footer.match(l)]
+    return [line for line in ref_lines if not re_footer.match(line)]
 
 
 def rebuild_reference_lines(ref_sectn, ref_line_marker_ptn):
@@ -214,8 +214,8 @@ def rebuild_reference_lines(ref_sectn, ref_line_marker_ptn):
     def prepare_ref(working_ref):
         working_ref = working_ref[:CFG_REFEXTRACT_MAX_LINES]
         working_line = ""
-        for l in working_ref:
-            working_line = join_lines(working_line, l.strip())
+        for line in working_ref:
+            working_line = join_lines(working_line, line.strip())
         return working_line.rstrip()
 
     lower_case_start = re.compile(r'[a-z]')
