@@ -52,8 +52,8 @@ docs_require = [
 tests_require = [
     'flake8-future-import~=0.0,>=0.4.4',
     'flake8~=3.0,>=3.5.0',
-    'pytest-cov~=2.0,>=2.5.1',
-    'pytest~=3.0,>=3.4.2',
+    'pytest-cov~=2.0,>=2.10',
+    'pytest~=4.0,>=4.6',
     'responses~=0.0,>=0.8.1',
 ]
 
