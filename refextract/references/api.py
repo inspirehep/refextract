@@ -203,7 +203,7 @@ def extract_journal_reference(line, override_kbs_files=None):
     Extracts the journal reference from string and parses for specific
     journal information.
     """
-    kbs = get_kbs(custom_kbs_files=override_kbs_files)
+    kbs = get_kbs(custom_kbs=override_kbs_files)
     references, dummy_m, dummy_c, dummy_co = parse_reference_line(line, kbs)
 
     for elements in references:

@@ -27,8 +27,6 @@ import csv
 import codecs
 import contextlib
 
-from hashlib import md5
-
 from .config import CFG_REFEXTRACT_KBS
 from .regexs import (
     re_kb_line,
@@ -55,76 +53,50 @@ def file_resolving(fpath, reader=None, **kwargs):
         yield fh
 
 
-def get_kbs(custom_kbs_files=None, cache={}):  # noqa
+def get_kbs(custom_kbs=None, cache={}, cache_inputs={}):  # noqa
     """Load kbs (with caching).
 
-    This function stores the loaded kbs into the cache variable
-    For the caching to work, it needs to receive an empty dictionary
-    as "cache" paramater.
+    This function stores the loaded kbs into the cache variable.
+    For the caching to work, it needs to receive empty dictionaries
+    as "cache" and "cache_inputs" parameters.
     """
+    kbs = CFG_REFEXTRACT_KBS.copy()
+    if custom_kbs:
+        kbs.update({kb_type: kb for (kb_type, kb) in custom_kbs.items() if kb})
 
-    cache_key = make_cache_key(custom_kbs_files)
-    if cache_key not in cache:
-        # Build paths from defaults and specified ones
-        kbs_files = CFG_REFEXTRACT_KBS.copy()
-        if custom_kbs_files:
-            for key, path in custom_kbs_files.items():
-                if path:
-                    kbs_files[key] = path
-        # Loads kbs from those paths
-        cache[cache_key] = load_kbs(kbs_files)
-    return cache[cache_key]
+    for kb_type, kb in kbs.items():
+        if kb != cache_inputs.get(kb_type):
+            cache_inputs[kb_type] = kb
+            cache[kb_type] = load_kb_by_type(kb_type, kb)
+    return cache
 
 
-def load_kbs(kbs_files):
-    """Load kbs (without caching)
+def load_kb_by_type(kb_type, kb):
+    """Load kb (without caching) for a given kb type."""
 
-    Args:
-    - kb_files: list of custom paths you can specify to override the
-                 default values
-    If path starts with "kb:", the kb will be loaded from the database
-    """
-
-    return {
-        'journals_re': build_journals_re_kb(kbs_files['journals-re']),
-        'journals': load_kb(kbs_files['journals'], build_journals_kb),
-        'report-numbers': build_reportnum_kb(kbs_files['report-numbers']),
-        'authors': build_authors_kb(kbs_files['authors']),
-        'books': build_books_kb(kbs_files['books']),
-        'publishers': load_kb(kbs_files['publishers'], build_publishers_kb),
-        'special_journals': build_special_journals_kb(kbs_files['special-journals']),
-        'collaborations': load_kb(kbs_files['collaborations'], build_collaborations_kb),
+    loaders = {
+        'journals_re': build_journals_re_kb,
+        'journals': lambda kb: load_kb(kb, build_journals_kb),
+        'report-numbers': build_reportnum_kb,
+        'authors': build_authors_kb,
+        'books': build_books_kb,
+        'publishers': lambda kb: load_kb(kb, build_publishers_kb),
+        'special_journals': build_special_journals_kb,
+        'collaborations': lambda kb: load_kb(kb, build_collaborations_kb),
     }
+
+    return loaders[kb_type](kb)
 
 
 def load_kb(path, builder):
+    if isinstance(path, dict):
+        return load_kb_from_iterable(path.items(), builder)
     try:
         path.startswith
     except AttributeError:
         return load_kb_from_iterable(path, builder)
     else:
         return load_kb_from_file(path, builder)
-
-
-def make_cache_key(custom_kbs_files=None):
-    """Create cache key for kbs caches instances
-
-    This function generates a unique key for a given set of arguments.
-
-    The files dictionary is transformed like this:
-    {'journal': '/var/journal.kb', 'books': '/var/books.kb'}
-    to
-    "journal=/var/journal.kb;books=/var/books.kb"
-
-    Then _inspire is appended if we are an INSPIRE site.
-    """
-    if custom_kbs_files:
-        serialized_args = ('%s=%s' % v for v in custom_kbs_files.items())
-        serialized_args = ';'.join(serialized_args)
-    else:
-        serialized_args = "default"
-    cache_key = md5(serialized_args.encode('utf-8')).digest()
-    return cache_key
 
 
 def order_reportnum_patterns_bylen(numeration_patterns):

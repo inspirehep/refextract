@@ -41,14 +41,13 @@ CFG_KBS_DIR = pkg_resources.resource_filename('refextract.references', 'kbs')
 
 CFG_REFEXTRACT_KBS = {
     'journals': "%s/journal-titles.kb" % CFG_KBS_DIR,
-    'journals-re': "%s/journal-titles-re.kb" % CFG_KBS_DIR,
+    'journals_re': "%s/journal-titles-re.kb" % CFG_KBS_DIR,
     'report-numbers': "%s/report-numbers.kb" % CFG_KBS_DIR,
     'authors': "%s/authors.kb" % CFG_KBS_DIR,
     'collaborations': "%s/collaborations.kb" % CFG_KBS_DIR,
     'books': "%s/books.kb" % CFG_KBS_DIR,
-    'conferences': "%s/conferences.kb" % CFG_KBS_DIR,
     'publishers': "%s/publishers.kb" % CFG_KBS_DIR,
-    'special-journals': "%s/special-journals.kb" % CFG_KBS_DIR,
+    'special_journals': "%s/special-journals.kb" % CFG_KBS_DIR,
 }
 
 # Reference fields:

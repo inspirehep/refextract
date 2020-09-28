@@ -76,7 +76,7 @@ def kbs_override():
             ("NUCL INSTRUM METHODS", "Nucl.Instrum.Meth."),
             ("Z PHYS", "Z.Phys."),
         ],
-        "journals-re": [
+        "journals_re": [
             "DAN---Dokl.Akad.Nauk Ser.Fiz.",
         ],
         "report-numbers": [
@@ -165,3 +165,11 @@ def test_long_registrant_dois(pdf_files):
     for ref in r[1:]:
         assert 'doi' in ref
         assert ref.get('doi')[0].startswith(u'doi:10.18429/JACoW')
+
+
+def test_override_kbs_files_can_take_journals_dict():
+    journals = {"Journal of Testing": "J.Testing"}
+    reference = "J. Smith, Journal of Testing 42 (2020) 1234"
+
+    result = extract_references_from_string(reference, override_kbs_files={"journals": journals})
+    assert result[0]["journal_title"] == ["J.Testing"]
