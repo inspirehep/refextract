@@ -1428,7 +1428,7 @@ def parse_references(reference_lines,
     output a list of dictionaries containing the parsed references
     """
     # RefExtract knowledge bases
-    kbs = get_kbs(custom_kbs_files=override_kbs_files)
+    kbs = get_kbs(custom_kbs=override_kbs_files)
     # Identify journal titles, report numbers, URLs, DOIs, and authors...
     processed_references, counts, dummy_bad_titles_count = \
         parse_references_elements(reference_lines, kbs, linker_callback)
