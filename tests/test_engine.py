@@ -436,3 +436,13 @@ def test_reference_split_handles_semicolon():
     res = get_references(ref_line)
     references = res[0]
     assert len(references) == 2
+
+
+def test_clean_pdf_before_run(tmp_path, pdf_files):
+    tmp_file_path = tmp_path / "packed.pdf"
+    pdf = pdf_files[6]
+    with open(pdf, 'rb') as input, open(tmp_file_path.as_posix(), 'wb') as tmp_out:
+        tmp_out.write(input.read())
+
+    text = get_plaintext_document_body(tmp_file_path.as_posix())
+    assert text == ['Test\n', '\x0c']
