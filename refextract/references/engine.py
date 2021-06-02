@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of refextract.
-# Copyright (C) 2013, 2015, 2016, 2017, 2018 CERN.
+# Copyright (C) 2013, 2015, 2016, 2017, 2018, 2020 CERN.
 #
 # refextract is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -26,6 +26,7 @@
 from __future__ import absolute_import, division, print_function
 
 import logging
+import mmap
 import re
 
 from datetime import datetime
@@ -1391,6 +1392,32 @@ def remove_leading_garbage_lines_from_reference_section(ref_sectn):
 
 # Tasks related to conversion of full-text to plain-text:
 
+def clean_pdf_file(filename):
+    """
+    strip leading and/or trailing junk from a PDF file
+    """
+    with open(filename, 'rb+') as file:
+        try:
+            mmfile = mmap.mmap(file.fileno(), 0, access=mmap.ACCESS_WRITE)
+            start = mmfile.find(b'%PDF-')
+            if start == -1:
+                # no PDF marker found
+                LOGGER.debug('not a PDF file')
+                return
+            end = mmfile.rfind(b'%%EOF')
+            offset = len(b'%%EOF')
+            if start > 0:
+                LOGGER.debug('moving and truncating')
+                mmfile.move(0, start, end + offset - start)
+                mmfile.resize(end + offset - start)
+                mmfile.flush()
+            elif end > 0 and end + offset != mmfile.size():
+                LOGGER.debug('truncating only')
+                mmfile.resize(end + offset - start)
+                mmfile.flush()
+        finally:
+            mmfile.close()
+
 
 def get_plaintext_document_body(fpath, keep_layout=False):
     """Given a file-path to a full-text, return a list of unicode strings
@@ -1404,6 +1431,7 @@ def get_plaintext_document_body(fpath, keep_layout=False):
        @return: (list) of strings - each string being a line in the document.
     """
     textbody = []
+    clean_pdf_file(fpath)
     mime_type = magic.from_file(fpath, mime=True)
 
     if mime_type == "text/plain":
