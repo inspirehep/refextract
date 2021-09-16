@@ -36,7 +36,6 @@ import requests
 import magic
 
 from tempfile import mkstemp
-from itertools import izip
 
 from .engine import (
     get_kbs,
@@ -47,8 +46,9 @@ from .engine import (
 from .errors import FullTextNotAvailableError
 from .find import (find_numeration_in_body,
                    get_reference_section_beginning)
-from .pdf import extract_texkeys_from_pdf
+from .pdf import extract_texkeys_and_urls_from_pdf
 from .text import extract_references_from_fulltext, rebuild_reference_lines
+from .record import update_reference_with_urls
 
 
 def extract_references_from_url(url, headers=None, chunk_size=1024, **kwargs):
@@ -144,10 +144,14 @@ def extract_references_from_file(path,
     )
 
     if magic.from_file(path, mime=True) == "application/pdf":
-        texkeys = extract_texkeys_from_pdf(path)
-        if len(texkeys) == len(parsed_refs):
-            parsed_refs = [dict(ref, texkey=[key]) for ref, key in izip(parsed_refs, texkeys)]
+        extracted_texkeys_urls = extract_texkeys_and_urls_from_pdf(path)
+        if len(extracted_texkeys_urls) == len(parsed_refs):
+            parsed_refs_updated = []
+            for ref, ref_texkey_urls in zip(parsed_refs, extracted_texkeys_urls):
+                update_reference_with_urls(ref, ref_texkey_urls.get('urls', []))
+                parsed_refs_updated.append(dict(ref, texkey=[ref_texkey_urls['texkey']]))
 
+            return parsed_refs_updated
     return parsed_refs
 
 
