@@ -127,6 +127,7 @@ def test_extract_references_from_file(pdf_files):
     r = extract_references_from_file(pdf_files[0])
     assert 'texkey' in r[0]
     assert 'author' in r[0]
+    assert 'url' in r[0]
     assert len(r) == 36
     with pytest.raises(FullTextNotAvailableError):
         extract_references_from_file(pdf_files[0] + "error")
@@ -145,6 +146,7 @@ def test_extract_references_from_url(pdf_files):
 
     r = extract_references_from_url(url)
     assert len(r) == 36
+    assert 'url' in r[0]
 
     with pytest.raises(FullTextNotAvailableError):
         url = "http://www.example.com"
