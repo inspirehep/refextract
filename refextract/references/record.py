@@ -161,6 +161,11 @@ def build_reference_fields(citation_elements, line_marker, raw_ref,
     return reference_fields
 
 
+def update_reference_with_urls(reference, url_set):
+    for url in url_set:
+        add_subfield(reference, 'url', url)
+
+
 def merge_misc(field):
     current_misc = None
     for subfield in field.subfields[:]:
