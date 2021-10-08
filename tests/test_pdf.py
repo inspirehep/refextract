@@ -610,11 +610,195 @@ def test_extract_texkeys_and_urls_from_pdf(pdf_files):
             },
         },
     ]
-
     assert two_col_keys == expected
 
+    two_col_2 = extract_texkeys_and_urls_from_pdf(pdf_files[5])
+    expected_two_col_keys_2 = [
+        {
+            "texkey": "PhysRevLett.122.161801",
+            "urls": {"https://doi.org/10.1103/PhysRevLett.122.161801"},
+        },
+        {
+            "texkey": "PhysRevD.102.091101",
+            "urls": {"https://doi.org/10.1103/PhysRevD.102.091101"},
+        },
+        {"texkey": "SuperCDMS:2020aus", "urls": {"https://arxiv.org/abs/2007.14289"}},
+        {
+            "texkey": "PhysRevLett.123.251801",
+            "urls": {"https://doi.org/10.1103/PhysRevLett.123.251801"},
+        },
+        {
+            "texkey": "PhysRevD.100.102002",
+            "urls": {"https://doi.org/10.1103/PhysRevD.100.102002"},
+        },
+        {
+            "texkey": "PhysRevD.101.042001",
+            "urls": {"https://doi.org/10.1103/PhysRevD.101.042001"},
+        },
+        {"texkey": "osti_4701226"},
+        {
+            "texkey": "Izraelevitch_2017",
+            "urls": {"https://doi.org/10.1088/1748-0221/12/06/p06014"},
+        },
+        {
+            "texkey": "PhysRevD.94.082007",
+            "urls": {"https://doi.org/10.1103/PhysRevD.94.082007"},
+        },
+        {
+            "texkey": "PhysRevD.94.122003",
+            "urls": {"https://doi.org/10.1103/PhysRevD.94.122003"},
+        },
+        {
+            "texkey": "PhysRevD.91.083509",
+            "urls": {"https://doi.org/10.1103/PhysRevD.91.083509"},
+        },
+        {
+            "texkey": "PhysRevD.42.3211",
+            "urls": {"https://doi.org/10.1103/PhysRevD.42.3211"},
+        },
+        {
+            "texkey": "PhysRevA.45.2104",
+            "urls": {"https://doi.org/10.1103/PhysRevA.45.2104"},
+        },
+        {"texkey": "Note1"},
+        {
+            "texkey": "Thulliez_2021",
+            "urls": {"https://doi.org/10.1088/1748-0221/16/07/p07032"},
+        },
+        {
+            "texkey": "PhysRevD.95.082002",
+            "urls": {"https://doi.org/10.1103/PhysRevD.95.082002"},
+        },
+        {
+            "texkey": "AKERIB2008476",
+            "urls": {"https://doi.org/https://doi.org/10.1016/j.nima.2008.03.103"},
+        },
+        {
+            "texkey": "doi:10.1063/1.1146105",
+            "urls": {
+                "https://arxiv.org/abs/https://doi.org/10.1063/1.1146105",
+                "https://doi.org/10.1063/1.1146105",
+            },
+        },
+        {"texkey": "Kelvinox"},
+        {
+            "texkey": "PhysRevLett.112.041302",
+            "urls": {"https://doi.org/10.1103/PhysRevLett.112.041302"},
+        },
+        {"texkey": "5874000", "urls": {"https://doi.org/10.1109/NSSMIC.2010.5874000"}},
+        {
+            "texkey": "doi:10.1063/1.341976",
+            "urls": {
+                "https://arxiv.org/abs/https://doi.org/10.1063/1.341976",
+                "https://doi.org/10.1063/1.341976",
+            },
+        },
+        {"texkey": "Neganov:1985khw"},
+        {
+            "texkey": "PEHL196845",
+            "urls": {"https://doi.org/https://doi.org/10.1016/0029-554X(68)90342-X"},
+        },
+        {"texkey": "Golwala_thesis"},
+        {
+            "texkey": "Harris_Villano_Fritts_2021",
+            "urls": {"https://doi.org/10.17605/OSF.IO/G4ENQ"},
+        },
+        {"texkey": "PhysRev.72.26", "urls": {"https://doi.org/10.1103/PhysRev.72.26"}},
+        {
+            "texkey": "LOWE1997354",
+            "urls": {"https://doi.org/https://doi.org/10.1016/S0168-9002(97)00965-0"},
+        },
+        {"texkey": "Mast_thesis"},
+        {"texkey": "Clarke2003"},
+        {
+            "texkey": "villano2021textttnrcascadesim",
+            "urls": {"https://arxiv.org/abs/2104.02742"},
+        },
+        {"texkey": "abundances", "urls": {"https://doi.org/10.1351/pac199870010217"}},
+        {
+            "texkey": "doi:10.1080/18811248.2011.9711675",
+            "urls": {
+                "https://arxiv.org/abs/https://doi.org/10.1080/18811248.2011.9711675",
+                "https://doi.org/10.1080/18811248.2011.9711675",
+            },
+        },
+        {
+            "texkey": "PhysRevC.46.972",
+            "urls": {"https://doi.org/10.1103/PhysRevC.46.972"},
+        },
+        {
+            "texkey": "PhysRev.83.1073",
+            "urls": {"https://doi.org/10.1103/PhysRev.83.1073"},
+        },
+        {"texkey": "1610988", "urls": {"https://doi.org/10.1109/TNS.2006.869826"}},
+        {
+            "texkey": "AGOSTINELLI2003250",
+            "urls": {"https://doi.org/https://doi.org/10.1016/S0168-9002(03)01368-8"},
+        },
+        {
+            "texkey": "PhysRev.98.740",
+            "urls": {"https://doi.org/10.1103/PhysRev.98.740"},
+        },
+        {
+            "texkey": "BROWN201477",
+            "urls": {"https://doi.org/https://doi.org/10.1016/j.nimb.2014.07.042"},
+        },
+        {
+            "texkey": "thulliez2021improvement",
+            "urls": {"https://arxiv.org/abs/2109.05967"},
+        },
+        {
+            "texkey": "OMER201743",
+            "urls": {"https://doi.org/https://doi.org/10.1016/j.nimb.2017.05.028"},
+        },
+        {
+            "texkey": "osti_295438",
+            "urls": {
+                "https://doi.org/10.2172/295438",
+                "https://www.osti.gov/biblio/295438",
+            },
+        },
+        {
+            "texkey": "Ibe:2017yqa",
+            "urls": {
+                "https://arxiv.org/abs/1707.07258",
+                "https://doi.org/10.1007/JHEP03(2018)194",
+            },
+        },
+        {
+            "texkey": "PhysRevLett.121.101801",
+            "urls": {"https://doi.org/10.1103/PhysRevLett.121.101801"},
+        },
+        {
+            "texkey": "PhysRevLett.118.031803",
+            "urls": {"https://doi.org/10.1103/PhysRevLett.118.031803"},
+        },
+        {
+            "texkey": "PhysRevD.103.122003",
+            "urls": {"https://doi.org/10.1103/PhysRevD.103.122003"},
+        },
+        {"texkey": "Foreman_Mackey_2013", "urls": {"https://doi.org/10.1086/670067"}},
+        {
+            "texkey": "PhysRevD.36.311",
+            "urls": {"https://doi.org/10.1103/PhysRevD.36.311"},
+        },
+        {"texkey": "10.1214/13-STS417", "urls": {"https://doi.org/10.1214/13-STS417"}},
+        {
+            "texkey": "Wilks:1938dza",
+            "urls": {"https://doi.org/10.1214/aoms/1177732360"},
+        },
+        {
+            "texkey": "PhysRevD.99.062001",
+            "urls": {"https://doi.org/10.1103/PhysRevD.99.062001"},
+        },
+    ]
 
-def test_extract_texkeys_and_urls_from_pdf_no_crash_on_incomplete_dest_coordinates(pdf_files):
+    assert two_col_2 == expected_two_col_keys_2
+
+
+def test_extract_texkeys_and_urls_from_pdf_no_crash_on_incomplete_dest_coordinates(
+    pdf_files,
+):
     expected = []
     result = extract_texkeys_and_urls_from_pdf(pdf_files[2])
 
@@ -630,6 +814,6 @@ def test_extract_texkeys_from_pdf_no_crash_on_pydpf2_error(pdf_files):
 
 def test_extract_texkeys_from_pdf_no_crash_on_other_exceptions(pdf_files):
     expected = []
-    result = extract_texkeys_and_urls_from_pdf(pdf_files[5])
+    result = extract_texkeys_and_urls_from_pdf(pdf_files[6])
 
     assert result == expected
