@@ -92,7 +92,9 @@ def extract_texkeys_and_urls_from_pdf(pdf_file):
                         urls, ref, next_reference_data
                     )
                 else:
-                    matched_urls_for_reference, urls = _match_urls_with_reference(urls, ref)
+                    matched_urls_for_reference, urls = _match_urls_with_reference(
+                        urls, ref
+                    )
                 if matched_urls_for_reference:
                     current_texkey_urls_dict["urls"] = matched_urls_for_reference
                 texkey_url_list.append(current_texkey_urls_dict)
@@ -108,44 +110,60 @@ def _match_urls_with_reference(urls_to_match, reference, next_reference=None):
         next_ref_page_number, next_ref_col, next_ref_y, _ = next_reference[1]
     urls_for_reference = set()
     for (url_index, url) in enumerate(urls_to_match):
-        url_page_number, _, url_y, _ = url[1]
+        url_page_number, url_col, url_y, _ = url[1]
         is_url_under_texkey = ref_y <= url_y
         is_reference_on_same_page_as_url = ref_page_number == url_page_number
         is_reference_on_previous_page_than_url = ref_page_number + 1 == url_page_number
-        if (
-            not next_reference and (
+        if not next_reference:
+            if (
                 is_reference_on_same_page_as_url or
                 is_reference_on_previous_page_than_url
-            ) and
-            is_url_under_texkey
-        ):
-            urls_for_reference.add(url[0])
+            ) and is_url_under_texkey:
+                urls_for_reference.add(url[0])
             continue
         is_url_between_texkeys = (
             is_reference_on_same_page_as_url or is_reference_on_previous_page_than_url
         ) and (ref_y <= url_y <= next_ref_y)
+        is_next_reference_on_the_same_page = next_ref_page_number == url_page_number
         is_last_reference_in_page = (
             is_reference_on_same_page_as_url and
             (next_ref_page_number > url_page_number) and
             is_url_under_texkey
         )
+        is_last_reference_in_page_two_col_layout = (
+            is_reference_on_same_page_as_url and
+            is_next_reference_on_the_same_page and
+            is_url_under_texkey and
+            (next_ref_col > url_col) and
+            next_ref_y < url_y
+        )
         is_in_new_column = (
             is_reference_on_same_page_as_url and
+            is_next_reference_on_the_same_page and
+            ref_y > url_y and
+            (next_ref_col > ref_column) and
+            (next_ref_y > url_y)
+        )
+        is_url_for_other_reference_in_new_column = (
+            is_reference_on_same_page_as_url and
             (next_ref_page_number == url_page_number) and
-            is_url_under_texkey and
-            (next_ref_col > ref_column)
+            (next_ref_col == ref_column < url_col) and
+            (next_ref_y > url_y)
         )
         is_url_unrelated_to_references = ref_page_number > url_page_number
         is_url_for_next_reference = url_y >= next_ref_y
         if is_url_between_texkeys:
             urls_for_reference.add(url[0])
-        elif is_last_reference_in_page:
+            continue
+        elif is_last_reference_in_page or is_last_reference_in_page_two_col_layout:
             urls_for_reference.add(url[0])
+            continue
         elif is_in_new_column:
             urls_for_reference.add(url[0])
+            continue
         elif is_url_unrelated_to_references:
             continue
-        elif is_url_for_next_reference:
+        elif is_url_for_next_reference or is_url_for_other_reference_in_new_column:
             urls_to_match = urls_to_match[url_index:]
             break
     if not next_reference:
