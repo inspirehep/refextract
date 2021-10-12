@@ -37,6 +37,8 @@ import magic
 
 from tempfile import mkstemp
 
+from inspire_utils.dedupers import dedupe_list
+
 from .engine import (
     get_kbs,
     get_plaintext_document_body,
@@ -149,6 +151,8 @@ def extract_references_from_file(path,
             parsed_refs_updated = []
             for ref, ref_texkey_urls in zip(parsed_refs, extracted_texkeys_urls):
                 update_reference_with_urls(ref, ref_texkey_urls.get('urls', []))
+                if ref.get('url'):
+                    ref['url'] = dedupe_list(ref['url'])
                 parsed_refs_updated.append(dict(ref, texkey=[ref_texkey_urls['texkey']]))
 
             return parsed_refs_updated
