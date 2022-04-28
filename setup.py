@@ -30,18 +30,16 @@ url = 'https://github.com/inspirehep/refextract'
 
 readme = open('README.rst').read()
 
-setup_requires = [
-    'autosemver~=0.0,>=0.5.3',
-]
-
 install_requires = [
     'PyPDF2~=1.0,>=1.26.0',
-    'autosemver~=0.0,>=0.5.3',
     'python-magic~=0.0,>=0.4.15',
     'requests~=2.0,>=2.18.4',
     'six~=1.0,>=1.10.0',
     'unidecode~=1.0,>=1.0.22',
     'inspire-utils~=3.0,>=3.0.0',
+    'Flask>=2.0.3',
+    "webargs<=5.4.0",
+    "gunicorn>=20.1.0"
 ]
 
 docs_require = [
@@ -54,28 +52,22 @@ tests_require = [
     'pytest-cov~=2.0,>=2.10',
     'pytest~=4.0,>=4.6',
     'responses~=0.0,>=0.8.1',
+    'mock>=4.0.3'
 ]
 
 extras_require = {
     'docs': docs_require,
     'tests': tests_require,
-    'tests:python_version=="2.7"': [
-        'unicode-string-literal~=1.0,>=1.1',
-    ],
 }
 
 extras_require['all'] = []
 for name, reqs in extras_require.items():
-    if name not in ['all', 'tests:python_version=="2.7"']:
-        extras_require['all'].extend(reqs)
+    extras_require['all'].extend(reqs)
 
 packages = find_packages(exclude=['docs'])
 
 setup(
     name='refextract',
-    autosemver={
-        'bugtracker_url': url + '/issues',
-    },
     url=url,
     license='GPLv2',
     author='CERN',
@@ -86,7 +78,6 @@ setup(
     platforms='any',
     description=__doc__,
     long_description=readme,
-    setup_requires=setup_requires,
     install_requires=install_requires,
     tests_require=tests_require,
     extras_require=extras_require,

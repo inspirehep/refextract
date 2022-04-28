@@ -14,7 +14,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          python-version: 3.6
           fetch-depth: 0
 
       - name: Install dependencies
@@ -44,10 +43,21 @@ jobs:
         run: |
           python setup.py sdist bdist_wheel
 
-
-      - name: Publish package
-        if: ${{ success() && github.event_name == 'push'  }}
-        uses: pypa/gh-action-pypi-publish@v1.3.1
+  push_image_to_harbor:
+    runs-on: ubuntu-latest
+    if: ${{ success() && github.event_name == 'push' }}
+    steps:
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
         with:
-          user: __token__
-          password: ${{ secrets.pypi_password }}
+          registry: registry.cern.ch
+          username: ${{ secrets.HARBOR_USERNAME }}
+          password: ${{ secrets.HARBOR_PASSWORD }}
+
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: . 
+          push: true
+          tags: registry.cern.ch/cern-sis/inspirehep/refextract:latest,registry.cern.ch/cern-sis/inspirehep/refextract:${{ github.sha }}
