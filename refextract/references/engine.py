@@ -69,7 +69,6 @@ from .regexs import (
     remove_year,
     re_year_in_misc_txt,
     re_hdl)
-from ..version import __version__ as version
 
 LOGGER = logging.getLogger(__name__)
 
@@ -1473,5 +1472,4 @@ def build_stats(counts):
     stats_str = "%(status)s-%(reportnum)s-%(title)s-%(author)s-%(url)s-%(doi)s-%(misc)s" % stats
     stats["old_stats_str"] = stats_str
     stats["date"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    stats["version"] = version
     return stats

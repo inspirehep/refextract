@@ -29,10 +29,8 @@ from .references.api import (
     extract_references_from_string,
     extract_references_from_url,
 )
-from .version import __version__
 
 __all__ = (
-    "__version__",
     "extract_journal_reference",
     "extract_references_from_file",
     "extract_references_from_string",
