@@ -24,7 +24,7 @@
 import logging
 import re
 
-from ..documents.pdf import replace_undesirable_characters
+from inspire_utils.record import replace_undesirable_characters
 from ..documents.text import (
     join_lines,
     repair_broken_urls,
