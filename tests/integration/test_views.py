@@ -40,7 +40,7 @@ def test_extract_journal_info(app_client):
     assert len(response.json["extracted_publication_infos"]) == 1
 
 
-@mock.patch("refextract.app.extract_journal_reference", side_effect=KeyError)
+@mock.patch("refextract.app.extract_journal_reference", side_effect=KeyError("test message"))
 def test_extract_journal_info_when_timeout_from_refextract(
     mock_extract_refs, app_client
 ):
@@ -75,7 +75,7 @@ def test_extract_journal_info_when_timeout_from_refextract(
         data=json.dumps(payload),
     )
     assert response.status_code == 500
-    assert {"message": "Can not extract publiacation info data"} == response.json
+    assert {'message': "Can not extract publication info data. Reason: 'test message'"} == response.json
 
 
 def test_extract_journal_info_for_multiple_pubinfos(app_client):
@@ -141,7 +141,7 @@ def test_extract_extract_references_from_text(app_client):
     assert "year" in response.json["extracted_references"][0]
 
 
-@mock.patch("refextract.app.extract_references_from_string", side_effect=KeyError)
+@mock.patch("refextract.app.extract_references_from_string", side_effect=KeyError("test message"))
 def test_extract_references_from_text_when_timeout_from_refextract(
     mock_extract_refs, app_client
 ):
@@ -159,7 +159,7 @@ def test_extract_references_from_text_when_timeout_from_refextract(
         "/extract_references_from_text", headers=headers, data=json.dumps(payload)
     )
     assert response.status_code == 500
-    assert {'message': 'Can not extract references.'} == response.json
+    assert {'message': "Can not extract references. Reason: 'test message'"} == response.json
 
 
 @pytest.mark.vcr()
