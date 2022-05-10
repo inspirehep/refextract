@@ -35,8 +35,8 @@ def create_app():
                 if not extracted_publication_info:
                     extracted_publication_info = {}
                 extracted_publication_infos.append(extracted_publication_info)
-        except Exception:
-            return make_response(jsonify({"message": "Can not extract publiacation info data"}), 500)
+        except Exception as e:
+            return make_response(jsonify({"message": f"Can not extract publication info data. Reason: {str(e)}"}), 500)
         return jsonify({"extracted_publication_infos": extracted_publication_infos})
 
     @app.route("/extract_references_from_text", methods=["POST"])
@@ -57,9 +57,9 @@ def create_app():
                 override_kbs_files=journal_dict,
                 reference_format=u"{title},{volume},{page}",
             )
-        except Exception:
+        except Exception as e:
             return make_response(
-                jsonify({"message": "Can not extract references."}), 500
+                jsonify({"message": f"Can not extract references. Reason: {str(e)}"}), 500
             )
         return jsonify({"extracted_references": extracted_references})
 
@@ -83,9 +83,9 @@ def create_app():
                     "reference_format": "{title},{volume},{page}"
                 }
             )
-        except Exception:
+        except Exception as e:
             return make_response(
-                jsonify({"message": "Can not extract references."}), 500
+                jsonify({"message": f"Can not extract references. Reason: {str(e)}"}), 500
             )
         return jsonify({"extracted_references": extracted_references})
 

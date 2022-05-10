@@ -36,7 +36,7 @@ install_requires = [
     'requests~=2.0,>=2.18.4',
     'six~=1.0,>=1.10.0',
     'unidecode~=1.0,>=1.0.22',
-    'inspire-utils~=3.0,>=3.0.0',
+    'inspire-utils~=3.0,>=3.0.25',
     'Flask>=2.0.3',
     "webargs<=5.4.0",
     "gunicorn>=20.1.0"
