@@ -1,10 +1,14 @@
+import logging
+
 from flask import Flask, jsonify, make_response
+from prometheus_flask_exporter.multiprocess import \
+    GunicornInternalPrometheusMetrics
 from webargs import fields
 from webargs.flaskparser import FlaskParser
 
 from refextract.references.api import (extract_journal_reference,
-                                       extract_references_from_url,
-                                       extract_references_from_string)
+                                       extract_references_from_string,
+                                       extract_references_from_url)
 
 parser = FlaskParser()
 
@@ -36,7 +40,14 @@ def create_app():
                     extracted_publication_info = {}
                 extracted_publication_infos.append(extracted_publication_info)
         except Exception as e:
-            return make_response(jsonify({"message": f"Can not extract publication info data. Reason: {str(e)}"}), 500)
+            return make_response(
+                jsonify(
+                    {
+                        "message": f"Can not extract publication info data. Reason: {str(e)}"
+                    }
+                ),
+                500,
+            )
         return jsonify({"extracted_publication_infos": extracted_publication_infos})
 
     @app.route("/extract_references_from_text", methods=["POST"])
@@ -55,11 +66,12 @@ def create_app():
             extracted_references = extract_references_from_string(
                 text,
                 override_kbs_files=journal_dict,
-                reference_format=u"{title},{volume},{page}",
+                reference_format="{title},{volume},{page}",
             )
         except Exception as e:
             return make_response(
-                jsonify({"message": f"Can not extract references. Reason: {str(e)}"}), 500
+                jsonify({"message": f"Can not extract references. Reason: {str(e)}"}),
+                500,
             )
         return jsonify({"extracted_references": extracted_references})
 
@@ -80,12 +92,13 @@ def create_app():
                 url,
                 **{
                     "override_kbs_files": journal_dict,
-                    "reference_format": "{title},{volume},{page}"
-                }
+                    "reference_format": "{title},{volume},{page}",
+                },
             )
         except Exception as e:
             return make_response(
-                jsonify({"message": f"Can not extract references. Reason: {str(e)}"}), 500
+                jsonify({"message": f"Can not extract references. Reason: {str(e)}"}),
+                500,
             )
         return jsonify({"extracted_references": extracted_references})
 
@@ -93,6 +106,11 @@ def create_app():
 
 
 app = create_app()
+
+if app.config.get('PROMETHEUS_ENABLE_EXPORTER_FLASK'):
+    logging.info("Starting prometheus metrics exporter")
+    metrics = GunicornInternalPrometheusMetrics.for_app_factory(prefix=app.name)
+    metrics.init_app(app)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
