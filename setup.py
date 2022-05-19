@@ -39,7 +39,8 @@ install_requires = [
     'inspire-utils~=3.0,>=3.0.25',
     'Flask>=2.0.3',
     "webargs<=5.4.0",
-    "gunicorn>=20.1.0"
+    "gunicorn>=20.1.0",
+    "prometheus-flask-exporter~=0.20,>=0.20.1"
 ]
 
 docs_require = [
