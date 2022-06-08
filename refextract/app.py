@@ -32,6 +32,9 @@ def create_app():
         journal_dict = {"journals": journal_kb_data}
         try:
             for publication_info in publication_infos:
+                if not publication_info.get('pubinfo_freetext'):
+                    extracted_publication_infos.append({})
+                    continue
                 extracted_publication_info = extract_journal_reference(
                     publication_info["pubinfo_freetext"],
                     override_kbs_files=journal_dict,

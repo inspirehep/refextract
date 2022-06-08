@@ -20,7 +20,7 @@ def test_extract_journal_info(app_client):
         "BULLETIN OF THE CALCUTTA MATHEMATICAL SOCIETY": "Bull.Calcutta Math.Soc.",
         "QUANTUM MACHINE INTELLIGENCE": "Quantum Machine Intelligence",
     }
-    publication_infos = [{"pubinfo_freetext": "Phys. Rev. 127 (1962) 965-970"}]
+    publication_infos = [{"pubinfo_freetext": "Phys. Rev. 127 (1962) 965-970"}, {"journal_title": "Phys. Rev."}]
 
     payload = {
         "journal_kb_data": journal_kb_data,
@@ -37,7 +37,7 @@ def test_extract_journal_info(app_client):
     )
     assert response.status_code == 200
     assert "extracted_publication_infos" in response.json
-    assert len(response.json["extracted_publication_infos"]) == 1
+    assert len(response.json["extracted_publication_infos"]) == 2
 
 
 @mock.patch("refextract.app.extract_journal_reference", side_effect=KeyError("test message"))
