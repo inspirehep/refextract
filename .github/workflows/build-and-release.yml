@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [master]
 
+env:
+  REGISTRY: registry.cern.ch
+  IMAGE: cern-sis/inspirehep/refextract
 
 jobs:
   Test:
@@ -43,26 +46,28 @@ jobs:
         run: |
           python setup.py sdist bdist_wheel
 
-  push_image_to_harbor:
+  push_to_registry_and_deploy:
     runs-on: ubuntu-latest
-    if: ${{ success() && github.event_name == 'push' }}
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-  
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
+
+      - name: Build Image
+        id: build
+        uses: cern-sis/gh-workflows/.github/actions/docker-build@v6
         with:
-          registry: registry.cern.ch
+          registry: ${{ env.REGISTRY }}
+          image: ${{ env.IMAGE }}
+          cache: false
           username: ${{ secrets.HARBOR_USERNAME }}
           password: ${{ secrets.HARBOR_PASSWORD }}
 
-      - name: Build and push
-        id: docker_build
-        uses: docker/build-push-action@v2
+      - name: Deploy QA
+        uses: cern-sis/gh-workflows/.github/actions/kubernetes-project-new-images@v6
         with:
-          context: . 
-          push: true
-          tags: registry.cern.ch/cern-sis/inspirehep/refextract:latest,registry.cern.ch/cern-sis/inspirehep/refextract:${{ github.sha }}
+          event-type: update
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE }}@${{ steps.build.outputs.image-digest }}
+          token: ${{ secrets.PAT_FIRE_EVENTS_ON_CERN_SIS_KUBERNETES }}
