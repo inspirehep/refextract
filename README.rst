@@ -25,13 +25,6 @@
  refextract
 ============
 
-.. image:: https://travis-ci.org/inspirehep/refextract.svg?branch=master
-    :target: https://travis-ci.org/inspirehep/refextract
-
-.. image:: https://coveralls.io/repos/github/inspirehep/refextract/badge.svg?branch=master
-    :target: https://coveralls.io/github/inspirehep/refextract?branch=master
-
-
 About
 =====
 

@@ -43,10 +43,6 @@ install_requires = [
     "prometheus-flask-exporter~=0.20,>=0.20.1"
 ]
 
-docs_require = [
-    'Sphinx~=1.0,>=1.7.1',
-]
-
 tests_require = [
     'flake8-future-import~=0.0,>=0.4.4',
     'flake8~=3.0,>=3.5.0',
@@ -57,7 +53,6 @@ tests_require = [
 ]
 
 extras_require = {
-    'docs': docs_require,
     'tests': tests_require,
 }
 
@@ -65,7 +60,7 @@ extras_require['all'] = []
 for name, reqs in extras_require.items():
     extras_require['all'].extend(reqs)
 
-packages = find_packages(exclude=['docs'])
+packages = find_packages()
 
 setup(
     name='refextract',

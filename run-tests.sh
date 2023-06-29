@@ -25,4 +25,3 @@ set -e
 
 flake8 refextract tests
 py.test tests
-sphinx-build -qnNW docs docs/_build/html
