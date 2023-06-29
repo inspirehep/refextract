@@ -11,7 +11,7 @@ env:
   IMAGE: cern-sis/inspirehep/refextract
 
 jobs:
-  Test:
+  test_and_publish:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -48,6 +48,7 @@ jobs:
 
   push_to_registry_and_deploy:
     runs-on: ubuntu-latest
+    needs: [test_and_publish]
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     steps:
       - name: Checkout
