@@ -24,6 +24,7 @@
 import logging
 
 from PyPDF2 import PdfFileReader
+from PyPDF2.generic import ByteStringObject
 
 from .regexs import re_reference_in_dest
 
@@ -57,9 +58,12 @@ def extract_texkeys_and_urls_from_pdf(pdf_file):
             LOGGER.debug(u"PDF: Internal PyPDF2 error, no TeXkeys returned.")
             return []
         # not all named destinations point to references
-        refs = [
-            dest for dest in destinations.items() if re_reference_in_dest.match(dest[0])
-        ]
+        refs = []
+        for destination in destinations.items():
+            destination_key = destination[0].decode("utf-8") if isinstance(destination[0], ByteStringObject) else destination[0]
+            match = re_reference_in_dest.match(destination_key)
+            if match:
+                refs.append(destination)
         try:
             if _destinations_in_two_columns(pdf, refs):
                 LOGGER.debug(u"PDF: Using two-column layout")
