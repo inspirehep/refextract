@@ -55,24 +55,30 @@ def extract_texkeys_and_urls_from_pdf(pdf_file):
             destinations = pdf.getNamedDestinations()
             urls = extract_urls(pdf)
         except Exception:
-            LOGGER.debug(u"PDF: Internal PyPDF2 error, no TeXkeys returned.")
+            LOGGER.debug("PDF: Internal PyPDF2 error, no TeXkeys returned.")
             return []
         # not all named destinations point to references
         refs = []
         for destination in destinations.items():
-            destination_key = destination[0].decode("utf-8") if isinstance(destination[0], ByteStringObject) else destination[0]
+            destination_key = (
+                destination[0].decode("utf-8")
+                if isinstance(destination[0], ByteStringObject)
+                else destination[0]
+            )
             match = re_reference_in_dest.match(destination_key)
             if match:
                 refs.append(destination)
+        two_column_layout = False
         try:
             if _destinations_in_two_columns(pdf, refs):
-                LOGGER.debug(u"PDF: Using two-column layout")
+                two_column_layout = True
+                LOGGER.debug("PDF: Using two-column layout")
 
                 def sortfunc(dest_couple):
                     return dest_couple[1]
 
             else:
-                LOGGER.debug(u"PDF: Using single-column layout")
+                LOGGER.debug("PDF: Using single-column layout")
 
                 def sortfunc(dest_couple):
                     page, _, ypos, xpos = dest_couple[1]
@@ -91,22 +97,24 @@ def extract_texkeys_and_urls_from_pdf(pdf_file):
                 if nb < len(refs) - 1:
                     next_reference_data = refs[nb + 1]
                     matched_urls_for_reference, urls = _match_urls_with_reference(
-                        urls, ref, next_reference_data
+                        urls, ref, next_reference_data, two_column_layout=two_column_layout
                     )
                 else:
                     matched_urls_for_reference, urls = _match_urls_with_reference(
-                        urls, ref
+                        urls, ref, two_column_layout=two_column_layout
                     )
                 if matched_urls_for_reference:
                     current_texkey_urls_dict["urls"] = matched_urls_for_reference
                 texkey_url_list.append(current_texkey_urls_dict)
             return texkey_url_list
         except Exception:
-            LOGGER.debug(u"PDF: Impossible to determine layout, no TeXkeys returned")
+            LOGGER.debug("PDF: Impossible to determine layout, no TeXkeys returned")
             return []
 
 
-def _match_urls_with_reference(urls_to_match, reference, next_reference=None):
+def _match_urls_with_reference(
+    urls_to_match, reference, next_reference=None, two_column_layout=False
+):
     ref_page_number, ref_column, ref_y, _ = reference[1]
     if next_reference:
         next_ref_page_number, next_ref_col, next_ref_y, _ = next_reference[1]
@@ -114,11 +122,16 @@ def _match_urls_with_reference(urls_to_match, reference, next_reference=None):
     for (url_index, url) in enumerate(urls_to_match):
         url_page_number, url_col, url_y, _ = url[1]
         is_url_under_texkey = ref_y <= url_y
+        is_url_in_same_col = ref_column == url_col
+        is_url_in_next_col = url_col > ref_column
         is_reference_on_same_page_as_url = ref_page_number == url_page_number
         is_reference_on_previous_page_than_url = ref_page_number + 1 == url_page_number
         if not next_reference:
             if (
-                is_reference_on_same_page_as_url or
+                (
+                    is_reference_on_same_page_as_url and
+                    (is_url_in_same_col or is_url_in_next_col)
+                ) or
                 is_reference_on_previous_page_than_url
             ) and is_url_under_texkey:
                 urls_for_reference.add(url[0])
@@ -137,7 +150,9 @@ def _match_urls_with_reference(urls_to_match, reference, next_reference=None):
             is_next_reference_on_the_same_page and
             is_url_under_texkey and
             (next_ref_col > url_col) and
-            next_ref_y < url_y
+            next_ref_y < url_y and
+            ref_y <= url_y and
+            (is_url_in_same_col or is_url_in_next_col)
         )
         is_in_new_column = (
             is_reference_on_same_page_as_url and
@@ -155,8 +170,9 @@ def _match_urls_with_reference(urls_to_match, reference, next_reference=None):
         is_url_unrelated_to_references = ref_page_number > url_page_number
         is_url_for_next_reference = url_y >= next_ref_y
         if is_url_between_texkeys:
-            urls_for_reference.add(url[0])
-            continue
+            if not two_column_layout or (two_column_layout and url_col == ref_column):
+                urls_for_reference.add(url[0])
+                continue
         elif is_last_reference_in_page or is_last_reference_in_page_two_col_layout:
             urls_for_reference.add(url[0])
             continue
