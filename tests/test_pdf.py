@@ -795,6 +795,115 @@ def test_extract_texkeys_and_urls_from_pdf(pdf_files):
 
     assert two_col_2 == expected_two_col_keys_2
 
+    two_col_with_one_url_only = extract_texkeys_and_urls_from_pdf(pdf_files[6])
+    expected_two_col_with_one_url_only = [
+        {"texkey": "Gr20"},
+        {"texkey": "Au18"},
+        {"texkey": "Ue35"},
+        {"texkey": "SM88"},
+        {"texkey": "Sh00"},
+        {"texkey": "Jaku21"},
+        {"texkey": "T60"},
+        {"texkey": "MT00"},
+        {"texkey": "Jaku21b", "urls": {"http://arxiv.org/abs/2102.08069"}},
+        {"texkey": "Mo64"},
+        {"texkey": "Ko21"},
+        {"texkey": "Lan"},
+        {"texkey": "Sch55"},
+        {"texkey": "Le56"},
+        {"texkey": "FR74"},
+        {"texkey": "BS19"},
+        {"texkey": "Va00"},
+        {"texkey": "T61"},
+        {"texkey": "BD64"},
+        {"texkey": "Ye61"},
+        {"texkey": "Kl77"},
+        {"texkey": "VJ"},
+        {"texkey": "Sal"},
+        {"texkey": "YRW"},
+        {"texkey": "Ma69"},
+        {"texkey": "MG64"},
+        {"texkey": "We65"},
+        {"texkey": "Lo58"},
+        {"texkey": "Reu82"},
+        {"texkey": "Off91"},
+        {"texkey": "Jaku22"},
+        {"texkey": "Fr72"},
+        {"texkey": "Jo62"},
+    ]
+    assert two_col_with_one_url_only == expected_two_col_with_one_url_only
+
+    two_col_with_one_url_only_1 = extract_texkeys_and_urls_from_pdf(pdf_files[7])
+    expected_two_col_with_one_url_only_1 = [
+        {"texkey": "Hees-Rapp"},
+        {"texkey": "He:2022ywp", "urls": {"http://arxiv.org/abs/2204.09299"}},
+        {"texkey": "Das-Alam-Mohanty"},
+        {"texkey": "Svetitsky:1987gq"},
+        {"texkey": "Tsallis"},
+        {"texkey": "Marques-Cleymans-Deppman-2015"},
+        {"texkey": "Marques-Andrade-Deppman-2013"},
+        {"texkey": "WilkWlodarkzyk-multiparticle"},
+        {"texkey": "TsallisBook"},
+        {"texkey": "PLASTINO1995347"},
+        {"texkey": "Muskat"},
+        {"texkey": "Schwammle"},
+        {"texkey": "Schwammle2009"},
+        {"texkey": "WaltonRafelski"},
+        {"texkey": "Wong:2015mba"},
+        {"texkey": "Deppman:2019yno"},
+        {"texkey": "PasechnikSumbera"},
+        {"texkey": "Adolfsson:2020dhm"},
+        {"texkey": "Qin:2015srf"},
+        {"texkey": "Apolinario:2015bfm"},
+        {"texkey": "Casalderrey-Solana:2018wrw"},
+        {"texkey": "CORADDU2003473"},
+        {"texkey": "Curilef"},
+        {"texkey": "Annala:2019puf"},
+        {"texkey": "Annala:2020rgx"},
+        {"texkey": "Cardoso2017"},
+        {"texkey": "Sen:2021tdu"},
+    ]
+    assert two_col_with_one_url_only_1 == expected_two_col_with_one_url_only_1
+
+    two_col_with_one_url_only_2 = extract_texkeys_and_urls_from_pdf(pdf_files[8])
+    two_col_with_one_url_only_2_expected = [
+        {"texkey": "Penrose:1964wq"},
+        {"texkey": "Penrose:1969pc"},
+        {"texkey": "Hawking:1976ra"},
+        {"texkey": "wald2001thermodynamics"},
+        {"texkey": "abbott2016observation"},
+        {"texkey": "isi2021testing"},
+        {"texkey": "isi2019testing"},
+        {"texkey": "PhysRevD.7.2333"},
+        {"texkey": "PhysRevLett.30.71"},
+        {"texkey": "bardeen1973four"},
+        {"texkey": "wald1994quantum"},
+        {"texkey": "abbott2021gwtc", "urls": {"http://arxiv.org/abs/2111.03606"}},
+        {"texkey": "cabero2018observational"},
+        {"texkey": "samples2"},
+        {"texkey": "scientific2016tests"},
+        {"texkey": "lalsimulation"},
+        {"texkey": "abbott2021gwtc1"},
+        {"texkey": "samples1"},
+        {"texkey": "schutz1999gravitational"},
+        {"texkey": "martynov2016sensitivity"},
+        {"texkey": "bersanetti2021advanced"},
+        {"texkey": "kagra2019kagra"},
+        {"texkey": "shaddock2008space"},
+        {"texkey": "hu2017taiji"},
+        {"texkey": "ruan2020taiji"},
+        {"texkey": "luo2020brief"},
+        {"texkey": "luo2016tianqin"},
+        {"texkey": "Gong:2021gvw"},
+        {"texkey": "amaro2018relativistic"},
+        {"texkey": "berry2013observing"},
+        {"texkey": "babak2017science"},
+        {"texkey": "berry2013expectations"},
+        {"texkey": "gwosc"},
+    ]
+
+    assert two_col_with_one_url_only_2 == two_col_with_one_url_only_2_expected
+
 
 def test_extract_texkeys_and_urls_from_pdf_no_crash_on_incomplete_dest_coordinates(
     pdf_files,
@@ -814,6 +923,6 @@ def test_extract_texkeys_from_pdf_no_crash_on_pydpf2_error(pdf_files):
 
 def test_extract_texkeys_from_pdf_no_crash_on_other_exceptions(pdf_files):
     expected = []
-    result = extract_texkeys_and_urls_from_pdf(pdf_files[6])
+    result = extract_texkeys_and_urls_from_pdf(pdf_files[9])
 
     assert result == expected
