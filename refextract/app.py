@@ -1,14 +1,15 @@
 import logging
 
 from flask import Flask, jsonify, make_response
-from prometheus_flask_exporter.multiprocess import \
-    GunicornInternalPrometheusMetrics
+from prometheus_flask_exporter.multiprocess import GunicornInternalPrometheusMetrics
 from webargs import fields
 from webargs.flaskparser import FlaskParser
 
-from refextract.references.api import (extract_journal_reference,
-                                       extract_references_from_string,
-                                       extract_references_from_url)
+from refextract.references.api import (
+    extract_journal_reference,
+    extract_references_from_string,
+    extract_references_from_url,
+)
 
 parser = FlaskParser()
 
@@ -46,7 +47,8 @@ def create_app():
             return make_response(
                 jsonify(
                     {
-                        "message": f"Can not extract publication info data. Reason: {str(e)}"
+                        "message":
+                            f"Can not extract publication info data. Reason: {str(e)}"
                     }
                 ),
                 500,

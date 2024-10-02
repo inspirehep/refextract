@@ -22,66 +22,67 @@
 # or submit itself to any jurisdiction.
 
 import re
-
 from urllib.parse import unquote
 
 from unidecode import unidecode
 
-from .config import \
-    CFG_REFEXTRACT_MARKER_CLOSING_AUTHOR_ETAL, \
-    CFG_REFEXTRACT_MARKER_CLOSING_AUTHOR_INCL, \
-    CFG_REFEXTRACT_MARKER_CLOSING_AUTHOR_STND, \
-    CFG_REFEXTRACT_MARKER_CLOSING_TITLE_IBID, \
-    CFG_REFEXTRACT_MARKER_OPENING_TITLE_IBID, \
-    CFG_REFEXTRACT_MARKER_OPENING_COLLABORATION, \
-    CFG_REFEXTRACT_MARKER_CLOSING_COLLABORATION
-
-from ..documents.text import remove_and_record_multiple_spaces_in_line
-
-from .regexs import \
-    re_ibid, \
-    re_doi, \
-    re_raw_url, \
-    re_series_from_numeration, \
-    re_punctuation, \
-    re_correct_numeration_2nd_try_ptn1, \
-    re_correct_numeration_2nd_try_ptn2, \
-    re_correct_numeration_2nd_try_ptn3, \
-    re_correct_numeration_2nd_try_ptn4, \
-    re_numeration_nucphys_vol_page_yr, \
-    re_numeration_vol_subvol_nucphys_yr_page, \
-    re_numeration_nucphys_vol_yr_page, \
-    re_multiple_hyphens, \
-    re_numeration_vol_page_yr, \
-    re_numeration_vol_yr_page, \
-    re_numeration_vol_nucphys_series_yr_page, \
-    re_numeration_vol_series_nucphys_page_yr, \
-    re_numeration_vol_nucphys_series_page_yr, \
-    re_html_tagged_url, \
-    re_numeration_yr_vol_page, \
-    re_numeration_vol_nucphys_page_yr, \
-    re_wash_volume_tag, \
-    re_numeration_vol_nucphys_yr_subvol_page, \
-    re_quoted, \
-    re_isbn, \
-    re_arxiv, \
-    re_arxiv_5digits, \
-    re_new_arxiv, \
-    re_new_arxiv_5digits, \
-    re_pos, \
-    re_pos_year_num, \
-    re_series_from_numeration_after_volume, \
-    RE_OLD_ARXIV, \
-    RE_ARXIV_CATCHUP, \
-    RE_ATLAS_CONF_PRE_2010, \
-    RE_ATLAS_CONF_POST_2010
-
-from ..authors.regexs import (
-    get_author_regexps,
+from refextract.authors.regexs import (
     etal_matches,
+    get_author_regexps,
     re_ed_notation,
-    re_etal)
-from ..documents.text import wash_line
+    re_etal,
+)
+from refextract.documents.text import (
+    remove_and_record_multiple_spaces_in_line,
+    wash_line,
+)
+from refextract.references.config import (
+    CFG_REFEXTRACT_MARKER_CLOSING_AUTHOR_ETAL,
+    CFG_REFEXTRACT_MARKER_CLOSING_AUTHOR_INCL,
+    CFG_REFEXTRACT_MARKER_CLOSING_AUTHOR_STND,
+    CFG_REFEXTRACT_MARKER_CLOSING_COLLABORATION,
+    CFG_REFEXTRACT_MARKER_CLOSING_TITLE_IBID,
+    CFG_REFEXTRACT_MARKER_OPENING_COLLABORATION,
+    CFG_REFEXTRACT_MARKER_OPENING_TITLE_IBID,
+)
+from refextract.references.regexs import (
+    RE_ARXIV_CATCHUP,
+    RE_ATLAS_CONF_POST_2010,
+    RE_ATLAS_CONF_PRE_2010,
+    RE_OLD_ARXIV,
+    re_arxiv,
+    re_arxiv_5digits,
+    re_correct_numeration_2nd_try_ptn1,
+    re_correct_numeration_2nd_try_ptn2,
+    re_correct_numeration_2nd_try_ptn3,
+    re_correct_numeration_2nd_try_ptn4,
+    re_doi,
+    re_html_tagged_url,
+    re_ibid,
+    re_isbn,
+    re_multiple_hyphens,
+    re_new_arxiv,
+    re_new_arxiv_5digits,
+    re_numeration_nucphys_vol_page_yr,
+    re_numeration_nucphys_vol_yr_page,
+    re_numeration_vol_nucphys_page_yr,
+    re_numeration_vol_nucphys_series_page_yr,
+    re_numeration_vol_nucphys_series_yr_page,
+    re_numeration_vol_nucphys_yr_subvol_page,
+    re_numeration_vol_page_yr,
+    re_numeration_vol_series_nucphys_page_yr,
+    re_numeration_vol_subvol_nucphys_yr_page,
+    re_numeration_vol_yr_page,
+    re_numeration_yr_vol_page,
+    re_pos,
+    re_pos_year_num,
+    re_punctuation,
+    re_quoted,
+    re_raw_url,
+    re_series_from_numeration,
+    re_series_from_numeration_after_volume,
+    re_wash_volume_tag,
+)
 
 
 def tag_reference_line(line, kbs, record_titles_count):
@@ -439,7 +440,7 @@ def tag_atlas_conf(line):
 
 def identifiy_journals_re(line, kb_journals):
     matches = {}
-    for pattern, dummy_journal in kb_journals:
+    for pattern, _dummy_journal in kb_journals:
         match = re.search(pattern, line)
         if match:
             matches[match.start()] = match.group(0)
@@ -813,19 +814,18 @@ def account_for_stripped_whitespace(spaces_keys,
             # current replacement index:
             true_replacement_index += removed_spaces[space]
             spare_replacement_index += removed_spaces[space]
-        elif space >= spare_replacement_index and \
-            replacement_types[replacement_index] == u"journal" and \
-            space < (spare_replacement_index +
-                     len(journals_matches[replacement_index])):
+        elif spare_replacement_index <= space < (spare_replacement_index +
+                                                 len(journals_matches[
+                                                         replacement_index])) and \
+            replacement_types[replacement_index] == u"journal":
             # A periodical title is being replaced. Account for multi-spaces
             # that may have been stripped from the title before its
             # recognition:
             spare_replacement_index += removed_spaces[space]
             extras += removed_spaces[space]
-        elif space >= spare_replacement_index and \
-            replacement_types[replacement_index] == u"reportnumber" and \
-            space < (spare_replacement_index +
-                     len_reportnums[replacement_index]):
+        elif (spare_replacement_index <= space < (spare_replacement_index +
+                                                 len_reportnums[replacement_index]) and
+              replacement_types[replacement_index] == u"reportnumber"):
             # An institutional preprint report-number is being replaced.
             # Account for multi-spaces that may have been stripped from it
             # before its recognition:
@@ -861,7 +861,7 @@ def identify_and_tag_collaborations(line, collaborations_kb):
        which won't influence the reference splitting heuristics
        (used when looking at mulitple <AUTH> tags in a line).
     """
-    for dummy_collab, re_collab in collaborations_kb.items():
+    for _dummy_collab, re_collab in collaborations_kb.items():
         matches = re_collab.finditer(strip_tags(line))
 
         for match in reversed(list(matches)):
@@ -903,12 +903,13 @@ def identify_and_tag_authors(line, authors_kb):
         preceeding_text_string = line
         preceeding_text_start = 0
         for auth_no, match in enumerate(matched_authors):
-            # Only if there are no underscores or closing arrows found in the matched author group
-            # This must be checked for here, as it cannot be applied to the re without clashing with
-            # other Unicode characters
+            # Only if there are no underscores or closing arrows found in the matched
+            # author group This must be checked for here, as it cannot be applied to
+            # the re without clashing with other Unicode characters
             if line[match.start():match.end()].find("_") == -1:
                 # Has the group with name 'et' (for 'et al') been found in the pattern?
-                # Has the group with name 'es' (for ed. before the author) been found in the pattern?
+                # Has the group with name 'es' (for ed. before the author)
+                # been found in the pattern?
                 # Has the group with name 'ee' (for ed. after the author) been
                 # found in the pattern?
                 matched_positions.append({
@@ -919,7 +920,8 @@ def identify_and_tag_authors(line, authors_kb):
                     'ed_end': match.group('ee'),
                     'multi_auth': match.group('multi_auth'),
                     'multi_surs': match.group('multi_surs'),
-                    'text_before': preceeding_text_string[preceeding_text_start:match.start()],
+                    'text_before':
+                        preceeding_text_string[preceeding_text_start:match.start()],
                     'auth_no': auth_no,
                     'author_names': match.group('author_names')
                 })
@@ -947,14 +949,16 @@ def identify_and_tag_authors(line, authors_kb):
             # An AND found here likely indicates a missed author before this text
             # Thus, triggers weaker author searching, within the previous misc text
             # (Check the text before the current match to see if it has a bad 'and')
-            # A bad 'and' will only be denoted as such if there exists only one author after it
+            # A bad 'and' will only be denoted as such
+            # if there exists only one author after it
             # and the author group is legit (not to be dumped in misc)
             if not dump_in_misc and not (m['multi_auth'] or m['multi_surs']) \
                     and (lower_text_before.endswith(' and')):
                 # Search using a weaker author pattern to try and find the
                 # missed author(s) (cut away the end 'and')
                 weaker_match = re_auth_near_miss.match(m['text_before'])
-                if weaker_match and not (weaker_match.group('es') or weaker_match.group('ee')):
+                if (weaker_match and
+                        not (weaker_match.group('es') or weaker_match.group('ee'))):
                     # Change the start of the author group to include this new
                     # author group
                     start = start - \
@@ -967,16 +971,16 @@ def identify_and_tag_authors(line, authors_kb):
             add_to_misc = ""
             # If a semi-colon was found at the end of this author group, keep it in misc
             # so that it can be looked at for splitting heurisitics
-            if len(output_line) > m['end']:
-                if output_line[m['end']].strip(" ,.") == ';':
-                    add_to_misc = ';'
+            if (len(output_line) > m['end'] and
+                    output_line[m['end']].strip(" ,.") == ';'):
+                add_to_misc = ';'
 
             # Standardize eds. notation
             tmp_output_line = re.sub(re_ed_notation, '(ed.)',
-                                     output_line[start:end], re.IGNORECASE)
+                                     output_line[start:end], flags=re.IGNORECASE)
             # Standardize et al. notation
             tmp_output_line = re.sub(re_etal, 'et al.',
-                                     tmp_output_line, re.IGNORECASE)
+                                     tmp_output_line, flags=re.IGNORECASE)
             # Strip
             tmp_output_line = tmp_output_line.lstrip('.').strip(",:;- [](")
             if not tmp_output_line.endswith('(ed.)'):
@@ -1006,7 +1010,7 @@ def identify_and_tag_authors(line, authors_kb):
                 ed_notation = " (eds.)"
                 # Standardize et al. notation
                 tmp_output_line = re.sub(re_etal, 'et al.',
-                                         m['author_names'], re.IGNORECASE)
+                                         m['author_names'], flags=re.IGNORECASE)
                 # remove any characters which denote this author group
                 # to be editors, just take the
                 # author names, and append '(ed.)'
@@ -1032,7 +1036,7 @@ def sum_2_dictionaries(dicta, dictb):
        @return: (dictionary) - the sum of the 2 dictionaries
     """
     dict_out = dicta.copy()
-    for key in dictb.keys():
+    for key in dictb:
         if 'key' in dict_out:
             # Add the sum for key in dictb to that of dict_out:
             dict_out[key] += dictb[key]
@@ -1229,7 +1233,9 @@ def identify_report_numbers(line, kb_reports):
     # at given locations in line
 
     repnum_search_kb, repnum_standardised_categs = kb_reports
-    repnum_categs = sorted(repnum_standardised_categs.keys(), key=lambda x: (len(x[1]), x), reverse=True)
+    repnum_categs = sorted(repnum_standardised_categs.keys(),
+                           key=lambda x: (len(x[1]), x),
+                           reverse=True)
     # Handle CERN/LHCC/98-013
     line = line.replace('/', ' ')
 

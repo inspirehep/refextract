@@ -24,7 +24,7 @@
 import logging
 import re
 
-from ..references.config import CFG_REFEXTRACT_KBS
+from refextract.references.config import CFG_REFEXTRACT_KBS
 
 LOGGER = logging.getLogger(__name__)
 
@@ -42,10 +42,7 @@ def get_author_affiliation_numeration_str(punct=None):
     re_number = r'(?:\d\d?)'
     re_chained_numbers = r"(?:(?:[,;]\s*%s\.?\s*))*" % re_number
     # Punctuation surrounding the number, either general or specific again
-    if punct is None:
-        re_punct = r"(?:[\{\(\[]?)"
-    else:
-        re_punct = re.escape(punct)
+    re_punct = '(?:[\\{\\(\\[]?)' if punct is None else re.escape(punct)
 
     # Generic number finder (MUST NOT INCLUDE NAMED GROUPS!!!)
     numeration_str = r"""
@@ -81,37 +78,41 @@ def get_initial_surname_author_pattern(incl_numeration=False):
 
     Return a standard author, with a maximum of 6 initials, and a surname.
     The author pattern returned will match 'Initials Surname' formats only.
-    The Initials MUST be uppercase, and MUST have at least a dot, hypen or apostrophe between them.
-    @param incl_numeration: (boolean) Return an author pattern with optional numeration after authors.
+    The Initials MUST be uppercase, and MUST have at least a dot,
+    hyphen or apostrophe between them.
+    @param incl_numeration: (boolean) Return an author pattern
+    with optional numeration after authors.
     @return (string): The 'Initials Surname' author pattern."""
     # Possible inclusion of superscript numeration at the end of author names
     # Will match the empty string
-    if incl_numeration:
-        append_num_re = get_author_affiliation_numeration_str() + '?'
-    else:
-        append_num_re = ""
+    append_num_re = (
+            get_author_affiliation_numeration_str() + '?') if incl_numeration else ''
 
     return r"""
     (?:
-        (?:%(uppercase_re)s\w{2,20}\s+)?                     ## Optionally a first name before the initials
+        (?:%(uppercase_re)s\w{2,20}\s+)?  ## Optionally a first name before the initials
 
-        (?<!Volume\s)                                        ## Initials (1-5) (cannot follow 'Volume\s')
-        %(uppercase_re)s(?:\s*[.'’\s-]{1,3}\s*%(uppercase_re)s){0,4}[.\s-]{1,2}\s* ## separated by .,-,',etc.
-
-        (?:%(uppercase_re)s\w{2,20}\s+)?                     ## Optionally a first name after the initials
+        (?<!Volume\s)                     ## Initials (1-5) (cannot follow 'Volume\s')
+        ## separated by .,-,',etc.
+        %(uppercase_re)s(?:\s*[.'’\s-]{1,3}\s*%(uppercase_re)s){0,4}[.\s-]{1,2}\s*
+        ## Optionally a first name after the initials
+        (?:%(uppercase_re)s\w{2,20}\s+)?
 
         (?:
-            (?!%(invalid_prefixes)s)                         ## Invalid prefixes to avoid
-            \w{1,3}(?<!and)(?:(?:[’'`´-]\s?)|\s)             ## The surname prefix: 1, 2 or 3
-        )?                                                   ## character prefixes before the surname (e.g. 'van','de')
+            (?!%(invalid_prefixes)s)            ## Invalid prefixes to avoid
+            \w{1,3}(?<!and)(?:(?:[’'`´-]\s?)|\s)## The surname prefix: 1, 2 or 3
+        )?                                      ## character prefixes before the surname
+                                                ## (e.g. 'van','de')
 
-        (?!%(invalid_surnames)s)                             ## Invalid surnames to avoid
-        %(uppercase_re)s                                     ## The surname, which must start with an upper case character
-        (?:[rR]\.|\w{1,20})                                  ## handle Jr.
-        (?:[\-’'`´][\w’']{1,20})?                            ## single hyphen allowed jan-el or Figueroa-O'Farrill
-        [’']?                                                ## Eventually an ending '
-
-        %(numeration)s                                       ## A possible number to appear after an author name, used for author extraction
+        (?!%(invalid_surnames)s)                            ## Invalid surnames to avoid
+        ## The surname, which must start with an upper case character
+        %(uppercase_re)s
+        (?:[rR]\.|\w{1,20})                                 ## handle Jr.
+        ## single hyphen allowed jan-el or Figueroa-O'Farrill
+        (?:[\-’'`´][\w’']{1,20})?
+        [’']?                                               ## Eventually an ending '
+        ## A possible number to appear after an author name, used for author extraction
+        %(numeration)s
 
         (?:               # Look for editor notation after the author group...
             \s*,?\s*      # Eventually a coma/space
@@ -130,38 +131,41 @@ def get_surname_initial_author_pattern(incl_numeration=False):
     """Match an author name of the form: 'surname initial(s)'
 
     This is sometimes the represention of the first author found inside an author group.
-    This author pattern is only used to find a maximum of ONE author inside an author group.
+    This author pattern is only used
+    to find a maximum of ONE author inside an author group.
     Authors of this form MUST have either a comma after the initials, or an 'and',
     which denotes the presence of other authors in the author group.
-    @param incl_numeration: (boolean) Return an author pattern with optional numeration after authors.
+    @param incl_numeration: (boolean)
+    Return an author pattern with optional numeration after authors.
     @return (string): The 'Surname Initials' author pattern."""
     # Possible inclusion of superscript numeration at the end of author names
     # Will match the empty string
-    if incl_numeration:
-        append_num_re = get_author_affiliation_numeration_str() + '?'
-    else:
-        append_num_re = ""
+    append_num_re = (
+            get_author_affiliation_numeration_str() + '?') if incl_numeration else ''
 
     return r"""
     (?:
         (?:
-            (?!%(invalid_prefixes)s)                             ## Invalid prefixes to avoid
+            (?!%(invalid_prefixes)s)                     ## Invalid prefixes to avoid
             \w{1,3}(?<!and)(?<!in)(?:(?:[’'`´-]\s?)|\s)
         )?   ## The optional surname prefix:
-                                                                 ## 1 or 2, 2-3 character prefixes before the surname (e.g. 'van','de')
+        ## 1 or 2, 2-3 character prefixes before the surname (e.g. 'van','de')
 
-        (?!%(invalid_surnames)s)                                 ## Invalid surnames to avoid
-        %(uppercase_re)s\w{2,20}(?:[\-’'`´]\w{2,20})?            ## The surname, which must start with an upper case character (single hyphen allowed)
+        (?!%(invalid_surnames)s)       ## Invalid surnames to avoid
+        ## The surname, which must start with an upper case character
+        ## (single hyphen allowed)
+        %(uppercase_re)s\w{2,20}(?:[\-’'`´]\w{2,20})?
 
-        \s*[,.\s]\s*                                             ## The space between the surname and its initials
+        \s*[,.\s]\s*                   ## The space between the surname and its initials
 
-        (?<!Volume\s)                                            ## Initials
+        (?<!Volume\s)                  ## Initials
         %(uppercase_re)s(?:\s*[.'’\s-]{1,2}\s*%(uppercase_re)s){0,4}\.{0,2}
 
-                                                                 ## Either a comma or an 'and' MUST be present ... OR an end of line marker
-                                                                 ## (maybe some space's between authors)
-                                                                 ## Uses positive lookahead assertion
-        %(numeration)s                                           ## A possible number to appear after an author name, used for author extraction
+        ## Either a comma or an 'and' MUST be present ... OR an end of line marker
+        ## (maybe some space's between authors)
+        ## Uses positive lookahead assertion
+        ## A possible number to appear after an author name, used for author extraction
+        %(numeration)s
 
         (?:               # Look for editor notation after the author group...
             \s*,?\s*      # Eventually a coma/space
@@ -187,8 +191,10 @@ invalid_prefixes = (
 
 def make_auth_regex_str(etal, initial_surname_author=None, surname_initial_author=None):
     """
-        Returns a regular expression to be used to identify groups of author names in a citation.
-        This method contains patterns for default authors, so no arguments are needed for the
+        Returns a regular expression to be used to identify groups
+        of author names in a citation.
+        This method contains patterns for default authors,
+         so no arguments are needed for the
         most reliable form of matching.
 
         The returned author pattern is capable of:
@@ -196,25 +202,27 @@ def make_auth_regex_str(etal, initial_surname_author=None, surname_initial_autho
         'Initial. [surname prefix...] Surname'
 
         2. Identifying multiple authors, each with at least one initial, of the form:
-        'Initial. [surname prefix...] Surname, [and] [Initial. [surname prefix...] Surname ... ]'
+        'Initial. [surname prefix...] Surname,
+         [and] [Initial. [surname prefix...] Surname ... ]'
         ***(Note that a full stop, hyphen or apostrophe after each initial is
         absolutely vital in identifying authors for both of these above methods.
         Initials must also be uppercase.)***
 
-        3. Capture 'et al' statements at the end of author groups (allows for authors with et al
-        to be processed differently from 'standard' authors)
+        3. Capture 'et al' statements at the end of author groups (allows for authors
+        with et al to be processed differently from 'standard' authors)
 
-        4. Identifying a single author surname name positioned before the phrase 'et al',
-        with no initials: 'Surname et al'
+        4. Identifying a single author surname name positioned
+        before the phrase 'et al', with no initials: 'Surname et al'
 
         5. Identifying two author surname name positioned before the phrase 'et al',
         with no initials, but separated by 'and' or '&': 'Surname [and|&] Surname et al'
 
         6. Identifying authors of the form:
         'Surname Initials, Initials Surname [Initials Surname]...'. Some authors choose
-        to represent the most important cited author (in a list of authors) by listing first
-        their surname, and then their initials. Since this form has little distinguishing
-        characteristics which could be used to create a reliable a pattern, at least one
+        to represent the most important cited author (in a list of authors)
+        by listing first their surname, and then their initials.
+         Since this form has little distinguishing characteristics
+         which could be used to create a reliable a pattern, at least one
         standard author must be present after it in order to improve the accuracy.
 
         7. Capture editor notation, of which can take many forms e.g.
@@ -230,7 +238,8 @@ def make_auth_regex_str(etal, initial_surname_author=None, surname_initial_autho
             C. Hayward, V van Edwards, M. J. Woodbridge, and L. Kelloggs et al.,
         - detect whether the author group has been marked up as editors of the doc.
             (therefore they will NOT be marked up as authors) e.g.:
-            ed. C Hayward | (ed) V van Edwards  | ed by, M. J. Woodbridge and V van Edwards
+            ed. C Hayward | (ed) V van Edwards  |
+             ed by, M. J. Woodbridge and V van Edwards
             | L. Kelloggs (editors) | M. Jackson (eds.) | ...
         -detect a maximum of two surnames only if the surname(s) is followed by 'et al'
          (must be separated by 'and' if there are two), e.g.:
@@ -244,8 +253,10 @@ def make_auth_regex_str(etal, initial_surname_author=None, surname_initial_autho
 
     if not surname_initial_author:
         # The author name of the form: 'surname initial(s)'
-        # This is sometimes the represention of the first author found inside an author group.
-        # This author pattern is only used to find a maximum of ONE author inside an author group.
+        # This is sometimes the represention of the first author
+        # found inside an author group.
+        # This author pattern is only used to find a maximum of ONE author
+        # inside an author group.
         # Authors of this form MUST have either a comma after the initials, or an 'and',
         # which denotes the presence of other authors in the author group.
         surname_initial_author = get_surname_initial_author_pattern()
@@ -255,27 +266,33 @@ def make_auth_regex_str(etal, initial_surname_author=None, surname_initial_autho
     # J. Bloggs, W.-H. Smith, D. De Samuel, G.L. Bayetian, C. Hayward et al.,
     # (the use of 'et. al' is a giveaway that the preceeding
     # text was indeed an author name)
-    # This will also match authors which seem to be labeled as editors (with the phrase 'ed.')
+    # This will also match authors which seem to be labeled as editors
+    # (with the phrase 'ed.')
     # In which case, the author will be thrown away later on.
-    # The regex returned has around 100 named groups already (max), so any new groups must be
-    # started using '?:'
+    # The regex returned has around 100 named groups already (max),
+    # so any new groups must be started using '?:'
 
     return r"""
-     (?:^|\s+|\()                                                     ## Must be the start of the line, or a space (or an opening bracket in very few cases)
-     (?P<es>                                                        ## Look for editor notation before the author
-      (?:(?:(?:[Ee][Dd]s?|[Ee]dited|[Ee]ditors?)((?:\.\s?)|(?:\.?\s)))                    ## 'eds?. '     | 'ed '      | 'ed.'
-      |(?:(?:[Ee][Dd]s?|[Ee]dited|[Ee]ditions?)(?:(?:\.\s?)|(?:\.?\s))by(?:\s|([:,]\s)))    ## 'eds?. by, ' | 'ed. by: ' | 'ed by '  | 'ed. by '| 'ed by: '
-      |(?:\(\s?([Ee][Dd]s?|[Ee]dited|[Ee]ditors?)(?:(?:\.\s?)|(?:\.?\s))?\)))           ## '( eds?. )'  | '(ed.)'    | '(ed )'   | '( ed )' | '(ed)'
+    ## Must be the start of the line, a space (or an opening bracket in very few cases)
+     (?:^|\s+|\()
+     ## Look for editor notation before the author
+     (?P<es>
+      ## 'eds?. '     | 'ed '      | 'ed.'
+      (?:(?:(?:[Ee][Dd]s?|[Ee]dited|[Ee]ditors?)((?:\.\s?)|(?:\.?\s)))
+      ## 'eds?. by, ' | 'ed. by: ' | 'ed by '  | 'ed. by '| 'ed by: '
+      |(?:(?:[Ee][Dd]s?|[Ee]dited|[Ee]ditions?)(?:(?:\.\s?)|(?:\.?\s))by(?:\s|([:,]\s)))
+       ## '( eds?. )'  | '(ed.)'    | '(ed )'   | '( ed )' | '(ed)'
+      |(?:\(\s?([Ee][Dd]s?|[Ee]dited|[Ee]ditors?)(?:(?:\.\s?)|(?:\.?\s))?\)))
      )?
 
-                                                                    ## **** (1) , one or two surnames which MUST end with 'et al' (e.g. Amaldi et al.,)
+   ## **** (1) , one or two surnames which MUST end with 'et al' (e.g. Amaldi et al.,)
    (?P<author_names>
        (?:
          (?:[A-Z](?:\s*[.'’-]{1,2}\s*[A-Z]){0,4}[.\s]\s*)?          ## Initials
          [A-Z][^0-9_\.\s]{2,20}(?:(?:[,\.]\s*)|(?:[,\.]?\s+))       ## Surname
          (?:[A-Z](?:\s*[.'’-]{1,2}\s*[A-Z]){0,4}[.\s]\s*)?          ## Initials
          (?P<multi_surs>
-          (?:(?:[Aa][Nn][Dd]|\&)\s+)                                ## Maybe 'and' or '&' tied with another name
+          (?:(?:[Aa][Nn][Dd]|\&)\s+)                                ## 'and' or '&'
           [A-Z][^0-9_\.\s]{3,20}(?:(?:[,\.]\s*)|(?:[,\.]?\s+))      ## More surnames
           (?:[A-Z](?:[ -][A-Z])?\s+)?                               ## with initials
          )?
@@ -284,7 +301,7 @@ def make_auth_regex_str(etal, initial_surname_author=None, surname_initial_autho
              %(ed)s
          )?
          (?P<et2>
-            %(etal)s                                                ## et al, MUST BE PRESENT however, for this author form
+            %(etal)s             # et al, MUST BE PRESENT however, for this author form
          )
          (?:                     # Look for editor notation after the author group...
              \s*[,\s]?\s*        # Eventually a coma/space
@@ -293,26 +310,26 @@ def make_auth_regex_str(etal, initial_surname_author=None, surname_initial_autho
        ) |
 
         (?:
-                                                                    ## **** (2) , The standard author form.. (e.g. J. Bloggs)
-                                                                    ## This author form can either start with a normal 'initial surname' author,
-                                                                    ## or it can begin with a single 'surname initial' author
+            ## **** (2) , The standard author form.. (e.g. J. Bloggs)
+            ## This author form can either start with a normal 'initial surname' author,
+            ## or it can begin with a single 'surname initial' author
 
-            (?:                                                     ## The first author in the 'author group'
+            (?:                                ## The first author in the 'author group'
                %(i_s_author)s |
                (?P<sur_initial_auth>%(s_i_author)s)
             )
 
             (?P<multi_auth>
-                (?:                                                 ## Then 0 or more author names
+                (?:                         ## Then 0 or more author names
                     \s*[,\s]\s*
                     (?:
                         %(i_s_author)s | %(s_i_author)s
                     )
                 )*
 
-                (?:                                                 ## Maybe 'and' or '&' tied with another name
+                (?:                         ## Maybe 'and' or '&' tied with another name
                     (?:
-                        \s*[,\s]\s*                                 ## handle "J. Dan, and H. Pon"
+                        \s*[,\s]\s*         ## handle "J. Dan, and H. Pon"
                         (?:[Aa][Nn][DdsS]|\&)
                         \s+
                     )
@@ -374,7 +391,8 @@ re_ed_notation = r"""
 
 # Used as a weak mechanism to classify possible authors above identified affiliations
 # (start) Firstname SurnamePrefix Surname (end)
-re_ambig_auth = re.compile(r"^\s*[A-Z][^\s_<>0-9]+\s+([^\s_<>0-9]{1,3}\.?\s+)?[A-Z][^\s_<>0-9]+\s*$",
+re_ambig_auth = re.compile(r"^\s*[A-Z][^\s_<>0-9]+\s+([^\s_<>"
+                           r"0-9]{1,3}\.?\s+)?[A-Z][^\s_<>0-9]+\s*$",
                            re.UNICODE)
 
 # Obtain the compiled expression which includes the proper author numeration
@@ -392,10 +410,13 @@ re_comma_or_and_at_start = re.compile(
 
 
 def make_collaborations_regex_str():
-    """ From the authors knowledge-base, construct a single regex holding the or'd possibilities of patterns
-    which should be included in $h subfields. The word 'Collaboration' is also converted to 'Coll', and
+    """ From the authors knowledge-base,
+     construct a single regex holding the or'd possibilities of patterns
+    which should be included in $h subfields.
+     The word 'Collaboration' is also converted to 'Coll', and
     used in finding matches. Letter case is not considered during the search.
-    @return: (string) The single pattern built from each line in the author knowledge base.
+    @return: (string) The single pattern built from each line
+     in the author knowledge base.
     """
     def add_to_auth_list(s):
         """Strip the line, replace spaces with 'backslash s' and append 'the'
@@ -410,27 +431,30 @@ def make_collaborations_regex_str():
     fpath = CFG_REFEXTRACT_KBS['collaborations']
 
     try:
-        fh = open(fpath, "r")
+        with open(fpath, 'r') as fh:
+            for line_num, rawline in enumerate(fh):
+                try:
+                    rawline = rawline.decode("utf-8")
+                except UnicodeError:
+                    LOGGER.debug(
+                        u"Unicode problems in %s for line %d", fpath, line_num)
+                    raise UnicodeError(
+                        "Error: Unable to parse collaboration kb (line: %s)"
+                        % str(line_num))
+                if rawline.strip() and rawline[0].strip() != '#':
+                    add_to_auth_list(rawline)
+                    # Shorten collaboration to 'coll'
+                    if rawline.lower().endswith('collaboration\n'):
+                        coll_version = rawline[:rawline.lower().find(
+                            u'collaboration\n')] + r"coll[\.\,]"
+                        add_to_auth_list(
+                            coll_version.strip().replace(' ', r'\s') + u"s?")
     except IOError:
         # problem opening KB for reading, or problem while reading from it:
-        LOGGER.debug(u"Error: Could not build knowledge base containing author patterns - failed to read from KB %s s.\n", fpath)
+        LOGGER.debug(u"Error: Could not build knowledge base containing author "
+                     u"patterns - failed to read from KB %s s.\n", fpath)
         raise IOError("Error: Unable to open collaborations kb '%s'" % fpath)
 
-    for line_num, rawline in enumerate(fh):
-        try:
-            rawline = rawline.decode("utf-8")
-        except UnicodeError:
-            LOGGER.debug(u"Unicode problems in %s for line %d", fpath, line_num)
-            raise UnicodeError(
-                "Error: Unable to parse collaboration kb (line: %s)" % str(line_num))
-        if rawline.strip() and rawline[0].strip() != '#':
-            add_to_auth_list(rawline)
-            # Shorten collaboration to 'coll'
-            if rawline.lower().endswith('collaboration\n'):
-                coll_version = rawline[:rawline.lower().find(
-                    u'collaboration\n')] + r"coll[\.\,]"
-                add_to_auth_list(
-                    coll_version.strip().replace(' ', r'\s') + u"s?")
 
     author_match_re = ""
     if len(auths) > 0:
@@ -447,7 +471,8 @@ def get_single_author_pattern():
     ones used inside the main 'author group' pattern generator. This function is used
     not for reference extraction, but for author extraction. Numeration is appended
     to author patterns by default.
-    @return (string): Just the author name pattern designed to identify single author names
+    @return (string): Just the author name pattern designed to
+     identify single author names
     in both SI and IS formats. (NO 'et al', editors, 'and'... matching)
     @return: (string) the union of 'initial surname' and 'surname initial'
     authors"""
@@ -472,8 +497,9 @@ def get_author_regexps():
     if not RE_AUTH_NEAR_MISS:
         # Given an Auth hit, some misc text, and then another Auth hit straight after,
         # (OR a bad_and was found)
-        # check the entire misc text to see if is 'looks' like an author group, which didn't match
-        # as a normal author. In which case, append it to the single author group.
+        # check the entire misc text to see if is 'looks' like an author group,
+        # which didn't match as a normal author.
+        # In which case, append it to the single author group.
         # PLEASE use this pattern only against space stripped text.
         # IF a bad_and was found (from above).. do re.search using this pattern
         # ELIF an auth-misc-auth combo was hit, do re.match using this pattern

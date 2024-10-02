@@ -23,19 +23,21 @@
 
 """Finding the reference section from the fulltext"""
 
+import contextlib
 import logging
 import re
 
-from .regexs import \
-    get_reference_section_title_patterns, \
-    get_reference_line_numeration_marker_patterns, \
-    regex_match_list, \
-    get_post_reference_section_title_patterns, \
-    get_post_reference_section_keyword_patterns, \
-    re_reference_line_bracket_markers, \
-    re_reference_line_dot_markers, \
-    re_reference_line_number_markers, \
-    re_num
+from refextract.references.regexs import (
+    get_post_reference_section_keyword_patterns,
+    get_post_reference_section_title_patterns,
+    get_reference_line_numeration_marker_patterns,
+    get_reference_section_title_patterns,
+    re_num,
+    re_reference_line_bracket_markers,
+    re_reference_line_dot_markers,
+    re_reference_line_number_markers,
+    regex_match_list,
+)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -75,11 +77,15 @@ def find_reference_section(docbody):
             if title_match:
                 title = title_match.group('title')
                 index = len(docbody) - 1 - reversed_index
-                temp_ref_details, found_title = find_numeration(docbody[index:index + 6], title)
+                temp_ref_details, found_title = (
+                    find_numeration(docbody[index:index + 6], title))
                 if temp_ref_details:
-                    if ref_details and 'title' in ref_details and ref_details['title'] and not temp_ref_details['title']:
+                    if (ref_details and 'title' in ref_details and ref_details['title']
+                            and not temp_ref_details['title']):
                         continue
-                    if ref_details and 'marker' in ref_details and ref_details['marker'] and not temp_ref_details['marker']:
+                    if (ref_details and 'marker' in ref_details
+                            and ref_details['marker']
+                            and not temp_ref_details['marker']):
                         continue
 
                     ref_details = temp_ref_details
@@ -393,11 +399,9 @@ def find_end_of_reference_section(docbody,
         # save the reference count
         num_match = regex_match_list(docbody[x].strip(), mk_patterns)
         if num_match:
-            try:
+            with contextlib.suppress(ValueError, IndexError):
                 current_reference_count = int(num_match.group('marknum'))
-            except (ValueError, IndexError):
-                # non numerical references marking
-                pass
+
         # look for a likely section title that would follow a reference
         # section:
         end_match = regex_match_list(docbody[x].strip(), t_patterns)

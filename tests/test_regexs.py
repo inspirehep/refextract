@@ -27,7 +27,7 @@ from refextract.references import regexs
 
 
 def test_word():
-    r = regexs._create_regex_pattern_add_optional_spaces_to_word_characters('ABC')
+    r = regexs._create_regex_pattern_with_optional_spaces('ABC')
     assert r == r'A\s*B\s*C\s*'
 
 

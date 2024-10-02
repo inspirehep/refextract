@@ -29,25 +29,29 @@ from a raw string.
 """
 
 import os
-import requests
-import magic
-
 from tempfile import mkstemp
 
+import magic
+import requests
 from inspire_utils.dedupers import dedupe_list
 
-from .engine import (
+from refextract.references.engine import (
     get_kbs,
     get_plaintext_document_body,
     parse_reference_line,
     parse_references,
 )
-from .errors import FullTextNotAvailableError
-from .find import (find_numeration_in_body,
-                   get_reference_section_beginning)
-from .pdf import extract_texkeys_and_urls_from_pdf
-from .text import extract_references_from_fulltext, rebuild_reference_lines
-from .record import update_reference_with_urls
+from refextract.references.errors import FullTextNotAvailableError
+from refextract.references.find import (
+    find_numeration_in_body,
+    get_reference_section_beginning,
+)
+from refextract.references.pdf import extract_texkeys_and_urls_from_pdf
+from refextract.references.record import update_reference_with_urls
+from refextract.references.text import (
+    extract_references_from_fulltext,
+    rebuild_reference_lines,
+)
 
 
 def extract_references_from_url(url, headers=None, chunk_size=1024, **kwargs):
@@ -71,7 +75,8 @@ def extract_references_from_url(url, headers=None, chunk_size=1024, **kwargs):
 
     To override KBs for journal names etc., use ``override_kbs_files``:
 
-    >>> extract_references_from_url(path, override_kbs_files={'journals': 'my/path/to.kb'})
+    >>> extract_references_from_url(path,
+                                    override_kbs_files={'journals': 'my/path/to.kb'})
 
     """
     # Get temporary filepath to download to
@@ -122,7 +127,8 @@ def extract_references_from_file(path,
 
     To override KBs for journal names etc., use ``override_kbs_files``:
 
-    >>> extract_references_from_file(path, override_kbs_files={'journals': 'my/path/to.kb'})
+    >>> extract_references_from_file(path,
+                                     override_kbs_files={'journals': 'my/path/to.kb'})
 
     """
     if not os.path.isfile(path):
@@ -146,11 +152,14 @@ def extract_references_from_file(path,
         extracted_texkeys_urls = extract_texkeys_and_urls_from_pdf(path)
         if len(extracted_texkeys_urls) == len(parsed_refs):
             parsed_refs_updated = []
-            for ref, ref_texkey_urls in zip(parsed_refs, extracted_texkeys_urls):
+            for ref, ref_texkey_urls in zip(parsed_refs,
+                                            extracted_texkeys_urls,
+                                            strict=False):
                 update_reference_with_urls(ref, ref_texkey_urls.get('urls', []))
                 if ref.get('url'):
                     ref['url'] = dedupe_list(ref['url'])
-                parsed_refs_updated.append(dict(ref, texkey=[ref_texkey_urls['texkey']]))
+                parsed_refs_updated.append(dict(ref,
+                                                texkey=[ref_texkey_urls['texkey']]))
 
             return parsed_refs_updated
     return parsed_refs
@@ -182,7 +191,8 @@ def extract_references_from_string(source,
 
     To override KBs for journal names etc., use ``override_kbs_files``:
 
-    >>> extract_references_from_string(path, override_kbs_files={'journals': 'my/path/to.kb'})
+    >>> extract_references_from_string(path,
+        override_kbs_files={'journals': 'my/path/to.kb'})
     """
     docbody = source.split('\n')
     if not is_only_references:

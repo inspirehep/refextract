@@ -25,7 +25,6 @@
 
 import re
 
-
 re_space_comma = re.compile(r'\s,', re.UNICODE)
 re_space_semicolon = re.compile(r'\s;', re.UNICODE)
 re_space_period = re.compile(r'\s\.', re.UNICODE)
@@ -34,7 +33,8 @@ re_comma_space_colon = re.compile(r',\s:', re.UNICODE)
 re_space_closing_square_bracket = re.compile(r'\s\]', re.UNICODE)
 re_opening_square_bracket_space = re.compile(r'\[\s', re.UNICODE)
 re_hyphens = re.compile(
-    br'(\\255|\u02D7|\u0335|\u0336|\u2212|\u002D|\uFE63|\uFF0D)'.decode('raw_unicode_escape'), re.UNICODE)
+    br'(\\255|\u02D7|\u0335|\u0336|\u2212|\u002D|\uFE63|\uFF0D)'
+    .decode('raw_unicode_escape'), re.UNICODE)
 re_multiple_space = re.compile(r'\s{2,}', re.UNICODE)
 
 re_group_captured_multiple_space = re.compile(r'(\s{2,})', re.UNICODE)
@@ -264,12 +264,8 @@ def get_number_header_lines(docbody, page_break_posns):
     # pattern to search for a word in a line:
     p_wordSearch = re.compile(r'([A-Za-z0-9-]+)', re.UNICODE)
     if remaining_breaks > 2:
-        if remaining_breaks > 3:
-            # Only check odd page headers
-            next_head = 2
-        else:
-            # Check headers on each page
-            next_head = 1
+        # Only check odd page headers else check headers on each page
+        next_head = 2 if remaining_breaks > 3 else 1
         keep_checking = 1
         while keep_checking:
             cur_break = 1
@@ -406,7 +402,7 @@ def strip_headers_footers_pagebreaks(docbody,
         for i in range(0, len(page_break_posns)):
             # Unless this is the last page break, chop headers
             if not first:
-                for dummy in range(1, num_head_lines + 1):
+                for _dummy in range(1, num_head_lines + 1):
                     docbody[page_break_posns[i] +
                             1:page_break_posns[i] + 2] = []
             else:
@@ -415,7 +411,7 @@ def strip_headers_footers_pagebreaks(docbody,
             docbody[page_break_posns[i]:page_break_posns[i] + 1] = []
             # Chop footers (unless this is the first page break)
             if i != len(page_break_posns) - 1:
-                for dummy in range(1, num_foot_lines + 1):
+                for _dummy in range(1, num_foot_lines + 1):
                     docbody[page_break_posns[i] -
                             num_foot_lines:page_break_posns[i] -
                             num_foot_lines + 1] = []
@@ -429,7 +425,7 @@ def check_boundary_lines_similar(l_1, l_2):
     @return: (int) 1/0.
     """
     num_matches = 0
-    if (type(l_1) != list) or (type(l_2) != list) or (len(l_1) != len(l_2)):
+    if not isinstance(l_1, list) or not isinstance(l_2, list) or len(l_1) != len(l_2):
         # these 'boundaries' are not similar
         return 0
 

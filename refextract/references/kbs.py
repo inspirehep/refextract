@@ -21,21 +21,22 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-import re
-import six
-import csv
 import codecs
 import contextlib
+import csv
+import re
 
-from .config import CFG_REFEXTRACT_KBS
-from .regexs import (
-    re_kb_line,
-    re_regexp_character_class,
-    re_extract_quoted_text,
+import six
+
+from refextract.documents.text import re_group_captured_multiple_space
+from refextract.references.config import CFG_REFEXTRACT_KBS
+from refextract.references.regexs import (
     re_extract_char_class,
+    re_extract_quoted_text,
+    re_kb_line,
     re_punctuation,
+    re_regexp_character_class,
 )
-from ..documents.text import re_group_captured_multiple_space
 
 
 @contextlib.contextmanager
@@ -43,7 +44,9 @@ def file_resolving(fpath, reader=None, **kwargs):
     if isinstance(fpath, six.string_types):
         fh = codecs.open(fpath, encoding='utf-8')
         if reader:
-            yield reader(fh, delimiter=kwargs.pop('delimiter', '|'), lineterminator=kwargs.pop('lineterminator', ';'))
+            yield reader(fh,
+                         delimiter=kwargs.pop('delimiter', '|'),
+                         lineterminator=kwargs.pop('lineterminator', ';'))
         else:
             yield fh
 
@@ -91,12 +94,9 @@ def load_kb_by_type(kb_type, kb):
 def load_kb(path, builder):
     if isinstance(path, dict):
         return load_kb_from_iterable(path.items(), builder)
-    try:
-        path.startswith
-    except AttributeError:
-        return load_kb_from_iterable(path, builder)
-    else:
+    elif hasattr(path, 'startswith'):
         return load_kb_from_file(path, builder)
+    return load_kb_from_iterable(path, builder)
 
 
 def order_reportnum_patterns_bylen(numeration_patterns):
@@ -342,25 +342,18 @@ def build_reportnum_kb(fpath):
             if m_preprint_classification:
                 # This KB line contains a preprint classification for
                 # the current institute
-                try:
+                with contextlib.suppress(AttributeError, NameError):
                     current_institute_preprint_classifications.append((m_preprint_classification.group(1),
                                                                        m_preprint_classification.group(2)))
-                except (AttributeError, NameError):
-                    # didn't match this line correctly - skip it
-                    pass
-                # move on to the next line
                 continue
 
             m_numeration_pattern = re_numeration_pattern.search(rawline)
             if m_numeration_pattern:
                 # This KB line contains a preprint item numeration pattern
                 # for the current institute
-                try:
+                with contextlib.suppress(AttributeError, NameError):
                     current_institute_numerations.append(
                         m_numeration_pattern.group(1))
-                except (AttributeError, NameError):
-                    # didn't match the numeration pattern correctly - skip it
-                    pass
                 continue
 
         _add_institute_preprint_patterns(current_institute_preprint_classifications,
@@ -538,7 +531,7 @@ def build_journals_kb(knowledgebase):
 
     # Now, for every 'replacement term' found in the KB, if it is
     # not already in the KB as a "search term", add it:
-    for repl_term in repl_terms.keys():
+    for repl_term in repl_terms:
         raw_repl_phrase = repl_term.upper()
         raw_repl_phrase = re_punctuation.sub(u' ', raw_repl_phrase)
         raw_repl_phrase = \

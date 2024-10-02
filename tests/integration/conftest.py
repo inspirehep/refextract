@@ -6,7 +6,7 @@ from refextract.app import create_app
 @pytest.fixture(autouse=True, scope="session")
 def app():
     app = create_app()
-    yield app
+    return app
 
 
 @pytest.fixture()

@@ -53,7 +53,8 @@ def test_no_title_via_brackets():
     ])
     assert sect == {
         'marker': '[1]',
-        'marker_pattern': u'(?P<mark>(?P<left>\\[)\\s*(?P<marknum>\\d+)\\s*(?P<right>\\]))',
+        'marker_pattern': u'(?P<mark>(?P<left>\\[)\\s*(?P<marknum>\\d+)\\s*('
+                          u'?P<right>\\]))',
         'start_line': 1,
         'title_string': None,
         'title_marker_same_line': False,
@@ -69,7 +70,8 @@ def test_no_title_via_dots():
     ])
     assert sect == {
         'marker': '1.',
-        'marker_pattern': u'(?P<mark>(?P<left>)\\s*(?P<marknum>\\d+)\\s*(?P<right>\\.))',
+        'marker_pattern':
+            u'(?P<mark>(?P<left>)\\s*(?P<marknum>\\d+)\\s*(?P<right>\\.))',
         'start_line': 1,
         'title_string': None,
         'title_marker_same_line': False,

@@ -25,15 +25,18 @@ import logging
 import re
 
 from inspire_utils.record import replace_undesirable_characters
-from ..documents.text import (
-    join_lines,
-    repair_broken_urls,
-    re_multiple_space,
-    remove_page_boundary_lines
-)
 
-from .config import CFG_REFEXTRACT_MAX_LINES
-from .find import find_end_of_reference_section, get_reference_section_beginning
+from refextract.documents.text import (
+    join_lines,
+    re_multiple_space,
+    remove_page_boundary_lines,
+    repair_broken_urls,
+)
+from refextract.references.config import CFG_REFEXTRACT_MAX_LINES
+from refextract.references.find import (
+    find_end_of_reference_section,
+    get_reference_section_beginning,
+)
 
 LOGGER = logging.getLogger(__name__)
 
