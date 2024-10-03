@@ -164,7 +164,7 @@ def test_extract_references_from_text_when_timeout_from_refextract(
     )
     assert response.status_code == 500
     assert response.json == {'message':
-                                 "Can not extract references. Reason: 'test message'"}
+                             "Can not extract references. Reason: 'test message'"}
 
 
 @pytest.mark.vcr()
