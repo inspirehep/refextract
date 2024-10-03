@@ -779,7 +779,7 @@ def find_substring_ignore_special_chars(s, substr):
                 i += 1
             if i > startIndex:
                 break
-            real_index=+1
+            real_index =+ 1
 
         return real_index
     else:
@@ -1066,7 +1066,7 @@ def parse_tagged_reference_line(line_marker,
 
             # extract the institutional report-number from the line:
             idx_closing_tag = processed_line.find(
-                CFG_REFEXTRACT_MARKER_CLOSING_REPORT_NUM,tag_match_end)
+                CFG_REFEXTRACT_MARKER_CLOSING_REPORT_NUM, tag_match_end)
             # Sanity check - did we find a closing report-number tag?
             if idx_closing_tag == -1:
                 # no closing </cds.REPORTNUMBER> tag found -

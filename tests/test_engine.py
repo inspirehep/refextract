@@ -396,8 +396,8 @@ def test_reference_split():
             'journal_year': [u'1988'],
             'linemarker': [u'7'],
             'raw_ref': ['[7] J. Ellis et al., Phys. Lett. B 212, 375 (1988); H. Ejiri '
-                        'et al., Phys. Lett. B 317, 14 (1993).'], 'journal_page': [
-            u'375']
+                        'et al., Phys. Lett. B 317, 14 (1993).'],
+            'journal_page': [u'375']
         },
         {
             'author': [u'H. Ejiri et al.'],
