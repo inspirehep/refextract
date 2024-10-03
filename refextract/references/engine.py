@@ -779,7 +779,7 @@ def find_substring_ignore_special_chars(s, substr):
                 i += 1
             if i > startIndex:
                 break
-            real_index =+ 1
+            real_index += 1
 
         return real_index
     else:
