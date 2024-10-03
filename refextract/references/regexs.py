@@ -892,12 +892,11 @@ def get_post_reference_section_keyword_patterns():
         r').*(AAS\s*)?\sLATEX',
         r'AAS\s+?LATEX\s+?' +
         _create_regex_pattern_with_optional_spaces(u'macros') + u'v',
-                r'^\s*' + _create_regex_pattern_with_optional_spaces(
-                    u'This paper has been produced using'),
-                r'^\s*' +
-        _create_regex_pattern_with_optional_spaces(
-                    u'This article was processed by the author using Springer-Verlag') +
-                u' LATEX']
+        r'^\s*' + _create_regex_pattern_with_optional_spaces(
+            u'This paper has been produced using'),
+        r'^\s*' + _create_regex_pattern_with_optional_spaces(
+            u'This article was processed by the author using Springer-Verlag') +
+        u' LATEX']
     for p in patterns:
         compiled_patterns.append(re.compile(p, re.I | re.UNICODE))
     return compiled_patterns

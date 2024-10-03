@@ -86,7 +86,7 @@ def get_initial_surname_author_pattern(incl_numeration=False):
     # Possible inclusion of superscript numeration at the end of author names
     # Will match the empty string
     append_num_re = (
-            get_author_affiliation_numeration_str() + '?') if incl_numeration else ''
+        get_author_affiliation_numeration_str() + '?') if incl_numeration else ''
 
     return r"""
     (?:
@@ -141,7 +141,7 @@ def get_surname_initial_author_pattern(incl_numeration=False):
     # Possible inclusion of superscript numeration at the end of author names
     # Will match the empty string
     append_num_re = (
-            get_author_affiliation_numeration_str() + '?') if incl_numeration else ''
+        get_author_affiliation_numeration_str() + '?') if incl_numeration else ''
 
     return r"""
     (?:
@@ -454,7 +454,6 @@ def make_collaborations_regex_str():
         LOGGER.debug(u"Error: Could not build knowledge base containing author "
                      u"patterns - failed to read from KB %s s.\n", fpath)
         raise IOError("Error: Unable to open collaborations kb '%s'" % fpath)
-
 
     author_match_re = ""
     if len(auths) > 0:

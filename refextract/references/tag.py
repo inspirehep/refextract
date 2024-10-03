@@ -814,17 +814,17 @@ def account_for_stripped_whitespace(spaces_keys,
             # current replacement index:
             true_replacement_index += removed_spaces[space]
             spare_replacement_index += removed_spaces[space]
-        elif spare_replacement_index <= space < (spare_replacement_index +
+        elif (spare_replacement_index <= space < (spare_replacement_index +
                                                  len(journals_matches[
-                                                         replacement_index])) and \
-            replacement_types[replacement_index] == u"journal":
+                                                         replacement_index])) and
+              replacement_types[replacement_index] == u"journal"):
             # A periodical title is being replaced. Account for multi-spaces
             # that may have been stripped from the title before its
             # recognition:
             spare_replacement_index += removed_spaces[space]
             extras += removed_spaces[space]
         elif (spare_replacement_index <= space < (spare_replacement_index +
-                                                 len_reportnums[replacement_index]) and
+                                                  len_reportnums[replacement_index]) and
               replacement_types[replacement_index] == u"reportnumber"):
             # An institutional preprint report-number is being replaced.
             # Account for multi-spaces that may have been stripped from it
