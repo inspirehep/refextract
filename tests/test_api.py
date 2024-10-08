@@ -26,11 +26,10 @@ import responses
 
 from refextract.references.api import (
     extract_journal_reference,
+    extract_references_from_file,
     extract_references_from_string,
     extract_references_from_url,
-    extract_references_from_file,
 )
-
 from refextract.references.errors import FullTextNotAvailableError
 
 
@@ -41,7 +40,8 @@ def kbs_override():
             ('Griffiths, David', 'Introduction to elementary particles', '2008')
         ],
         "journals": [
-            ("PHYSICAL REVIEW SPECIAL TOPICS ACCELERATORS AND BEAMS", "Phys.Rev.ST Accel.Beams"),
+            ("PHYSICAL REVIEW SPECIAL TOPICS ACCELERATORS AND BEAMS",
+             "Phys.Rev.ST Accel.Beams"),
             ("PHYS REV D", "Phys.Rev.;D"),
             ("PHYS REV", "Phys.Rev."),
             ("PHYS REV LETT", "Phys.Rev.Lett."),
@@ -54,7 +54,8 @@ def kbs_override():
             ("MATH PHYS", "Math.Phys."),
             ("J MATH PHYS", "J.Math.Phys."),
             ("JHEP", "JHEP"),
-            ("SITZUNGSBER PREUSS AKAD WISS PHYS MATH KL", "Sitzungsber.Preuss.Akad.Wiss.Berlin (Math.Phys.)"),
+            ("SITZUNGSBER PREUSS AKAD WISS PHYS MATH KL",
+             "Sitzungsber.Preuss.Akad.Wiss.Berlin (Math.Phys.)"),
             ("PHYS LETT", "Phys.Lett."),
             ("NUCL PHYS", "Nucl.Phys."),
             ("NUCL PHYS", "Nucl.Phys."),
@@ -148,15 +149,15 @@ def test_extract_references_from_url(pdf_files):
     assert len(r) == 36
     assert 'url' in r[0]
 
+    url = "http://www.example.com"
+    responses.add(
+        responses.GET,
+        url,
+        body="File not found!",
+        status=404,
+        content_type='text/plain',
+    )
     with pytest.raises(FullTextNotAvailableError):
-        url = "http://www.example.com"
-        responses.add(
-            responses.GET,
-            url,
-            body="File not found!",
-            status=404,
-            content_type='text/plain',
-        )
         extract_references_from_url(url)
 
 
@@ -173,5 +174,6 @@ def test_override_kbs_files_can_take_journals_dict():
     journals = {"Journal of Testing": "J.Testing"}
     reference = "J. Smith, Journal of Testing 42 (2020) 1234"
 
-    result = extract_references_from_string(reference, override_kbs_files={"journals": journals})
+    result = extract_references_from_string(reference,
+                                            override_kbs_files={"journals": journals})
     assert result[0]["journal_title"] == ["J.Testing"]

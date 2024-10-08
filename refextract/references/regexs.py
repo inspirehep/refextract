@@ -22,7 +22,6 @@
 # or submit itself to any jurisdiction.
 
 import re
-
 from datetime import datetime
 
 # Sep
@@ -93,7 +92,8 @@ RE_ATLAS_CONF_POST_2010 = re.compile(
 
 
 # Pattern for old arxiv numbers
-old_arxiv_numbers = r"[\|/:\s-]?(?P<num>(?:9[1-9]|0[0-7])(?:0[1-9]|1[0-2])\d{3})(?:v\d{1,3})?(?=[^\w\d]|$)"
+old_arxiv_numbers = (r"[\|/:\s-]?(?P<num>(?:9[1-9]|0[0-7])(?:0[1-9]|1[0-2])\d{3})("
+                     r"?:v\d{1,3})?(?=[^\w\d]|$)")
 
 old_arxiv = {
     r"acc-ph": None,
@@ -193,7 +193,6 @@ old_arxiv = {
     r"quan-ph": "quant-ph",
     r"nlin-cd": "nlin.cd",
     r"math-sp": "math.sp",
-    r"atro-ph": "astro-ph",
     r"ast-ph": "astro-ph",
     r"asyro-ph": "astro-ph",
     r"aastro-ph": "astro-ph",
@@ -243,14 +242,16 @@ re_new_arxiv = re.compile(r""" # 9910.1234v9 [physics.ins-det]
     (?P<year>%(arxiv_years)s)
     (?P<month>(0[1-9]|1[0-2]))
     \.(?P<num>\d{4})(?:[\s-]*V(?P<version>\d))?(?!\d)
-    \s*(?P<suffix>\[[A-Z.-]+\])? """ % {'arxiv_years': arxiv_years}, re.VERBOSE | re.UNICODE | re.IGNORECASE)
+    \s*(?P<suffix>\[[A-Z.-]+\])? """ % {'arxiv_years': arxiv_years},
+                          re.VERBOSE | re.UNICODE | re.IGNORECASE)
 
 re_new_arxiv_5digits = re.compile(r""" # 9910.1234v9 [physics.ins-det]
     (?<!ARXIV:)(?<!\d)
     (?P<year>%(arxiv_years)s)
     (?P<month>(0[1-9]|1[0-2]))
     \.(?P<num>\d{5})(?:[\s-]*V(?P<version>\d))?(?!\d)
-    \s*(?P<suffix>\[[A-Z.-]+\])? """ % {'arxiv_years': arxiv_years_5digits}, re.VERBOSE | re.UNICODE | re.IGNORECASE)
+    \s*(?P<suffix>\[[A-Z.-]+\])? """ % {'arxiv_years': arxiv_years_5digits},
+                                  re.VERBOSE | re.UNICODE | re.IGNORECASE)
 
 # Pattern to recognize quoted text:
 re_quoted = re.compile(r'"(?P<title>[^"]+)"', re.UNICODE)
@@ -330,7 +331,7 @@ vol_tag = r'<cds\.VOL\>(?P<vol>[^<]+)<\/cds\.VOL>'
 year_tag = r'\<cds\.YR\>\((?P<yr>[^<]+)\)\<\/cds\.YR\>'
 series_tag = r'(?P<series>(?:[A-H]|I{1,3}V?|VI{0,3}))?'
 page_tag = r'\<cds\.PG\>(?P<pg>[^<]+)\<\/cds\.PG\>'
-re_recognised_numeration_for_title_plus_series = re.compile(
+re_recognised_numeration_title_plus_series = re.compile(
     r'^\s*[\.,]?\s*(?:Ser\.\s*)?' + series_tag + r'\s*:?\s*' + vol_tag +
     r'\s*(?: ' + year_tag + r')?\s*(?: ' + page_tag + r')', re.UNICODE)
 
@@ -341,19 +342,22 @@ re_recognised_numeration_for_title_plus_series = re.compile(
 # <cds.YR>(1999)</cds.YR> <cds.PG>6119</cds.PG>.
 re_numeration_no_ibid_txt = \
     re.compile(r"""
-          ^((\s*;\s*|\s+and\s+)(?P<series>(?:[A-H]|I{1,3}V?|VI{0,3}))?\s*:?\s   ## Leading ; : or " and :", and a possible series letter
-          \<cds\.VOL\>(?P<vol>\d+|(?:\d+\-\d+))\<\/cds\.VOL>\s                  ## Volume
-          \<cds\.YR\>\((?P<yr>[12]\d{3})\)\<\/cds\.YR\>\s                       ## year
-          \<cds\.PG\>(?P<pg>[RL]?\d+[c]?)\<\/cds\.PG\>)                         ## page
+          ^((\s*;\s*|\s+and\s+)(?P<series>(?:[A-H]|I{1,3}V?|VI{0,3}))?\s*:?\s
+          ## Leading ; : or " and :", and a possible series letter
+          \<cds\.VOL\>(?P<vol>\d+|(?:\d+\-\d+))\<\/cds\.VOL>\s                 ## Volume
+          \<cds\.YR\>\((?P<yr>[12]\d{3})\)\<\/cds\.YR\>\s                      ## year
+          \<cds\.PG\>(?P<pg>[RL]?\d+[c]?)\<\/cds\.PG\>)                        ## page
           """, re.UNICODE | re.VERBOSE)
 
 re_title_followed_by_series_markup_tags = \
     re.compile(
-        r'(\<cds.JOURNAL(?P<ibid>ibid)?\>([^\<]+)\<\/cds.JOURNAL(?:ibid)?\>\s*.?\s*\<cds\.SER\>([A-H]|(I{1,3}V?|VI{0,3}))\<\/cds\.SER\>)', re.UNICODE)
+        r'(\<cds.JOURNAL(?P<ibid>ibid)?\>([^\<]+)\<\/cds.JOURNAL(?:ibid)?\>\s*'
+        r'.?\s*\<cds\.SER\>([A-H]|(I{1,3}V?|VI{0,3}))\<\/cds\.SER\>)', re.UNICODE)
 
 re_title_followed_by_implied_series = \
     re.compile(
-        r'(\<cds.JOURNAL(?P<ibid>ibid)?\>([^\<]+)\<\/cds.JOURNAL(?:ibid)?\>\s*.?\s*([A-H]|(I{1,3}V?|VI{0,3}))\s+:)', re.UNICODE)
+        r"(\<cds.JOURNAL(?P<ibid>ibid)?\>([^\<]+)\<\/cds.JOURNAL(?:ibid)?\>"
+        r"\s*.?\s*([A-H]|(I{1,3}V?|VI{0,3}))\s+:)", re.UNICODE)
 
 
 re_punctuation = re.compile(r'[\.\,\;\'\(\)\-]', re.UNICODE)
@@ -400,7 +404,8 @@ re_series_from_title = re.compile(r"""
     (?:[\s\.]+(?:(?P<open_bracket>\()\s*[Ss][Ee][Rr]\.)?
             ([A-H]|(I{1,3}V?|VI{0,3}))
     )?
-    (?(open_bracket)\s*\))$   ## Only match the ending bracket if the opening bracket was found""",
+    (?(open_bracket)\s*\))$
+    ## Only match the ending bracket if the opening bracket was found""",
                                   re.UNICODE | re.VERBOSE)
 
 
@@ -427,7 +432,9 @@ re_volume_sub_number_opt = u'(?:' + re_sep + u'(?P<vol_sub>' + \
 re_volume_prefix = r"(?:[Vv]o?l?\.?|[Nn][oO°]\.?)"  # Optional Vol./No.
 re_volume_suffix = r"(?:\s*\(\d{1,2}(?:-\d)?\))?"
 re_volume_num = r"\d+|" + r"(?:(?<!\w)" + re_roman_numbers + r"(?!\w))"
-re_volume_id = r"(?P<vol>(?:(?:[A-Za-z]\s*[,\s:-]?\s*)?(?P<vol_num>%(volume_num)s))|(?:(?P<vol_num_alt>%(volume_num)s)(?:[A-Za-z]))|(?:(?:[A-Za-z]\s?)?(?P<vol_num_alt2>\d+)\s*\-\s*(?:[A-Za-z]\s?)?\d+))" % {
+re_volume_id = (r"(?P<vol>(?:(?:[A-Za-z]\s*[,\s:-]?\s*)?(?P<vol_num>%(volume_num)s))|("
+                r"?:(?P<vol_num_alt>%(volume_num)s)(?:[A-Za-z]))|(?:(?:[A-Za-z]\s?)?("
+                r"?P<vol_num_alt2>\d+)\s*\-\s*(?:[A-Za-z]\s?)?\d+))") % {
     'volume_num': re_volume_num}
 re_volume_check = r"(?<![\/\d])"
 re_volume = r"\b" + u"(?:" + re_volume_prefix + r")?\s*" + re_volume_check + \
@@ -533,7 +540,8 @@ re_correct_numeration_2nd_try_ptn4 = re.compile(
 # Delete the colon and expressions such as Serie, vol, V. inside the pattern
 # <serie : volume> E.g. Replace the string """Series A, Vol 4""" with """A 4"""
 re_strip_series_and_volume_labels = (re.compile(
-    r'(Serie\s|\bS\.?\s)?([A-H])\s?[:,]\s?(\b[Vv]o?l?\.?|\b[Nn]o\.?)?\s?(\d+)', re.UNICODE),
+    r'(Serie\s|\bS\.?\s)?([A-H])\s?[:,]\s?(\b[Vv]o?l?\.?|\b[Nn]o\.?)?\s?(\d+)',
+    re.UNICODE),
     r'\g<2> \g<4>')
 
 
@@ -655,14 +663,14 @@ re_numeration_yr_vol_page = re.compile(
 # Pattern used to locate references of a doi inside a citation
 # This pattern matches both url (http) and 'doi:' or 'DOI' formats
 re_doi = (re.compile(r"""
-    ((\(?[Dd][Oo][Ii](\s)*\)?:?(\s)*)       # 'doi:' or 'doi' or '(doi)' (upper or lower case)
-    |(https?://(dx\.)?doi\.org\/))?         # or 'http://(dx.)doi.org/'  (neither has to be present)
-    (?P<doi>10\.                            # 10.                        (mandatory for DOI's)
-    \d{3,7}                                 # [0-9] x 3-7
-    (\.\w+)*                                # subdivisions separated by . (doesn't have to be present)
-    (/|%2f)                                 # / (possibly urlencoded)
-    [\w\-_:;\(\)/\.<>]+                     # any character
-    [\w\-_:;\(\)/<>])                       # any character excluding a full stop
+    ((\(?[Dd][Oo][Ii](\s)*\)?:?(\s)*)  # 'doi:' or 'doi' or '(doi)'(upper or lower case)
+    |(https?://(dx\.)?doi\.org\/))?    # or 'http://(dx.)doi.org/'
+    (?P<doi>10\.                       # 10.                       (mandatory for DOI's)
+    \d{3,7}                            # [0-9] x 3-7
+    (\.\w+)*                           # subdivisions separated by . (optional)
+    (/|%2f)                            # / (possibly urlencoded)
+    [\w\-_:;\(\)/\.<>]+                # any character
+    [\w\-_:;\(\)/<>])                  # any character excluding a full stop
     """, re.VERBOSE + re.IGNORECASE))
 
 # Pattern used to locate HDL (handle identifiers)
@@ -671,7 +679,7 @@ re_hdl = re.compile(r"""([hH][dD][lL]:
                          (?P<hdl_id>\S+/\S+)""", re.UNICODE | re.VERBOSE)
 
 
-def _create_regex_pattern_add_optional_spaces_to_word_characters(word):
+def _create_regex_pattern_with_optional_spaces(word):
     """Add the regex special characters (\s*) to allow optional spaces between
        the characters in a word.
        @param word: (string) the word to be inserted into a regex pattern.
@@ -718,12 +726,12 @@ def get_reference_section_title_patterns():
 
     for t in titles:
         t_ptn = re.compile(sect_marker +
-                           _create_regex_pattern_add_optional_spaces_to_word_characters(t) +
+                           _create_regex_pattern_with_optional_spaces(t) +
                            line_end, re.I | re.UNICODE)
         patterns.append(t_ptn)
         # allow e.g.  'N References' to be found where N is an integer
         t_ptn = re.compile(sect_marker1 +
-                           _create_regex_pattern_add_optional_spaces_to_word_characters(t) +
+                           _create_regex_pattern_with_optional_spaces(t) +
                            line_end, re.I | re.UNICODE)
         patterns.append(t_ptn)
 
@@ -810,55 +818,55 @@ def get_post_reference_section_title_patterns():
     patterns = [
         # Section titles
         thead +
-        _create_regex_pattern_add_optional_spaces_to_word_characters(
+        _create_regex_pattern_with_optional_spaces(
             u'appendix') + ttail,
         thead +
-        _create_regex_pattern_add_optional_spaces_to_word_characters(
+        _create_regex_pattern_with_optional_spaces(
             u'appendices') + ttail,
-        thead + _create_regex_pattern_add_optional_spaces_to_word_characters(
+        thead + _create_regex_pattern_with_optional_spaces(
             u'acknowledgement') + r's?' + ttail,
-        thead + _create_regex_pattern_add_optional_spaces_to_word_characters(
+        thead + _create_regex_pattern_with_optional_spaces(
             u'acknowledgment') + r's?' + ttail,
-        thead + _create_regex_pattern_add_optional_spaces_to_word_characters(
+        thead + _create_regex_pattern_with_optional_spaces(
             u'table') + r'\w?s?\d?' + ttail,
         thead +
-        _create_regex_pattern_add_optional_spaces_to_word_characters(
+        _create_regex_pattern_with_optional_spaces(
             u'figure') + r's?' + ttail,
-        thead + _create_regex_pattern_add_optional_spaces_to_word_characters(
+        thead + _create_regex_pattern_with_optional_spaces(
             u'list of figure') + r's?' + ttail,
         thead +
-        _create_regex_pattern_add_optional_spaces_to_word_characters(
+        _create_regex_pattern_with_optional_spaces(
             u'annex') + r's?' + ttail,
-        thead + _create_regex_pattern_add_optional_spaces_to_word_characters(
+        thead + _create_regex_pattern_with_optional_spaces(
             u'discussion') + r's?' + ttail,
         thead +
-        _create_regex_pattern_add_optional_spaces_to_word_characters(
+        _create_regex_pattern_with_optional_spaces(
             u'remercie') + r's?' + ttail,
         thead +
-        _create_regex_pattern_add_optional_spaces_to_word_characters(
+        _create_regex_pattern_with_optional_spaces(
             u'index') + r's?' + ttail,
         thead +
-        _create_regex_pattern_add_optional_spaces_to_word_characters(
+        _create_regex_pattern_with_optional_spaces(
             u'summary') + r's?' + ttail,
         # Figure nums
         r'^\s*' +
-        _create_regex_pattern_add_optional_spaces_to_word_characters(
+        _create_regex_pattern_with_optional_spaces(
             u'figure') + numatn,
         r'^\s*' +
-        _create_regex_pattern_add_optional_spaces_to_word_characters(
+        _create_regex_pattern_with_optional_spaces(
             u'fig') + r'\.\s*' + numatn,
         r'^\s*' +
-        _create_regex_pattern_add_optional_spaces_to_word_characters(
+        _create_regex_pattern_with_optional_spaces(
             u'fig') + r'\.?\s*\d\w?\b',
         # Tables
         r'^\s*' +
-        _create_regex_pattern_add_optional_spaces_to_word_characters(
+        _create_regex_pattern_with_optional_spaces(
             u'table') + numatn,
         r'^\s*' +
-        _create_regex_pattern_add_optional_spaces_to_word_characters(
+        _create_regex_pattern_with_optional_spaces(
             u'tab') + r'\.\s*' + numatn,
         r'^\s*' +
-        _create_regex_pattern_add_optional_spaces_to_word_characters(
+        _create_regex_pattern_with_optional_spaces(
             u'tab') + r'\.?\s*\d\w?\b',
         # Other titles formats
         r'^\s*' + roman_numbers + r'\.?\s*[Cc]onclusion[\w\s]*$',
@@ -878,17 +886,17 @@ def get_post_reference_section_keyword_patterns():
        @return: (list) of compiled regex patterns.
     """
     compiled_patterns = []
-    patterns = [u'(' + _create_regex_pattern_add_optional_spaces_to_word_characters(u'prepared') +
-                r'|' + _create_regex_pattern_add_optional_spaces_to_word_characters(u'created') +
-                r').*(AAS\s*)?\sLATEX',
-                r'AAS\s+?LATEX\s+?' +
-                _create_regex_pattern_add_optional_spaces_to_word_characters(
-                    u'macros') + u'v',
-                r'^\s*' + _create_regex_pattern_add_optional_spaces_to_word_characters(
-                    u'This paper has been produced using'),
-                r'^\s*' +
-                _create_regex_pattern_add_optional_spaces_to_word_characters(u'This article was processed by the author using Springer-Verlag') +
-                u' LATEX']
+    patterns = [
+        u'(' + _create_regex_pattern_with_optional_spaces(u'prepared') +
+        r'|' + _create_regex_pattern_with_optional_spaces(u'created') +
+        r').*(AAS\s*)?\sLATEX',
+        r'AAS\s+?LATEX\s+?' +
+        _create_regex_pattern_with_optional_spaces(u'macros') + u'v',
+        r'^\s*' + _create_regex_pattern_with_optional_spaces(
+            u'This paper has been produced using'),
+        r'^\s*' + _create_regex_pattern_with_optional_spaces(
+            u'This article was processed by the author using Springer-Verlag') +
+        u' LATEX']
     for p in patterns:
         compiled_patterns.append(re.compile(p, re.I | re.UNICODE))
     return compiled_patterns
@@ -927,10 +935,7 @@ re_year_in_misc_txt = re.compile(r"(?:^|(?<!\d))(?:19|20)\d{2}(?:(?!\d)|$)")
 
 
 def remove_year(s, year=None):
-    if year:
-        year_pattern = re.escape(year)
-    else:
-        year_pattern = r"(?:19|20)\d{2}"
+    year_pattern = re.escape(year) if year else "(?:19|20)\\d{2}"
     s = re.sub(r'\[\s*%s\s*\]' % year_pattern, '', s)
     s = re.sub(r'\(\s*%s\s*\)' % year_pattern, '', s)
     s = re.sub(r'\s*%s\s*' % year_pattern, '', s)

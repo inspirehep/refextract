@@ -39,7 +39,7 @@ import os
 import re
 import subprocess
 
-from ..references.config import CFG_PATH_PDFTOTEXT
+from refextract.references.config import CFG_PATH_PDFTOTEXT
 
 LOGGER = logging.getLogger(__name__)
 
@@ -56,10 +56,7 @@ def convert_PDF_to_plaintext(fpath, keep_layout=False):
     if not os.path.isfile(CFG_PATH_PDFTOTEXT):
         raise IOError('Missing pdftotext executable')
 
-    if keep_layout:
-        layout_option = "-layout"
-    else:
-        layout_option = "-raw"
+    layout_option = '-layout' if keep_layout else '-raw'
     doclines = []
     # Pattern to check for lines with a leading page-break character.
     # If this pattern is matched, we want to split the page-break into

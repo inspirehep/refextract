@@ -35,7 +35,7 @@ def test_get_kbs_caches_journal_dict():
 
     first_cache = get_kbs(custom_kbs={"journals": journals}).copy()
     assert len(first_cache["journals"]) == 3
-    assert ["JOURNAL OF TESTING", "J TESTING"] == first_cache["journals"][-1]
+    assert first_cache["journals"][-1] == ["JOURNAL OF TESTING", "J TESTING"]
 
     journals = journals.copy()
     second_cache = get_kbs(custom_kbs={"journals": journals})
@@ -58,4 +58,4 @@ def test_get_kbs_invalidates_cache_if_input_changes():
         in zip(first_cache["journals"], second_cache["journals"])
     )
     assert len(second_cache["journals"]) == 3
-    assert ["JOURNAL OF TESTING", "J TEST"] == second_cache["journals"][-1]
+    assert second_cache["journals"][-1] == ["JOURNAL OF TESTING", "J TEST"]
