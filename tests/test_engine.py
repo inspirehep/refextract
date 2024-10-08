@@ -27,7 +27,6 @@ from refextract.references.engine import (
     get_plaintext_document_body,
     parse_references,
 )
-
 from refextract.references.errors import UnknownDocumentTypeError
 
 
@@ -36,7 +35,8 @@ def get_references(ref_line, override_kbs_files=None):
 
 
 def test_month_with_year():
-    ref_line = u"""[2] S. Weinberg, A Model of Leptons, Phys. Rev. Lett. 19 (Nov, 1967) 1264–1266."""
+    ref_line = (u"[2] S. Weinberg, A Model of Leptons, Phys. Rev. Lett. 19 (Nov, "
+                u"1967) 1264–1266.")
     res = get_references(ref_line)
     references = res[0]
     expected = [
@@ -56,12 +56,16 @@ def test_month_with_year():
 
 
 def test_numeration_not_finding_year():
-    ref_line = u"""[137] M. Papakyriacou, H. Mayer, C. Pypen, H. P. Jr., and S. Stanzl-Tschegg, “Inﬂuence of loading frequency on high cycle fatigue properties of b.c.c. and h.c.p. metals,” Materials Science and Engineering, vol. A308, pp. 143–152, 2001."""
+    ref_line = (u"[137] M. Papakyriacou, H. Mayer, C. Pypen, H. P. Jr., and S. "
+                u"Stanzl-Tschegg, “Inﬂuence of loading frequency on high cycle "
+                u"fatigue properties of b.c.c. and h.c.p. metals,” Materials Science "
+                u"and Engineering, vol. A308, pp. 143–152, 2001.")
     res = get_references(ref_line)
     references = res[0]
     expected = [
         {
-            'author': [u'M. Papakyriacou, H. Mayer, C. Pypen, H. P. Jr., and S. Stanzl-Tschegg'],
+            'author': [u'M. Papakyriacou, H. Mayer, C. Pypen, H. P. Jr., and S. '
+                       u'Stanzl-Tschegg'],
             'journal_page': [u'143-152'],
             'journal_reference': [u'Mat.Sci.Eng. A308 (2001) 143-152'],
             'journal_title': [u'Mat.Sci.Eng.'],
@@ -69,7 +73,8 @@ def test_numeration_not_finding_year():
             'journal_year': [u'2001'],
             'linemarker': [u'137'],
             'year': [u'2001'],
-            'title': [u'Influence of loading frequency on high cycle fatigue properties of b.c.c. and h.c.p. metals'],
+            'title': [u'Influence of loading frequency on high cycle fatigue '
+                      u'properties of b.c.c. and h.c.p. metals'],
             'raw_ref': [ref_line],
         }
     ]
@@ -77,7 +82,9 @@ def test_numeration_not_finding_year():
 
 
 def test_numeration_not_finding_year2():
-    ref_line = u"""[138] Y.-B. Park, R. Mnig, and C. A. Volkert, “Frequency effect on thermal fatigue damage in Cu interconnects,” Thin Solid Films, vol. 515, pp. 3253– 3258, 2007."""
+    ref_line = (u"[138] Y.-B. Park, R. Mnig, and C. A. Volkert, “Frequency effect on "
+                u"thermal fatigue damage in Cu interconnects,” Thin Solid Films, "
+                u"vol. 515, pp. 3253– 3258, 2007.")
     res = get_references(ref_line)
     references = res[0]
     expected = [
@@ -90,7 +97,8 @@ def test_numeration_not_finding_year2():
             'journal_year': [u'2007'],
             'linemarker': [u'138'],
             'year': [u'2007'],
-            'title': [u'Frequency effect on thermal fatigue damage in Cu interconnects'],
+            'title': [u'Frequency effect on thermal '
+                      u'fatigue damage in Cu interconnects'],
             'raw_ref': [ref_line],
         }
     ]
@@ -98,7 +106,10 @@ def test_numeration_not_finding_year2():
 
 
 def test_extra_a_in_report_number():
-    ref_line = u'[14] CMS Collaboration, CMS-PAS-HIG-12-002. CMS Collaboration, CMS-PAS-HIG-12-008. CMS Collaboration, CMS-PAS-HIG-12-022. ATLAS Collaboration, arXiv:1205.0701. ATLAS Collaboration, ATLAS-CONF-2012-078.'
+    ref_line = (u'[14] CMS Collaboration, CMS-PAS-HIG-12-002. CMS Collaboration, '
+                u'CMS-PAS-HIG-12-008. CMS Collaboration, CMS-PAS-HIG-12-022. ATLAS '
+                u'Collaboration, arXiv:1205.0701. ATLAS Collaboration, '
+                u'ATLAS-CONF-2012-078.')
     res = get_references(ref_line)
     references = res[0]
     assert len(references) == 1
@@ -117,7 +128,8 @@ def test_extra_a_in_report_number():
 
 
 def test_fermi_report_number_AD_APC():
-    ref_line = u'[8] V. Lebedev et al. (PIP-II Collaboration), The PIP-II Conceptual Design Report, FERMILAB-TM-2649-AD-APC (2017).'
+    ref_line = (u'[8] V. Lebedev et al. (PIP-II Collaboration), The PIP-II Conceptual '
+                u'Design Report, FERMILAB-TM-2649-AD-APC (2017).')
     res = get_references(ref_line)
     references = res[0]
     assert references[0]['reportnumber'] == [u'FERMILAB-TM-2649-AD-APC']
@@ -125,7 +137,8 @@ def test_fermi_report_number_AD_APC():
 
 
 def test_fermi_report_number_AD_APC_TD():
-    ref_line = u'[9] G. Ambrosio et al., Fermilab Report Fermilab-FN-0954-AD-APC-TD (2013).'
+    ref_line = (u'[9] G. Ambrosio et al., Fermilab Report Fermilab-FN-0954-AD-APC-TD ('
+                u'2013).')
     res = get_references(ref_line)
     references = res[0]
     assert references[0]['reportnumber'] == [u'FERMILAB-FN-0954-AD-APC-TD']
@@ -133,7 +146,8 @@ def test_fermi_report_number_AD_APC_TD():
 
 
 def test_fermi_report_number_no_suffix():
-    ref_line = u'[8] T.  H.  Nicol,  "TESLA  Test  Cell  Cryostat  Support  Post  Thermal  and Structural Analysis, "FERMILAB-TM-1794, Fermilab, 1992.'
+    ref_line = (u'[8] T.  H.  Nicol,  "TESLA  Test  Cell  Cryostat  Support  Post  '
+                u'Thermal  and Structural Analysis, "FERMILAB-TM-1794, Fermilab, 1992.')
     res = get_references(ref_line)
     references = res[0]
     assert references[0]['reportnumber'] == [u'FERMILAB-TM-1794']
@@ -141,7 +155,9 @@ def test_fermi_report_number_no_suffix():
 
 
 def test_fermi_report_number_mulitple():
-    ref_line = u'[17] ILC Collaboration, G. Aaronset al., ILC Reference Design Report Volume 1 - Executive Summary, FERMILAB-DESIGN-2007-03, FERMILAB-PUB-07-794-E, arXiv:0712.1950 [physics.acc-ph].'
+    ref_line = (u'[17] ILC Collaboration, G. Aaronset al., ILC Reference Design Report '
+                u'Volume 1 - Executive Summary, FERMILAB-DESIGN-2007-03, '
+                u'FERMILAB-PUB-07-794-E, arXiv:0712.1950 [physics.acc-ph].')
     res = get_references(ref_line)
     references = res[0]
     assert references[0]['reportnumber'] == [
@@ -153,7 +169,10 @@ def test_fermi_report_number_mulitple():
 
 
 def test_fermi_report_number_ESH():
-    ref_line = u'[11] T. Sanami, Applicability of a Bonner Sphere technique for pulsed neutron in 120 GeV proton facility, in Proceedings of the 22nd Workshop on Radiation Detectors and Their Uses, pp. 148-159, FERMILAB-CONF-08-203-AD-APC-E-ESH (2008).'
+    ref_line = (u'[11] T. Sanami, Applicability of a Bonner Sphere technique for '
+                u'pulsed neutron in 120 GeV proton facility, in Proceedings of the '
+                u'22nd Workshop on Radiation Detectors and Their Uses, pp. 148-159, '
+                u'FERMILAB-CONF-08-203-AD-APC-E-ESH (2008).')
     res = get_references(ref_line)
     references = res[0]
     assert references[0]['reportnumber'] == [u'FERMILAB-Conf-08-203-AD-APC-E-ESH']
@@ -161,7 +180,8 @@ def test_fermi_report_number_ESH():
 
 
 def test_fermi_report_number_wdrs():
-    ref_line = u'[5] M. Bardeen & M. Wayne, E-Labs - Learning with Authentic Data, FERMILAB-CONF-16-205-WDRS (2016).'
+    ref_line = (u'[5] M. Bardeen & M. Wayne, E-Labs - Learning with Authentic Data, '
+                u'FERMILAB-CONF-16-205-WDRS (2016).')
     res = get_references(ref_line)
     references = res[0]
     assert references[0]['reportnumber'] == [u'FERMILAB-Conf-16-205-WDRS']
@@ -169,7 +189,8 @@ def test_fermi_report_number_wdrs():
 
 
 def test_not_fermi_report_number():
-    ref_line = u'[17]  S.-h. Lee, C. DeTar, H. Na, and D. Mohler (Fermilab Lattice, MILC), (2014), arXiv:1411.1389 [hep-lat].'
+    ref_line = (u'[17]  S.-h. Lee, C. DeTar, H. Na, and D. Mohler (Fermilab Lattice, '
+                u'MILC), (2014), arXiv:1411.1389 [hep-lat].')
     res = get_references(ref_line)
     references = res[0]
     assert references[0]['reportnumber'] == [u'arXiv:1411.1389 [hep-lat]']
@@ -177,7 +198,9 @@ def test_not_fermi_report_number():
 
 
 def test_d0_cdf_note_report_number():
-    ref_line = u'[7] CDF and D0 Collaborations, CDF Note 9787, D0 Note 5928 (2009); T. Aaltonenet al. (CDF Collaboration), Phys. Rev. Lett.100, 161802 (2008);'
+    ref_line = (u'[7] CDF and D0 Collaborations, CDF Note 9787, D0 Note 5928 (2009); '
+                u'T. Aaltonenet al. (CDF Collaboration), Phys. Rev. Lett.100, '
+                u'161802 (2008);')
     res = get_references(ref_line)
     references = res[0]
     assert references[0]['reportnumber'] == [
@@ -188,7 +211,8 @@ def test_d0_cdf_note_report_number():
 
 
 def test_d0_symbol_report_number():
-    ref_line = u'[71] J. Estrada, C. Garcia, B. Hoeneisen, and P. Rubinov, "MCM II and the Trip chip," FERMILAB-TM-2226 (DØ note 4009), 2002.'
+    ref_line = (u'[71] J. Estrada, C. Garcia, B. Hoeneisen, and P. Rubinov, "MCM II '
+                u'and the Trip chip," FERMILAB-TM-2226 (DØ note 4009), 2002.')
     res = get_references(ref_line)
     references = res[0]
     assert references[0]['reportnumber'] == [
@@ -207,7 +231,9 @@ def test_d0_conf_note_report_number():
 
 
 def test_fermilab_proposal_report_number():
-    ref_line = u'7. A Proposal to Measure νμ → νe Oscillations and νgm Disappearance at the Fermilab Booster: BooNEE. Church, et al. (Eds.), Fermilab Proposal 898 (1997)'
+    ref_line = (u'7. A Proposal to Measure νμ → νe Oscillations and νgm Disappearance '
+                u'at the Fermilab Booster: BooNEE. Church, et al. (Eds.), Fermilab '
+                u'Proposal 898 (1997)')
     res = get_references(ref_line)
     references = res[0]
     assert references[0]['reportnumber'] == [u'FERMILAB-Proposal-898']
@@ -215,7 +241,8 @@ def test_fermilab_proposal_report_number():
 
 
 def test_false_fermilab_proposal_report_number():
-    ref_line = u'[10] T. Roberts, et al., 1976, Fermilab proposal neutron - deuteron elastic scattering'
+    ref_line = (u'[10] T. Roberts, et al., 1976, Fermilab proposal neutron - deuteron '
+                u'elastic scattering')
     res = get_references(ref_line)
     references = res[0]
     expected = [
@@ -231,7 +258,9 @@ def test_false_fermilab_proposal_report_number():
 
 
 def test_microboone_note_report_number():
-    ref_line = u'[9] The MicroBooNE Collaboration. Space Charge Effect Measurements and Corrections. MICROBOONE-NOTE-1018-PUB, 2016. URL http://www-microboone.fnal.gov/publications/publicnotes/index.html.'
+    ref_line = (u'[9] The MicroBooNE Collaboration. Space Charge Effect Measurements '
+                u'and Corrections. MICROBOONE-NOTE-1018-PUB, 2016. URL '
+                u'http://www-microboone.fnal.gov/publications/publicnotes/index.html.')
     res = get_references(ref_line)
     references = res[0]
     assert references[0]['reportnumber'] == [u'MICROBOONE-NOTE-1018-PUB']
@@ -239,7 +268,10 @@ def test_microboone_note_report_number():
 
 
 def test_microboone_fale_report_numbr():
-    ref_line = u'[40] MicroBooNE, LAr1-ND, ICARUS-WA104 collaboration, M. Antonello et al., A Proposal for a Three Detector Short-Baseline Neutrino Oscillation Program in the Fermilab Booster Neutrino Beam, 1503.01520.'
+    ref_line = (u'[40] MicroBooNE, LAr1-ND, ICARUS-WA104 collaboration, M. Antonello '
+                u'et al., A Proposal for a Three Detector Short-Baseline Neutrino '
+                u'Oscillation Program in the Fermilab Booster Neutrino Beam, '
+                u'1503.01520.')
     res = get_references(ref_line)
     references = res[0]
     expected = [
@@ -248,7 +280,8 @@ def test_microboone_fale_report_numbr():
             'linemarker': [u'40'],
             'misc': [u'MicroBooNE, LAr1-ND, ICARUS-WA104 collaboration',
                      u'A Proposal',
-                     u'for a Three Detector Short-Baseline Neutrino Oscillation Program in the Fermilab Booster Neutrino Beam'],
+                     u'for a Three Detector Short-Baseline Neutrino Oscillation '
+                     u'Program in the Fermilab Booster Neutrino Beam'],
             'raw_ref': [ref_line],
             'reportnumber': [u'arXiv:1503.01520'],
         }
@@ -257,7 +290,11 @@ def test_microboone_fale_report_numbr():
 
 
 def test_slac_report_number_5_digits():
-    ref_line = u'[25] Proton-nucleus scattering approximations and implications for LHC crystal collimation, Report No. SLAC-PUB14030, https://www.slac.stanford.edu/cgi-wrap/getdoc/slac-pub-14030.pdf. REDUCTION OF 400 GeV=c SLOW EXTRACTION \u2026 PHYS. REV. ACCEL. BEAMS 23, 023501 (2020) 023501-13'
+    ref_line = (u'[25] Proton-nucleus scattering approximations and implications for '
+                u'LHC crystal collimation, Report No. SLAC-PUB14030, '
+                u'https://www.slac.stanford.edu/cgi-wrap/getdoc/slac-pub-14030.pdf. '
+                u'REDUCTION OF 400 GeV=c SLOW EXTRACTION \u2026 PHYS. REV. ACCEL. '
+                u'BEAMS 23, 023501 (2020) 023501-13')
     res = get_references(ref_line)
     references = res[0]
     assert references[0]['reportnumber'] == [u'SLAC-PUB-14030']
@@ -265,7 +302,8 @@ def test_slac_report_number_5_digits():
 
 
 def test_doi_4_digit():
-    ref_line = u'[32]  E. Armengaud, et al., JINST 10(05), P05007 (2015). doi:10.1088/1748-0221/10/05/P05007.'
+    ref_line = (u'[32]  E. Armengaud, et al., JINST 10(05), P05007 (2015). '
+                u'doi:10.1088/1748-0221/10/05/P05007.')
     res = get_references(ref_line)
     references = res[0]
     expected = [
@@ -286,14 +324,19 @@ def test_doi_4_digit():
 
 
 def test_doi_5_digit_multi():
-    ref_line = u'38 R. Aaij et al. (LHCb Collaboration), "Measurement of charged particle multiplicities in pp collisions at ps = 7 TeV in the forward region", Eur. Phys. J. C (2012) 72: 1947. DOI: 10.1140/epjc/s10052-012-1947-8. HepData DOI: 10.17182/hepdata.65435.'
+    ref_line = (u'38 R. Aaij et al. (LHCb Collaboration), "Measurement of charged '
+                u'particle multiplicities in pp collisions at ps = 7 TeV in the '
+                u'forward region", Eur. Phys. J. C (2012) 72: 1947.'
+                u'DOI: 10.1140/epjc/s10052-012-1947-8. '
+                u'HepData DOI: 10.17182/hepdata.65435.')
     res = get_references(ref_line)
     references = res[0]
     expected = [
         {
             'author': [u'R. Aaij et al.'],
             'misc': [u'(LHCb Collaboration)'],
-            'title': [u'Measurement of charged particle multiplicities in pp collisions at ps = 7 TeV in the forward region'],
+            'title': [u'Measurement of charged particle multiplicities in pp '
+                      u'collisions at ps = 7 TeV in the forward region'],
             'doi': [u'doi:10.1140/epjc/s10052-012-1947-8'],
             'journal_page': [u'1947'],
             'journal_reference': [u'Eur. Phys. J. C 72 (2012) 1947'],
@@ -316,7 +359,8 @@ def test_doi_5_digit_multi():
 
 
 def test_doi_subdivisions():
-    ref_line = u'[10] A. Smith et al., "Introduction to Particle Physics", 2017, Springer Publishing, ISBN: 97881925212214, DOI: 10.978.819252/12214.'
+    ref_line = (u'[10] A. Smith et al., "Introduction to Particle Physics", 2017, '
+                u'Springer Publishing, ISBN: 97881925212214, DOI: 10.978.819252/12214.')
     res = get_references(ref_line)
     references = res[0]
     assert references[0]['doi'] == [u'doi:10.978.819252/12214']
@@ -329,16 +373,17 @@ def test_get_plaintext_document_body(tmpdir):
     f.write("".join(input))
     assert input == get_plaintext_document_body(str(f))
 
+    html = "<html><body>Some page</body></html>"
+    f = tmpdir.join("page.html")
+    f.write(html)
     with pytest.raises(UnknownDocumentTypeError) as excinfo:
-        html = "<html><body>Some page</body></html>"
-        f = tmpdir.join("page.html")
-        f.write(html)
         get_plaintext_document_body(str(f))
     assert 'text/html' in excinfo.value.args
 
 
 def test_reference_split():
-    ref_line = "[7] J. Ellis et al., Phys. Lett. B 212, 375 (1988); H. Ejiri et al., Phys. Lett. B 317, 14 (1993)."
+    ref_line = ("[7] J. Ellis et al., Phys. Lett. B 212, 375 (1988); H. Ejiri et al., "
+                "Phys. Lett. B 317, 14 (1993).")
     res = get_references(ref_line)
     references = res[0]
     expected = [
@@ -350,7 +395,9 @@ def test_reference_split():
             'journal_reference': [u'Phys. Lett. B 212 (1988) 375'],
             'journal_year': [u'1988'],
             'linemarker': [u'7'],
-            'raw_ref': ['[7] J. Ellis et al., Phys. Lett. B 212, 375 (1988); H. Ejiri et al., Phys. Lett. B 317, 14 (1993).'], 'journal_page': [u'375']
+            'raw_ref': ['[7] J. Ellis et al., Phys. Lett. B 212, 375 (1988); H. Ejiri '
+                        'et al., Phys. Lett. B 317, 14 (1993).'],
+            'journal_page': [u'375']
         },
         {
             'author': [u'H. Ejiri et al.'],
@@ -360,7 +407,8 @@ def test_reference_split():
             'journal_volume': [u'317'],
             'journal_year': [u'1993'],
             'linemarker': [u'7'],
-            'raw_ref': ['[7] J. Ellis et al., Phys. Lett. B 212, 375 (1988); H. Ejiri et al., Phys. Lett. B 317, 14 (1993).'],
+            'raw_ref': ['[7] J. Ellis et al., Phys. Lett. B 212, 375 (1988); H. Ejiri '
+                        'et al., Phys. Lett. B 317, 14 (1993).'],
             'year': [u'1993']
         }
     ]
@@ -368,8 +416,10 @@ def test_reference_split():
 
 
 def test_reference_split_ibid():
-    ref_line = """[17] See for example: Hagelin J S, Kelley S and Tanaka T 1994 Nucl. Phys. B 415 (1994) 293. Moroi T 1996
-Phys. Rev. D 53 6565 [Erratum-ibid. D 56 (1997) 4424] (Preprint hep-ph/9512396)."""
+    ref_line = """[17] See for example:
+     Hagelin J S, Kelley S and Tanaka T 1994 Nucl. Phys. B 415 (1994)
+     293. Moroi T 1996
+     Phys. Rev. D 53 6565 [Erratum-ibid. D 56 (1997) 4424] (Preprint hep-ph/9512396)."""
     res = get_references(ref_line)
     references = res[0]
     assert len(references) == 3
@@ -380,7 +430,12 @@ Phys. Rev. D 53 6565 [Erratum-ibid. D 56 (1997) 4424] (Preprint hep-ph/9512396).
 
 
 def test_reference_split_handles_authors_correctly():
-    ref_line = "[27] K. P. Das and R. C. Hwa, Phys. Lett.B 68, (1977) 459; Erratum Phys. Lett.B 73(1978) 504; D. Mol-nar and S. A. Voloshin, Phys. Rev. Lett.91(2003) 092301; V. Greco, C.M. Ko and P. Levai, Phys.Rev.C 68(2003) 034904; B. Zhang, Lie-Wen Chen and C. M. Ko, Phys.Rev.C 72(2005) 024906. R. J. Fries et al.Ann. Rev. Nucl. Part. Sci.58, (2008)177."
+    ref_line = ("[27] K. P. Das and R. C. Hwa, Phys. Lett.B 68, (1977) 459; Erratum "
+                "Phys. Lett.B 73(1978) 504; D. Mol-nar and S. A. Voloshin, Phys. Rev. "
+                "Lett.91(2003) 092301; V. Greco, C.M. Ko and P. Levai, Phys.Rev.C 68("
+                "2003) 034904; B. Zhang, Lie-Wen Chen and C. M. Ko, Phys.Rev.C 72("
+                "2005) 024906. R. J. Fries et al.Ann. Rev. Nucl. Part. Sci.58, "
+                "(2008)177.")
     res = get_references(ref_line)
     references = res[0]
     authors = [ref["author"] for ref in references]
@@ -396,7 +451,12 @@ def test_reference_split_handles_authors_correctly():
 
 
 def test_reference_split_handles_repeated_fields():
-    ref_line = u"[20] A. Buchel, \u201cFinite temperature resolution of the Klebanov-Tseytlin singularity,\u201d Nucl. Phys. B 600, 219 (2001) [hep-th/0011146]. A. Buchel, C. P. Herzog, I. R. Klebanov, L. A. Pando Zayas and A. A. Tseytlin, \u201cNonextremal gravity duals for fractional D-3 branes on the conifold,\u201d JHEP 0104 (2001) 033 [hep-th/0102105]."
+    ref_line = (u"[20] A. Buchel, \u201cFinite temperature resolution of the "
+                u"Klebanov-Tseytlin singularity,\u201d Nucl. Phys. B 600, 219 (2001) "
+                u"[hep-th/0011146]. A. Buchel, C. P. Herzog, I. R. Klebanov, "
+                u"L. A. Pando Zayas and A. A. Tseytlin, \u201cNonextremal gravity "
+                u"duals for fractional D-3 branes on the conifold,\u201d JHEP 0104 ("
+                u"2001) 033 [hep-th/0102105].")
     res = get_references(ref_line)
     references = res[0]
     assert references == [
@@ -408,29 +468,46 @@ def test_reference_split_handles_repeated_fields():
             'journal_volume': [u'600'],
             'journal_year': [u'2001'],
             'linemarker': [u'20'],
-            'raw_ref': [u'[20] A. Buchel, \u201cFinite temperature resolution of the Klebanov-Tseytlin singularity,\u201d Nucl. Phys. B 600, 219 (2001) [hep-th/0011146]. A. Buchel, C. P. Herzog, I. R. Klebanov, L. A. Pando Zayas and A. A. Tseytlin, \u201cNonextremal gravity duals for fractional D-3 branes on the conifold,\u201d JHEP 0104 (2001) 033 [hep-th/0102105].'],
+            'raw_ref': [u'[20] A. Buchel, \u201cFinite temperature resolution of the '
+                        u'Klebanov-Tseytlin singularity,\u201d Nucl. Phys. B 600, '
+                        u'219 (2001) [hep-th/0011146]. A. Buchel, C. P. Herzog, '
+                        u'I. R. Klebanov, L. A. Pando Zayas and A. A. Tseytlin, '
+                        u'\u201cNonextremal gravity duals for fractional D-3 branes '
+                        u'on the conifold,\u201d JHEP 0104 (2001) 033 ['
+                        u'hep-th/0102105].'],
             'reportnumber': [u'hep-th/0011146'],
-            'title': [u'Finite temperature resolution of the Klebanov-Tseytlin singularity'],
+            'title': [u'Finite temperature resolution of the Klebanov-Tseytlin '
+                      u'singularity'],
             'year': [u'2001']
         },
         {
-            'author': [u'A. Buchel, C. P. Herzog, I. R. Klebanov, L. A. Pando Zayas and A. A. Tseytlin'],
+            'author': [u'A. Buchel, C. P. Herzog, I. R. Klebanov, L. A. Pando Zayas '
+                       u'and A. A. Tseytlin'],
             'journal_page': [u'033'],
             'journal_reference': [u'J. High Energy Phys. 0104 (2001) 033'],
             'journal_title': [u'J. High Energy Phys.'],
             'journal_volume': [u'0104'],
             'journal_year': [u'2001'],
             'linemarker': [u'20'],
-            'raw_ref': [u'[20] A. Buchel, \u201cFinite temperature resolution of the Klebanov-Tseytlin singularity,\u201d Nucl. Phys. B 600, 219 (2001) [hep-th/0011146]. A. Buchel, C. P. Herzog, I. R. Klebanov, L. A. Pando Zayas and A. A. Tseytlin, \u201cNonextremal gravity duals for fractional D-3 branes on the conifold,\u201d JHEP 0104 (2001) 033 [hep-th/0102105].'],
+            'raw_ref': [u'[20] A. Buchel, \u201cFinite temperature resolution of the '
+                        u'Klebanov-Tseytlin singularity,\u201d Nucl. Phys. B 600, '
+                        u'219 (2001) [hep-th/0011146]. A. Buchel, C. P. Herzog, '
+                        u'I. R. Klebanov, L. A. Pando Zayas and A. A. Tseytlin, '
+                        u'\u201cNonextremal gravity duals for fractional D-3 branes '
+                        u'on the conifold,\u201d JHEP 0104 (2001) 033 ['
+                        u'hep-th/0102105].'],
             'reportnumber': [u'hep-th/0102105'],
-            'title': [u'Nonextremal gravity duals for fractional D-3 branes on the conifold'],
+            'title': [u'Nonextremal gravity duals for fractional D-3 branes on the '
+                      u'conifold'],
             'year': [u'2001']
         }
     ]
 
 
 def test_reference_split_handles_semicolon():
-    ref_line = "[7] Y.   Nara,   A.   Ohnishi,   and   H.   Stocker,arXiv:1601.07692 [hep-ph]; V. P. Konchakovski, W.Cassing, Yu. B. Ivanov and V. D. Toneev, Phys.Rev.C 90, 014903 (2014);"
+    ref_line = ("[7] Y.   Nara,   A.   Ohnishi,   and   H.   Stocker,arXiv:1601.07692 "
+                "[hep-ph]; V. P. Konchakovski, W.Cassing, Yu. B. Ivanov and V. D. "
+                "Toneev, Phys.Rev.C 90, 014903 (2014);")
     res = get_references(ref_line)
     references = res[0]
     assert len(references) == 2

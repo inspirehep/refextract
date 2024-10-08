@@ -23,7 +23,7 @@
 
 """Refextract."""
 
-from .references.api import (
+from refextract.references.api import (
     extract_journal_reference,
     extract_references_from_file,
     extract_references_from_string,

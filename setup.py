@@ -25,10 +25,10 @@
 
 from setuptools import find_packages, setup
 
-
 url = 'https://github.com/inspirehep/refextract'
 
-readme = open('README.rst').read()
+with open('README.rst') as file:
+    readme = file.read()
 
 install_requires = [
     'PyPDF2~=1.0,>=1.26.0',
@@ -57,7 +57,7 @@ extras_require = {
 }
 
 extras_require['all'] = []
-for name, reqs in extras_require.items():
+for _name, reqs in extras_require.items():
     extras_require['all'].extend(reqs)
 
 packages = find_packages()

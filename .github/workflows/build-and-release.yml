@@ -55,7 +55,8 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-
+      - name: Pre-commit check
+        uses: pre-commit/action@v3.0.1
       - name: Build Image
         id: build
         uses: cern-sis/gh-workflows/.github/actions/docker-build@v6

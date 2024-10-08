@@ -1,0 +1,28 @@
+target-version = "py38"
+[lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+[lint]
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+    # flake8-tidy-imports
+    "TID",
+    # flake8-pytest-style
+    "PT",
+]
+ignore = ["B904"]
+
+[lint.pycodestyle]
+ignore-overlong-task-comments = true
+
+[lint.pydocstyle]
+convention = "google"

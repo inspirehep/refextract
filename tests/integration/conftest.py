@@ -6,10 +6,10 @@ from refextract.app import create_app
 @pytest.fixture(autouse=True, scope="session")
 def app():
     app = create_app()
-    yield app
+    return app
 
 
-@pytest.fixture()
+@pytest.fixture
 def app_client(app):
     with app.test_client() as client:
         yield client

@@ -26,7 +26,7 @@ import logging
 from PyPDF2 import PdfFileReader
 from PyPDF2.generic import ByteStringObject
 
-from .regexs import re_reference_in_dest
+from refextract.references.regexs import re_reference_in_dest
 
 LOGGER = logging.getLogger(__name__)
 
@@ -47,7 +47,8 @@ def extract_texkeys_and_urls_from_pdf(pdf_file):
 
     @param pdf_file: path to a PDF
 
-    @return: list of dictionaries with all texkeys and corresponding urls found in the PDF
+    @return: list of dictionaries with all texkeys
+     and corresponding urls found in the PDF
     """
     with open(pdf_file, "rb") as pdf_stream:
         try:
@@ -97,7 +98,8 @@ def extract_texkeys_and_urls_from_pdf(pdf_file):
                 if nb < len(refs) - 1:
                     next_reference_data = refs[nb + 1]
                     matched_urls_for_reference, urls = _match_urls_with_reference(
-                        urls, ref, next_reference_data, two_column_layout=two_column_layout
+                        urls, ref, next_reference_data,
+                        two_column_layout=two_column_layout
                     )
                 else:
                     matched_urls_for_reference, urls = _match_urls_with_reference(
@@ -173,10 +175,9 @@ def _match_urls_with_reference(
             if not two_column_layout or (two_column_layout and url_col == ref_column):
                 urls_for_reference.add(url[0])
                 continue
-        elif is_last_reference_in_page or is_last_reference_in_page_two_col_layout:
-            urls_for_reference.add(url[0])
-            continue
-        elif is_in_new_column:
+        elif (is_last_reference_in_page or
+              is_last_reference_in_page_two_col_layout or
+              is_in_new_column):
             urls_for_reference.add(url[0])
             continue
         elif is_url_unrelated_to_references:

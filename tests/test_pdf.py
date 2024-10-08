@@ -84,7 +84,6 @@ def test_extract_texkeys_and_urls_from_pdf(pdf_files):
             "urls": {
                 "http://dx.doi.org/10.1016/j.physletb.2013.08.026",
                 "http://www.arXiv.org/abs/1307.1432",
-                "http://www.arXiv.org/abs/1307.1432",
             },
         },
         {"texkey": "CMS_combination", "urls": {"http://www.arXiv.org/abs/1412.8662"}},
@@ -110,7 +109,6 @@ def test_extract_texkeys_and_urls_from_pdf(pdf_files):
             "texkey": "CMS_HZZ",
             "urls": {
                 "http://dx.doi.org/10.1103/PhysRevD.89.092007",
-                "http://www.arXiv.org/abs/1312.5353",
                 "http://www.arXiv.org/abs/1312.5353",
             },
         },
