@@ -42,7 +42,7 @@ def test_get_kbs_caches_journal_dict():
     # the cache is reused, so identity of the cache elements doesn't change
     assert all(
         cached_first is cached_second for (cached_first, cached_second)
-        in zip(first_cache["journals"], second_cache["journals"])
+        in zip(first_cache["journals"], second_cache["journals"], strict=False)
     )
 
 
@@ -55,7 +55,7 @@ def test_get_kbs_invalidates_cache_if_input_changes():
     # the cache is invalidated, so identity of the cache elements changes
     assert all(
         cached_first is not cached_second for (cached_first, cached_second)
-        in zip(first_cache["journals"], second_cache["journals"])
+        in zip(first_cache["journals"], second_cache["journals"], strict=False)
     )
     assert len(second_cache["journals"]) == 3
     assert second_cache["journals"][-1] == ["JOURNAL OF TESTING", "J TEST"]

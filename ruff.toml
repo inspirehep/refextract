@@ -1,4 +1,4 @@
-target-version = "py38"
+target-version = "py311"
 [lint.flake8-tidy-imports]
 ban-relative-imports = "all"
 
