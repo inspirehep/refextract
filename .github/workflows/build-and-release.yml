@@ -47,8 +47,9 @@ jobs:
             username: ${{ secrets.HARBOR_USERNAME }}
             password: ${{ secrets.HARBOR_PASSWORD }}
         - name: Deploy QA
-          uses: cern-sis/gh-workflows/.github/actions/kubernetes-project-new-images@v6
+          uses: cern-sis/gh-workflows/.github/actions/kubernetes-project-new-images@v6.4
           with:
             event-type: update
+            repo: cern-sis/kubernetes-inspire
             images: ${{ env.REGISTRY }}/${{ env.IMAGE }}@${{ steps.build.outputs.image-digest }}
             token: ${{ secrets.PAT_FIRE_EVENTS_ON_CERN_SIS_KUBERNETES }}
