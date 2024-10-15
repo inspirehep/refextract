@@ -32,13 +32,17 @@ jobs:
         needs: [lint_and_test]
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         steps:
+        - name: Checkout Code
+          uses: actions/checkout@v4
+          with:
+            ref: ${{ github.ref }}
         - name: Build Image
           id: build
           uses: cern-sis/gh-workflows/.github/actions/docker-build@v6
           with:
-            registry: ${{ env.REGISTRY }}
+            registry: registry.cern.ch
             stage: refextract
-            image: ${{ env.IMAGE }}
+            image: cern-sis/inspirehep/refextract
             cache: false
             username: ${{ secrets.HARBOR_USERNAME }}
             password: ${{ secrets.HARBOR_PASSWORD }}
