@@ -152,7 +152,8 @@ def extract_references_from_file(path,
         extracted_texkeys_urls = extract_texkeys_and_urls_from_pdf(path)
         if len(extracted_texkeys_urls) == len(parsed_refs):
             parsed_refs_updated = []
-            for ref, ref_texkey_urls in zip(parsed_refs, extracted_texkeys_urls):
+            for ref, ref_texkey_urls in zip(parsed_refs, extracted_texkeys_urls,
+                                            strict=False):
                 update_reference_with_urls(ref, ref_texkey_urls.get('urls', []))
                 if ref.get('url'):
                     ref['url'] = dedupe_list(ref['url'])
