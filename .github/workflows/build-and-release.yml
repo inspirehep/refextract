@@ -51,5 +51,5 @@ jobs:
           with:
             event-type: update
             repo: cern-sis/kubernetes-inspire
-            images: ${{ env.REGISTRY }}/${{ env.IMAGE }}@${{ steps.build.outputs.image-digest }}
+            images: registry.cern.ch/cern-sis/inspirehep/refextract@${{ steps.build.outputs.image-digest }}
             token: ${{ secrets.PAT_FIRE_EVENTS_ON_CERN_SIS_KUBERNETES }}
