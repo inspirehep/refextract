@@ -13,6 +13,7 @@ from refextract.references.api import (
 
 parser = FlaskParser()
 
+LOGGER = logging.getLogger(__name__)
 
 def create_app():
     app = Flask(__name__)
@@ -33,7 +34,7 @@ def create_app():
         journal_dict = {"journals": journal_kb_data}
         try:
             for publication_info in publication_infos:
-                if not publication_info.get('pubinfo_freetext'):
+                if not publication_info.get("pubinfo_freetext"):
                     extracted_publication_infos.append({})
                     continue
                 extracted_publication_info = extract_journal_reference(
@@ -107,13 +108,44 @@ def create_app():
             )
         return jsonify({"extracted_references": extracted_references})
 
+    @app.route("/extract_references_from_list", methods=["POST"])
+    @parser.use_args(
+        {
+            "raw_references": fields.List(fields.String, required=True),
+            "journal_kb_data": fields.Dict(required=True),
+        },
+        locations=("json",),
+    )
+    def extract_references_from_list(args):
+        references = args.pop("raw_references")
+        journal_kb_data = args.pop("journal_kb_data")
+        journal_dict = {"journals": journal_kb_data}
+        extracted_references = []
+        for reference in references:
+            try:
+                extracted_reference = extract_references_from_string(
+                    reference,
+                    override_kbs_files=journal_dict,
+                    reference_format="{title},{volume},{page}",
+                )
+                if extracted_reference:
+                    extracted_references.append(extracted_reference[0])
+                else:
+                    extracted_references.append({"raw_ref": [reference]})
+            except Exception as e:
+                LOGGER.error(
+                    f"Failed to extract reference: {reference}. Reason: {str(e)}"
+                )
+                extracted_references.append({"raw_ref": [reference]})
+        return jsonify({"extracted_references": extracted_references})
+
     return app
 
 
 app = create_app()
 
-if app.config.get('PROMETHEUS_ENABLE_EXPORTER_FLASK'):
-    logging.info("Starting prometheus metrics exporter")
+if app.config.get("PROMETHEUS_ENABLE_EXPORTER_FLASK"):
+    LOGGER.info("Starting prometheus metrics exporter")
     metrics = GunicornInternalPrometheusMetrics.for_app_factory()
     metrics.init_app(app)
 
