@@ -515,7 +515,7 @@ def test_reference_split_handles_semicolon():
 
 def test_clean_pdf_before_run(tmp_path, pdf_files):
     tmp_file_path = tmp_path / "packed.pdf"
-    pdf = pdf_files[10]
+    pdf = pdf_files['packed_pdf.pdf']
     with open(pdf, 'rb') as input, open(tmp_file_path, 'wb') as tmp_out:
         tmp_out.write(input.read())
 
