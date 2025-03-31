@@ -25,7 +25,9 @@ from refextract.references.pdf import extract_texkeys_and_urls_from_pdf
 
 
 def test_extract_texkeys_and_urls_from_pdf(pdf_files):
-    one_col_keys = extract_texkeys_and_urls_from_pdf(pdf_files[0])
+    one_col_keys = extract_texkeys_and_urls_from_pdf(
+        pdf_files["1503.07589v1.pdf"]
+    )
     expected = [
         {
             "texkey": "Englert:1964et",
@@ -219,7 +221,7 @@ def test_extract_texkeys_and_urls_from_pdf(pdf_files):
     ]
     assert one_col_keys == expected
 
-    two_col_keys = extract_texkeys_and_urls_from_pdf(pdf_files[1])
+    two_col_keys = extract_texkeys_and_urls_from_pdf(pdf_files["1508.05632v2.pdf"])
 
     expected = [
         {
@@ -610,7 +612,7 @@ def test_extract_texkeys_and_urls_from_pdf(pdf_files):
     ]
     assert two_col_keys == expected
 
-    two_col_2 = extract_texkeys_and_urls_from_pdf(pdf_files[5])
+    two_col_2 = extract_texkeys_and_urls_from_pdf(pdf_files["2110.02751.pdf"])
     expected_two_col_keys_2 = [
         {
             "texkey": "PhysRevLett.122.161801",
@@ -793,7 +795,9 @@ def test_extract_texkeys_and_urls_from_pdf(pdf_files):
 
     assert two_col_2 == expected_two_col_keys_2
 
-    two_col_with_one_url_only = extract_texkeys_and_urls_from_pdf(pdf_files[6])
+    two_col_with_one_url_only = extract_texkeys_and_urls_from_pdf(
+        pdf_files["2301.05883.pdf"]
+    )
     expected_two_col_with_one_url_only = [
         {"texkey": "Gr20"},
         {"texkey": "Au18"},
@@ -831,7 +835,9 @@ def test_extract_texkeys_and_urls_from_pdf(pdf_files):
     ]
     assert two_col_with_one_url_only == expected_two_col_with_one_url_only
 
-    two_col_with_one_url_only_1 = extract_texkeys_and_urls_from_pdf(pdf_files[7])
+    two_col_with_one_url_only_1 = extract_texkeys_and_urls_from_pdf(
+        pdf_files["2303.03819.pdf"]
+    )
     expected_two_col_with_one_url_only_1 = [
         {"texkey": "Hees-Rapp"},
         {"texkey": "He:2022ywp", "urls": {"http://arxiv.org/abs/2204.09299"}},
@@ -863,7 +869,9 @@ def test_extract_texkeys_and_urls_from_pdf(pdf_files):
     ]
     assert two_col_with_one_url_only_1 == expected_two_col_with_one_url_only_1
 
-    two_col_with_one_url_only_2 = extract_texkeys_and_urls_from_pdf(pdf_files[8])
+    two_col_with_one_url_only_2 = extract_texkeys_and_urls_from_pdf(
+        pdf_files["2304.10117.pdf"]
+    )
     two_col_with_one_url_only_2_expected = [
         {"texkey": "Penrose:1964wq"},
         {"texkey": "Penrose:1969pc"},
@@ -907,20 +915,20 @@ def test_extract_texkeys_and_urls_from_pdf_no_crash_on_incomplete_dest_coordinat
     pdf_files,
 ):
     expected = []
-    result = extract_texkeys_and_urls_from_pdf(pdf_files[2])
+    result = extract_texkeys_and_urls_from_pdf(pdf_files["1706.09498v1.pdf"])
 
     assert result == expected
 
 
 def test_extract_texkeys_from_pdf_no_crash_on_pydpf2_error(pdf_files):
     expected = []
-    result = extract_texkeys_and_urls_from_pdf(pdf_files[3])
+    result = extract_texkeys_and_urls_from_pdf(pdf_files["1707.04066v1.pdf"])
 
     assert result == expected
 
 
 def test_extract_texkeys_from_pdf_no_crash_on_other_exceptions(pdf_files):
     expected = []
-    result = extract_texkeys_and_urls_from_pdf(pdf_files[9])
+    result = extract_texkeys_and_urls_from_pdf(pdf_files["DIS_SHEILA_final.pdf"])
 
     assert result == expected

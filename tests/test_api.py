@@ -36,12 +36,12 @@ from refextract.references.errors import FullTextNotAvailableError
 @pytest.fixture
 def kbs_override():
     return {
-        "books": [
-            ('Griffiths, David', 'Introduction to elementary particles', '2008')
-        ],
+        "books": [("Griffiths, David", "Introduction to elementary particles", "2008")],
         "journals": [
-            ("PHYSICAL REVIEW SPECIAL TOPICS ACCELERATORS AND BEAMS",
-             "Phys.Rev.ST Accel.Beams"),
+            (
+                "PHYSICAL REVIEW SPECIAL TOPICS ACCELERATORS AND BEAMS",
+                "Phys.Rev.ST Accel.Beams",
+            ),
             ("PHYS REV D", "Phys.Rev.;D"),
             ("PHYS REV", "Phys.Rev."),
             ("PHYS REV LETT", "Phys.Rev.Lett."),
@@ -54,8 +54,10 @@ def kbs_override():
             ("MATH PHYS", "Math.Phys."),
             ("J MATH PHYS", "J.Math.Phys."),
             ("JHEP", "JHEP"),
-            ("SITZUNGSBER PREUSS AKAD WISS PHYS MATH KL",
-             "Sitzungsber.Preuss.Akad.Wiss.Berlin (Math.Phys.)"),
+            (
+                "SITZUNGSBER PREUSS AKAD WISS PHYS MATH KL",
+                "Sitzungsber.Preuss.Akad.Wiss.Berlin (Math.Phys.)",
+            ),
             ("PHYS LETT", "Phys.Lett."),
             ("NUCL PHYS", "Nucl.Phys."),
             ("NUCL PHYS", "Nucl.Phys."),
@@ -106,16 +108,16 @@ def kbs_override():
             "######ATLANTIS#######",
             "< 9999999>",
             "CERN EX---CERN-EX",
-        ]
+        ],
     }
 
 
 def test_journal_extract():
     r = extract_journal_reference("Science Vol. 338 no. 6108 (2012) pp. 773-775")
-    assert r['year'] == u'2012'
-    assert r['volume'] == u'338'
-    assert r['page'] == u'773-775'
-    assert r['title'] == u'Science'
+    assert r["year"] == "2012"
+    assert r["volume"] == "338"
+    assert r["page"] == "773-775"
+    assert r["title"] == "Science"
 
 
 def test_extract_references_from_string(kbs_override):
@@ -125,29 +127,116 @@ def test_extract_references_from_string(kbs_override):
 
 
 def test_extract_references_from_file(pdf_files):
-    r = extract_references_from_file(pdf_files[0])
-    assert 'texkey' in r[0]
-    assert 'author' in r[0]
-    assert 'url' in r[0]
+    pdf = pdf_files["1503.07589v1.pdf"]
+    r = extract_references_from_file(pdf)
+    assert "texkey" in r[0]
+    assert "author" in r[0]
+    assert "url" in r[0]
     assert len(r) == 36
     with pytest.raises(FullTextNotAvailableError):
-        extract_references_from_file(pdf_files[0] + "error")
+        extract_references_from_file(pdf + "error")
+
+
+def test_extract_references_from_file_dois_as_pdfs_annotations(pdf_files):
+    """Test DOIs as PDFs annotations and texkeys as named destinations"""
+    pdf_file_with_dois_as_pdfs_annotations = pdf_files["2503.05372.pdf"]
+    extracted_references = extract_references_from_file(
+        pdf_file_with_dois_as_pdfs_annotations
+    )
+    first_reference = extracted_references[0]
+    assert len(first_reference["url"]) == 2
+    assert "https://doi.org/10.1103/PhysRevD.68.037502" in first_reference["url"]
+    assert "texkey" in first_reference
+    assert "Cahn:2003cw" in first_reference["texkey"]
+    assert len(extracted_references) == 39
+
+
+def test_extract_references_from_file_does_not_ignore_letters_in_volume(pdf_files):
+    """Test that letters in volume are not ignored."""
+    pdf = pdf_files["2503.05621.pdf"]
+    extracted_references = extract_references_from_file(pdf)
+    fith_reference = extracted_references[4]
+    assert "journal_volume" in fith_reference
+    assert fith_reference["journal_reference"][0] == "Phys. Rev. D95 (2017) 114510"
+    assert fith_reference["journal_volume"][0] == "D95"
+    assert len(extracted_references) == 24
+
+
+def test_extract_references_with_authors_after_references(pdf_files):
+    """Test that references extracted even with authors after references."""
+    pdf = pdf_files["2502.21088.pdf"]
+    extracted_references = extract_references_from_file(pdf)
+    first_reference = extracted_references[0]
+    last_reference = extracted_references[-1]
+    # assert first reference is correctly extracted
+    assert first_reference["journal_reference"][0] == "Phys. Rev. Lett. 25 (1970) 316"
+    assert first_reference["author"][0] == "S. D. Drell and T.-M. Yan"
+    # assert last reference correctly extracts collaboration
+    assert last_reference["collaboration"][0] == "ATLAS Collaboration"
+    assert len(extracted_references) == 104
+
+
+@pytest.mark.xfail(
+    reason="It should not put an Author in author field as it is a collaboration. "
+    "This happens because there are authors after the references."
+)
+def test_collaboration_without_author_when_authors_after_references(pdf_files):
+    """Test that references extracted even with authors after references."""
+    pdf = pdf_files["2502.21088.pdf"]
+    extracted_references = extract_references_from_file(pdf)
+    last_reference = extracted_references[-1]
+    # assert last reference is correctly extracted
+    assert last_reference["collaboration"][0] == "ATLAS Collaboration"
+    assert "author" not in last_reference
+
+
+@pytest.mark.xfail(
+    reason="It should extract the journal reference and urls correctly."
+)
+def test_extract_references_two_column_layout(pdf_files):
+    """Test that references extracted even with authors after references."""
+    pdf = pdf_files["2502.18907.pdf"]
+    extracted_references = extract_references_from_file(pdf)
+    first_reference = extracted_references[0]
+    assert (
+        first_reference["author"][0]
+        == "Adamopoulos G., Robertson J., Morrison N. A., Godet C."
+    )
+    assert first_reference["journal_reference"][0] == " J. Appl. Phys. 96 (2004) 6348"
+    assert "url" in first_reference
+
+
+def test_extract_references_with_multiple_refs_under_same_marker(pdf_files):
+    """Test that references extracted even with authors after references."""
+    pdf = pdf_files["2406.06875.pdf"]
+    extracted_references = extract_references_from_file(pdf)
+    first_reference = extracted_references[0]
+    second_reference = extracted_references[1]
+    third_reference = extracted_references[2]
+    assert first_reference["author"][0] == "W.T. Tutte"
+    assert second_reference["author"][0] == "W.T. Tutte"
+    assert third_reference["author"][0] == "W.T. Tutte"
+    assert first_reference["journal_reference"][0] == "Can. J. Math. 14 (1962) 21"
+    assert second_reference["journal_reference"][0] == "Can. J. Math. 15 (1963) 249"
+    assert (
+        third_reference["journal_reference"][0] == "Bull. Am. Math. Soc. 74 (1968) 64"
+    )
+    assert first_reference["linemarker"][0] == "1"
+    assert second_reference["linemarker"][0] == "1"
+    assert third_reference["linemarker"][0] == "1"
 
 
 @responses.activate
 def test_extract_references_from_url(pdf_files):
-    with open(pdf_files[0], 'rb') as fd:
+    with open(pdf_files["1503.07589v1.pdf"], "rb") as fd:
         url = "http://arxiv.org/pdf/1503.07589v1.pdf"
         responses.add(
-            responses.GET,
-            url,
-            body=fd.read(),
-            content_type='application/pdf'
+            responses.GET, url, body=fd.read(), content_type="application/pdf"
         )
 
     r = extract_references_from_url(url)
     assert len(r) == 36
-    assert 'url' in r[0]
+    assert "url" in r[0]
 
     url = "http://www.example.com"
     responses.add(
@@ -155,25 +244,26 @@ def test_extract_references_from_url(pdf_files):
         url,
         body="File not found!",
         status=404,
-        content_type='text/plain',
+        content_type="text/plain",
     )
     with pytest.raises(FullTextNotAvailableError):
         extract_references_from_url(url)
 
 
 def test_long_registrant_dois(pdf_files):
-    """ DOIs with 5 digit registrant code """
-    r = extract_references_from_file(pdf_files[11])
+    """DOIs with 5 digit registrant code"""
+    r = extract_references_from_file(pdf_files["wepml008.pdf"])
     assert len(r) == 6
     for ref in r[1:]:
-        assert 'doi' in ref
-        assert ref.get('doi')[0].startswith(u'doi:10.18429/JACoW')
+        assert "doi" in ref
+        assert ref.get("doi")[0].startswith("doi:10.18429/JACoW")
 
 
 def test_override_kbs_files_can_take_journals_dict():
     journals = {"Journal of Testing": "J.Testing"}
     reference = "J. Smith, Journal of Testing 42 (2020) 1234"
 
-    result = extract_references_from_string(reference,
-                                            override_kbs_files={"journals": journals})
+    result = extract_references_from_string(
+        reference, override_kbs_files={"journals": journals}
+    )
     assert result[0]["journal_title"] == ["J.Testing"]
