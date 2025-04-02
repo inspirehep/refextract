@@ -25,9 +25,7 @@ from refextract.references.pdf import extract_texkeys_and_urls_from_pdf
 
 
 def test_extract_texkeys_and_urls_from_pdf(pdf_files):
-    one_col_keys = extract_texkeys_and_urls_from_pdf(
-        pdf_files["1503.07589v1.pdf"]
-    )
+    one_col_keys = extract_texkeys_and_urls_from_pdf(pdf_files["1503.07589v1.pdf"])
     expected = [
         {
             "texkey": "Englert:1964et",
