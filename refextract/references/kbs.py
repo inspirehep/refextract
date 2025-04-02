@@ -26,8 +26,6 @@ import contextlib
 import csv
 import re
 
-import six
-
 from refextract.documents.text import re_group_captured_multiple_space
 from refextract.references.config import CFG_REFEXTRACT_KBS
 from refextract.references.regexs import (
@@ -41,7 +39,7 @@ from refextract.references.regexs import (
 
 @contextlib.contextmanager
 def file_resolving(fpath, reader=None, **kwargs):
-    if isinstance(fpath, six.string_types):
+    if isinstance(fpath, str):
         fh = codecs.open(fpath, encoding='utf-8')
         if reader:
             yield reader(fh,
