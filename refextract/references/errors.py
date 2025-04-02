@@ -25,10 +25,8 @@
 
 
 class FullTextNotAvailableError(Exception):
-
     """Raised when we cannot access the document text."""
 
 
 class UnknownDocumentTypeError(Exception):
-
     """Raised when we don't know how to handle the document's MIME type."""

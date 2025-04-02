@@ -190,9 +190,7 @@ def test_collaboration_without_author_when_authors_after_references(pdf_files):
     assert "author" not in last_reference
 
 
-@pytest.mark.xfail(
-    reason="It should extract the journal reference and urls correctly."
-)
+@pytest.mark.xfail(reason="It should extract the journal reference and urls correctly.")
 def test_extract_references_two_column_layout(pdf_files):
     """Test that references extracted even with authors after references."""
     pdf = pdf_files["2502.18907.pdf"]

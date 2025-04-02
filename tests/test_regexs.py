@@ -27,8 +27,8 @@ from refextract.references import regexs
 
 
 def test_word():
-    r = regexs._create_regex_pattern_with_optional_spaces('ABC')
-    assert r == r'A\s*B\s*C\s*'
+    r = regexs._create_regex_pattern_with_optional_spaces("ABC")
+    assert r == r"A\s*B\s*C\s*"
 
 
 def test_reference_section_title_pattern():
@@ -42,8 +42,8 @@ def test_get_reference_line_numeration_marker_patterns():
 
 
 def test_get_reference_line_marker_pattern():
-    r = regexs.get_reference_line_marker_pattern('ABC')
-    assert r.pattern.find('ABC') != -1
+    r = regexs.get_reference_line_marker_pattern("ABC")
+    assert r.pattern.find("ABC") != -1
 
 
 def test_get_post_reference_section_title_patterns():
@@ -57,13 +57,8 @@ def test_get_post_reference_section_keyword_patterns():
 
 
 def test_regex_match_list():
-    s = 'ABC'
-    m = regexs.regex_match_list(s, [
-        re.compile('C.C'),
-        re.compile('A.C')
-    ])
+    s = "ABC"
+    m = regexs.regex_match_list(s, [re.compile("C.C"), re.compile("A.C")])
     assert m
-    m = regexs.regex_match_list(s, [
-        re.compile('C.C')
-    ])
+    m = regexs.regex_match_list(s, [re.compile("C.C")])
     assert m is None

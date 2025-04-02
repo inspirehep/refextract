@@ -31,164 +31,193 @@ from refextract.references.tag import (
 
 def test_vol_page_year():
     "<vol>, <page> (<year>)"
-    ref_line = u"""24, 418 (1930)"""
+    ref_line = """24, 418 (1930)"""
     r = find_numeration(ref_line)
-    assert r['volume'] == u"24"
-    assert r['year'] == u"1930"
-    assert r['page'] == u"418"
+    assert r["volume"] == "24"
+    assert r["year"] == "1930"
+    assert r["page"] == "418"
 
 
 def test_vol_year_page():
-    "<vol>, (<year>) <page> "
-    ref_line = u"""24, (1930) 418"""
+    "<vol>, (<year>) <page>"
+    ref_line = """24, (1930) 418"""
     r = find_numeration(ref_line)
-    assert r['volume'] == u"24"
-    assert r['year'] == u"1930"
-    assert r['page'] == u"418"
+    assert r["volume"] == "24"
+    assert r["year"] == "1930"
+    assert r["page"] == "418"
 
 
 def test_year_title_volume_page():
-    "<year>, <title> <vol> <page> "
-    ref_line = u"""1930 <cds.JOURNAL>J.Phys.</cds.JOURNAL> 24, 418"""
+    "<year>, <title> <vol> <page>"
+    ref_line = """1930 <cds.JOURNAL>J.Phys.</cds.JOURNAL> 24, 418"""
     r = find_numeration_more(ref_line)
-    assert r['volume'] == u"24"
-    assert r['year'] == u"1930"
-    assert r['page'] == u"418"
+    assert r["volume"] == "24"
+    assert r["year"] == "1930"
+    assert r["page"] == "418"
 
 
 def test_identify_ibids_empty():
     r = identify_ibids("")
-    assert r == ({}, '')
+    assert r == ({}, "")
 
 
 def test_identify_ibids_simple():
-    ref_line = (u"[46] E. Schrodinger, Sitzungsber. Preuss. Akad. Wiss. Phys. Math. Kl."
-                u" 24, 418(1930); ibid, 3, 1(1931)")
+    ref_line = (
+        "[46] E. Schrodinger, Sitzungsber. Preuss. Akad. Wiss. Phys. Math. Kl."
+        " 24, 418(1930); ibid, 3, 1(1931)"
+    )
     r = identify_ibids(ref_line.upper())
-    assert r == ({85: u'IBID'}, u'[46] E. SCHRODINGER, SITZUNGSBER. PREUSS. AKAD. '
-                                u'WISS. PHYS. MATH. KL. 24, 418(1930); ____, 3, '
-                                u'1(1931)')
+    assert r == (
+        {85: "IBID"},
+        "[46] E. SCHRODINGER, SITZUNGSBER. PREUSS. AKAD. "
+        "WISS. PHYS. MATH. KL. 24, 418(1930); ____, 3, "
+        "1(1931)",
+    )
 
 
 def test_4_digits():
-    ref_line = u"""{any prefix}arXiv:1003.1111{any postfix}"""
+    ref_line = """{any prefix}arXiv:1003.1111{any postfix}"""
     r = tag_arxiv(ref_line)
-    assert r.strip(': ') == (u"{any prefix}<cds.ARXIV>arXiv:1003.1111</cds.ARXIV>{any "
-                             u"postfix}")
+    assert r.strip(": ") == (
+        "{any prefix}<cds.ARXIV>arXiv:1003.1111</cds.ARXIV>{any " "postfix}"
+    )
 
 
 def test_4_digits_suffix():
-    ref_line = u"""{any prefix}arXiv:1104.2222 [physics.ins-det]{any postfix}"""
+    ref_line = """{any prefix}arXiv:1104.2222 [physics.ins-det]{any postfix}"""
     r = tag_arxiv(ref_line)
-    assert r.strip(': ') == (u"{any prefix}<cds.ARXIV>arXiv:1104.2222 ["
-                             u"physics.ins-det]</cds.ARXIV>{any postfix}")
+    assert r.strip(": ") == (
+        "{any prefix}<cds.ARXIV>arXiv:1104.2222 ["
+        "physics.ins-det]</cds.ARXIV>{any postfix}"
+    )
 
 
 def test_5_digits():
-    ref_line = u"""{any prefix}arXiv:1303.33333{any postfix}"""
+    ref_line = """{any prefix}arXiv:1303.33333{any postfix}"""
     r = tag_arxiv(ref_line)
-    assert r.strip(': ') == (u"{any prefix}<cds.ARXIV>arXiv:1303.33333</cds.ARXIV>{any "
-                             u"postfix}")
+    assert r.strip(": ") == (
+        "{any prefix}<cds.ARXIV>arXiv:1303.33333</cds.ARXIV>{any " "postfix}"
+    )
 
 
 def test_5_digits_2012():
-    ref_line = u"""{any prefix}arXiv:1203.33333{any postfix}"""
+    ref_line = """{any prefix}arXiv:1203.33333{any postfix}"""
     r = tag_arxiv(ref_line)
-    assert r.strip(': ') == u"{any prefix}arXiv:1203.33333{any postfix}"
+    assert r.strip(": ") == "{any prefix}arXiv:1203.33333{any postfix}"
 
 
 def test_5_digits_suffix():
-    ref_line = u"""{any prefix}arXiv:1304.44444 [physics.ins-det]{any postfix}"""
+    ref_line = """{any prefix}arXiv:1304.44444 [physics.ins-det]{any postfix}"""
     r = tag_arxiv(ref_line)
-    assert r.strip(': ') == (u"{any prefix}<cds.ARXIV>arXiv:1304.44444 ["
-                             u"physics.ins-det]</cds.ARXIV>{any postfix}")
+    assert r.strip(": ") == (
+        "{any prefix}<cds.ARXIV>arXiv:1304.44444 ["
+        "physics.ins-det]</cds.ARXIV>{any postfix}"
+    )
 
 
 def test_4_digits_version():
-    ref_line = u"""{any prefix}arXiv:1003.1111v9{any postfix}"""
+    ref_line = """{any prefix}arXiv:1003.1111v9{any postfix}"""
     r = tag_arxiv(ref_line)
-    assert r.strip(': ') == (u"{any prefix}<cds.ARXIV>arXiv:1003.1111</cds.ARXIV>{any "
-                             u"postfix}")
+    assert r.strip(": ") == (
+        "{any prefix}<cds.ARXIV>arXiv:1003.1111</cds.ARXIV>{any " "postfix}"
+    )
 
 
 def test_4_digits_suffix_version():
-    ref_line = u"""{any prefix}arXiv:1104.2222v9 [physics.ins-det]{any postfix}"""
+    ref_line = """{any prefix}arXiv:1104.2222v9 [physics.ins-det]{any postfix}"""
     r = tag_arxiv(ref_line)
-    assert r.strip(': ') == (u"{any prefix}<cds.ARXIV>arXiv:1104.2222 ["
-                             u"physics.ins-det]</cds.ARXIV>{any postfix}")
+    assert r.strip(": ") == (
+        "{any prefix}<cds.ARXIV>arXiv:1104.2222 ["
+        "physics.ins-det]</cds.ARXIV>{any postfix}"
+    )
 
 
 def test_5_digits_version():
-    ref_line = u"""{any prefix}arXiv:1303.33333v9{any postfix}"""
+    ref_line = """{any prefix}arXiv:1303.33333v9{any postfix}"""
     r = tag_arxiv(ref_line)
-    assert r.strip(': ') == (u"{any prefix}<cds.ARXIV>arXiv:1303.33333</cds.ARXIV>{any "
-                             u"postfix}")
+    assert r.strip(": ") == (
+        "{any prefix}<cds.ARXIV>arXiv:1303.33333</cds.ARXIV>{any " "postfix}"
+    )
 
 
 def test_5_digits_suffix_version():
-    ref_line = u"""{any prefix}arXiv:1304.44444v9 [physics.ins-det]{any postfix}"""
+    ref_line = """{any prefix}arXiv:1304.44444v9 [physics.ins-det]{any postfix}"""
     r = tag_arxiv(ref_line)
-    assert r.strip(': ') == (u"{any prefix}<cds.ARXIV>arXiv:1304.44444 ["
-                             u"physics.ins-det]</cds.ARXIV>{any postfix}")
+    assert r.strip(": ") == (
+        "{any prefix}<cds.ARXIV>arXiv:1304.44444 ["
+        "physics.ins-det]</cds.ARXIV>{any postfix}"
+    )
 
 
 def test_4_digits_new():
-    ref_line = u"""{any prefix}9910.1234{any postfix}"""
+    ref_line = """{any prefix}9910.1234{any postfix}"""
     r = tag_arxiv(ref_line)
-    assert r.strip(': ') == (u"{any prefix}<cds.ARXIV>arXiv:9910.1234</cds.ARXIV>{any "
-                             u"postfix}")
+    assert r.strip(": ") == (
+        "{any prefix}<cds.ARXIV>arXiv:9910.1234</cds.ARXIV>{any " "postfix}"
+    )
 
 
 def test_4_digits_suffix_new():
-    ref_line = u"""{any prefix}9910.1234 [physics.ins-det]{any postfix}"""
+    ref_line = """{any prefix}9910.1234 [physics.ins-det]{any postfix}"""
     r = tag_arxiv(ref_line)
-    assert r.strip(': ') == (u"{any prefix}<cds.ARXIV>arXiv:9910.1234 ["
-                             u"physics.ins-det]</cds.ARXIV>{any postfix}")
+    assert r.strip(": ") == (
+        "{any prefix}<cds.ARXIV>arXiv:9910.1234 ["
+        "physics.ins-det]</cds.ARXIV>{any postfix}"
+    )
 
 
 def test_5_digits_new():
-    ref_line = u"""{any prefix}1310.12345{any postfix}"""
+    ref_line = """{any prefix}1310.12345{any postfix}"""
     r = tag_arxiv(ref_line)
-    assert r.strip(': ') == (u"{any prefix}<cds.ARXIV>arXiv:1310.12345</cds.ARXIV>{any "
-                             u"postfix}")
+    assert r.strip(": ") == (
+        "{any prefix}<cds.ARXIV>arXiv:1310.12345</cds.ARXIV>{any " "postfix}"
+    )
 
 
 def test_5_digits_suffix_new():
-    ref_line = u"""{any prefix}1310.12345 [physics.ins-det]{any postfix}"""
+    ref_line = """{any prefix}1310.12345 [physics.ins-det]{any postfix}"""
     r = tag_arxiv(ref_line)
-    assert r.strip(': ') == (u"{any prefix}<cds.ARXIV>arXiv:1310.12345 ["
-                             u"physics.ins-det]</cds.ARXIV>{any postfix}")
+    assert r.strip(": ") == (
+        "{any prefix}<cds.ARXIV>arXiv:1310.12345 ["
+        "physics.ins-det]</cds.ARXIV>{any postfix}"
+    )
 
 
 def test_4_digits_version_new():
-    ref_line = u"""{any prefix}9910.1234v9{any postfix}"""
+    ref_line = """{any prefix}9910.1234v9{any postfix}"""
     r = tag_arxiv(ref_line)
-    assert r.strip(': ') == (u"{any prefix}<cds.ARXIV>arXiv:9910.1234</cds.ARXIV>{any "
-                             u"postfix}")
+    assert r.strip(": ") == (
+        "{any prefix}<cds.ARXIV>arXiv:9910.1234</cds.ARXIV>{any " "postfix}"
+    )
 
 
 def test_4_digits_suffix_version_new():
-    ref_line = u"""{any prefix}9910.1234v9 [physics.ins-det]{any postfix}"""
+    ref_line = """{any prefix}9910.1234v9 [physics.ins-det]{any postfix}"""
     r = tag_arxiv(ref_line)
-    assert r.strip(': ') == (u"{any prefix}<cds.ARXIV>arXiv:9910.1234 ["
-                             u"physics.ins-det]</cds.ARXIV>{any postfix}")
+    assert r.strip(": ") == (
+        "{any prefix}<cds.ARXIV>arXiv:9910.1234 ["
+        "physics.ins-det]</cds.ARXIV>{any postfix}"
+    )
 
 
 def test_5_digits_version_new():
-    ref_line = u"""{any prefix}1310.12345v9{any postfix}"""
+    ref_line = """{any prefix}1310.12345v9{any postfix}"""
     r = tag_arxiv(ref_line)
-    assert r.strip(': ') == (u"{any prefix}<cds.ARXIV>arXiv:1310.12345</cds.ARXIV>{any "
-                             u"postfix}")
+    assert r.strip(": ") == (
+        "{any prefix}<cds.ARXIV>arXiv:1310.12345</cds.ARXIV>{any " "postfix}"
+    )
 
 
 def test_5_digits_suffix_version_new():
-    ref_line = u"""{any prefix}1310.12345v9 [physics.ins-det]{any postfix}"""
+    ref_line = """{any prefix}1310.12345v9 [physics.ins-det]{any postfix}"""
     r = tag_arxiv(ref_line)
-    assert r.strip(': ') == (u"{any prefix}<cds.ARXIV>arXiv:1310.12345 "
-                             "[physics.ins-det]</cds.ARXIV>{any postfix}")
+    assert r.strip(": ") == (
+        "{any prefix}<cds.ARXIV>arXiv:1310.12345 "
+        "[physics.ins-det]</cds.ARXIV>{any postfix}"
+    )
 
 
 def test_5_digits_suffix_version_new_2012():
-    ref_line = u"""{any prefix}1210.12345v9 [physics.ins-det]{any postfix}"""
+    ref_line = """{any prefix}1210.12345v9 [physics.ins-det]{any postfix}"""
     r = tag_arxiv(ref_line)
-    assert r.strip(': ') == u"{any prefix}1210.12345v9 [physics.ins-det]{any postfix}"
+    assert r.strip(": ") == "{any prefix}1210.12345v9 [physics.ins-det]{any postfix}"

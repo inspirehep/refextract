@@ -15,6 +15,7 @@ parser = FlaskParser()
 
 LOGGER = logging.getLogger(__name__)
 
+
 def create_app():
     app = Flask(__name__)
     app.config.from_pyfile("config.cfg", silent=True)
@@ -48,8 +49,8 @@ def create_app():
             return make_response(
                 jsonify(
                     {
-                        "message":
-                            f"Can not extract publication info data. Reason: {str(e)}"
+                        "message": f"Can not extract publication info data."
+                        f"Reason: {str(e)}"
                     }
                 ),
                 500,

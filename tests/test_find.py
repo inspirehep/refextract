@@ -25,18 +25,14 @@ from refextract.references.find import get_reference_section_beginning
 
 
 def test_simple():
-    sect = get_reference_section_beginning([
-        "Hello",
-        "References",
-        "[1] Ref1"
-    ])
+    sect = get_reference_section_beginning(["Hello", "References", "[1] Ref1"])
     assert sect == {
-        'marker': '[1]',
-        'marker_pattern': u'\\s*(?P<mark>\\[\\s*(?P<marknum>\\d+)\\s*\\])',
-        'start_line': 1,
-        'title_string': 'References',
-        'title_marker_same_line': False,
-        'how_found_start': 1,
+        "marker": "[1]",
+        "marker_pattern": "\\s*(?P<mark>\\[\\s*(?P<marknum>\\d+)\\s*\\])",
+        "start_line": 1,
+        "title_string": "References",
+        "title_marker_same_line": False,
+        "how_found_start": 1,
     }
 
 
@@ -46,69 +42,58 @@ def test_no_section():
 
 
 def test_no_title_via_brackets():
-    sect = get_reference_section_beginning([
-        "Hello",
-        "[1] Ref1"
-        "[2] Ref2"
-    ])
+    sect = get_reference_section_beginning(["Hello", "[1] Ref1" "[2] Ref2"])
     assert sect == {
-        'marker': '[1]',
-        'marker_pattern': u'(?P<mark>(?P<left>\\[)\\s*(?P<marknum>\\d+)\\s*('
-                          u'?P<right>\\]))',
-        'start_line': 1,
-        'title_string': None,
-        'title_marker_same_line': False,
-        'how_found_start': 2,
+        "marker": "[1]",
+        "marker_pattern": "(?P<mark>(?P<left>\\[)\\s*(?P<marknum>\\d+)\\s*("
+        "?P<right>\\]))",
+        "start_line": 1,
+        "title_string": None,
+        "title_marker_same_line": False,
+        "how_found_start": 2,
     }
 
 
 def test_no_title_via_dots():
-    sect = get_reference_section_beginning([
-        "Hello",
-        "1. Ref1"
-        "2. Ref2"
-    ])
+    sect = get_reference_section_beginning(["Hello", "1. Ref1" "2. Ref2"])
     assert sect == {
-        'marker': '1.',
-        'marker_pattern':
-            u'(?P<mark>(?P<left>)\\s*(?P<marknum>\\d+)\\s*(?P<right>\\.))',
-        'start_line': 1,
-        'title_string': None,
-        'title_marker_same_line': False,
-        'how_found_start': 3,
+        "marker": "1.",
+        "marker_pattern": "(?P<mark>(?P<left>)\\s*(?P<marknum>\\d+)\\s*(?P<right>\\.))",
+        "start_line": 1,
+        "title_string": None,
+        "title_marker_same_line": False,
+        "how_found_start": 3,
     }
 
 
 def test_no_title_via_numbers():
-    sect = get_reference_section_beginning([
-        "Hello",
-        "1 Ref1"
-        "2 Ref2"
-    ])
+    sect = get_reference_section_beginning(["Hello", "1 Ref1" "2 Ref2"])
     assert sect == {
-        'marker': '1',
-        'marker_pattern': u'(?P<mark>(?P<left>)\\s*(?P<marknum>\\d+)\\s*(?P<right>))',
-        'start_line': 1,
-        'title_string': None,
-        'title_marker_same_line': False,
-        'how_found_start': 4,
+        "marker": "1",
+        "marker_pattern": "(?P<mark>(?P<left>)\\s*(?P<marknum>\\d+)\\s*(?P<right>))",
+        "start_line": 1,
+        "title_string": None,
+        "title_marker_same_line": False,
+        "how_found_start": 4,
     }
 
 
 def test_no_title_via_numbers2():
-    sect = get_reference_section_beginning([
-        "Hello",
-        "1",
-        "Ref1",
-        "(3)",
-        "2",
-        "Ref2",
-    ])
+    sect = get_reference_section_beginning(
+        [
+            "Hello",
+            "1",
+            "Ref1",
+            "(3)",
+            "2",
+            "Ref2",
+        ]
+    )
     assert sect, {
-        'marker': '1',
-        'marker_pattern': u'(?P<mark>(?P<left>)\\s*(?P<marknum>\\d+)\\s*(?P<right>))',
-        'start_line': 1,
-        'title_string': None,
-        'title_marker_same_line': False,
-        'how_found_start': 4,
+        "marker": "1",
+        "marker_pattern": "(?P<mark>(?P<left>)\\s*(?P<marknum>\\d+)\\s*(?P<right>))",
+        "start_line": 1,
+        "title_string": None,
+        "title_marker_same_line": False,
+        "how_found_start": 4,
     }

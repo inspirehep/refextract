@@ -81,18 +81,14 @@ def extract_references_from_url(url, headers=None, chunk_size=1024, **kwargs):
     """
     # Get temporary filepath to download to
     filename, filepath = mkstemp(
-        suffix=u"_{0}".format(os.path.basename(url)),
+        suffix="_{0}".format(os.path.basename(url)),
     )
     os.close(filename)
 
     try:
-        req = requests.get(
-            url=url,
-            headers=headers,
-            stream=True
-        )
+        req = requests.get(url=url, headers=headers, stream=True)
         req.raise_for_status()
-        with open(filepath, 'wb') as f:
+        with open(filepath, "wb") as f:
             for chunk in req.iter_content(chunk_size):
                 f.write(chunk)
         references = extract_references_from_file(filepath, **kwargs)
@@ -103,11 +99,13 @@ def extract_references_from_url(url, headers=None, chunk_size=1024, **kwargs):
     return references
 
 
-def extract_references_from_file(path,
-                                 recid=None,
-                                 reference_format=u"{title} {volume} ({year}) {page}",
-                                 linker_callback=None,
-                                 override_kbs_files=None):
+def extract_references_from_file(
+    path,
+    recid=None,
+    reference_format="{title} {volume} ({year}) {page}",
+    linker_callback=None,
+    override_kbs_files=None,
+):
     """Extract references from a local pdf file.
 
     The first parameter is the path to the file.
@@ -132,7 +130,7 @@ def extract_references_from_file(path,
 
     """
     if not os.path.isfile(path):
-        raise FullTextNotAvailableError(u"File not found: '{0}'".format(path))
+        raise FullTextNotAvailableError("File not found: '{0}'".format(path))
 
     docbody = get_plaintext_document_body(path)
     reflines, dummy, dummy = extract_references_from_fulltext(docbody)
@@ -152,24 +150,28 @@ def extract_references_from_file(path,
         extracted_texkeys_urls = extract_texkeys_and_urls_from_pdf(path)
         if len(extracted_texkeys_urls) == len(parsed_refs):
             parsed_refs_updated = []
-            for ref, ref_texkey_urls in zip(parsed_refs, extracted_texkeys_urls,
-                                            strict=False):
-                update_reference_with_urls(ref, ref_texkey_urls.get('urls', []))
-                if ref.get('url'):
-                    ref['url'] = dedupe_list(ref['url'])
-                parsed_refs_updated.append(dict(ref,
-                                                texkey=[ref_texkey_urls['texkey']]))
+            for ref, ref_texkey_urls in zip(
+                parsed_refs, extracted_texkeys_urls, strict=False
+            ):
+                update_reference_with_urls(ref, ref_texkey_urls.get("urls", []))
+                if ref.get("url"):
+                    ref["url"] = dedupe_list(ref["url"])
+                parsed_refs_updated.append(
+                    dict(ref, texkey=[ref_texkey_urls["texkey"]])
+                )
 
             return parsed_refs_updated
     return parsed_refs
 
 
-def extract_references_from_string(source,
-                                   is_only_references=True,
-                                   recid=None,
-                                   reference_format="{title} {volume} ({year}) {page}",
-                                   linker_callback=None,
-                                   override_kbs_files=None):
+def extract_references_from_string(
+    source,
+    is_only_references=True,
+    recid=None,
+    reference_format="{title} {volume} ({year}) {page}",
+    linker_callback=None,
+    override_kbs_files=None,
+):
     """Extract references from a raw string.
 
     The first parameter is the path to the file.
@@ -193,18 +195,17 @@ def extract_references_from_string(source,
     >>> extract_references_from_string(path,
         override_kbs_files={'journals': 'my/path/to.kb'})
     """
-    docbody = source.split('\n')
+    docbody = source.split("\n")
     if not is_only_references:
         reflines, dummy, dummy = extract_references_from_fulltext(docbody)
     else:
         refs_info = get_reference_section_beginning(docbody)
         if not refs_info:
             refs_info, dummy = find_numeration_in_body(docbody)
-            refs_info['start_line'] = 0
-            refs_info['end_line'] = len(docbody) - 1,
+            refs_info["start_line"] = 0
+            refs_info["end_line"] = (len(docbody) - 1,)
 
-        reflines = rebuild_reference_lines(
-            docbody, refs_info['marker_pattern'])
+        reflines = rebuild_reference_lines(docbody, refs_info["marker_pattern"])
     parsed_refs, stats = parse_references(
         reflines,
         recid=recid,
@@ -226,5 +227,5 @@ def extract_journal_reference(line, override_kbs_files=None):
 
     for elements in references:
         for el in elements:
-            if el['type'] == 'JOURNAL':
+            if el["type"] == "JOURNAL":
                 return el

@@ -45,7 +45,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 def convert_PDF_to_plaintext(fpath, keep_layout=False):
-    """ Convert PDF to txt using pdftotext
+    """Convert PDF to txt using pdftotext
 
     Take the path to a PDF file and run pdftotext for this file, capturing
     the output.
@@ -54,20 +54,27 @@ def convert_PDF_to_plaintext(fpath, keep_layout=False):
     into plaintext; each string is a line in the document.)
     """
     if not os.path.isfile(CFG_PATH_PDFTOTEXT):
-        raise IOError('Missing pdftotext executable')
+        raise IOError("Missing pdftotext executable")
 
-    layout_option = '-layout' if keep_layout else '-raw'
+    layout_option = "-layout" if keep_layout else "-raw"
     doclines = []
     # Pattern to check for lines with a leading page-break character.
     # If this pattern is matched, we want to split the page-break into
     # its own line because we rely upon this for trying to strip headers
     # and footers, and for some other pattern matching.
-    p_break_in_line = re.compile(r'^\s*\f(.+)$', re.UNICODE)
+    p_break_in_line = re.compile(r"^\s*\f(.+)$", re.UNICODE)
     # build pdftotext command:
-    cmd_pdftotext = [CFG_PATH_PDFTOTEXT, layout_option, "-q",
-                     "-enc", "UTF-8", fpath, "-"]
+    cmd_pdftotext = [
+        CFG_PATH_PDFTOTEXT,
+        layout_option,
+        "-q",
+        "-enc",
+        "UTF-8",
+        fpath,
+        "-",
+    ]
 
-    LOGGER.debug(u"%s", ' '.join(cmd_pdftotext))
+    LOGGER.debug("%s", " ".join(cmd_pdftotext))
     # open pipe to pdftotext:
     pipe_pdftotext = subprocess.Popen(cmd_pdftotext, stdout=subprocess.PIPE)
     # read back results:
@@ -82,9 +89,9 @@ def convert_PDF_to_plaintext(fpath, keep_layout=False):
             # If there was a page-break character in the same line as some
             # text, split it out into its own line so that we can later
             # try to find headers and footers:
-            doclines.append(u"\f")
+            doclines.append("\f")
             doclines.append(m_break_in_line.group(1))
 
-    LOGGER.debug(u"convert_PDF_to_plaintext found: %s lines of text", len(doclines))
+    LOGGER.debug("convert_PDF_to_plaintext found: %s lines of text", len(doclines))
 
     return doclines

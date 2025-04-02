@@ -34,39 +34,39 @@ except ImportError:
 import pkg_resources
 
 # Version number:
-CFG_PATH_PDFTOTEXT = os.environ.get('CFG_PATH_PDFTOTEXT', which('pdftotext'))
+CFG_PATH_PDFTOTEXT = os.environ.get("CFG_PATH_PDFTOTEXT", which("pdftotext"))
 
 # Module config directory
-CFG_KBS_DIR = pkg_resources.resource_filename('refextract.references', 'kbs')
+CFG_KBS_DIR = pkg_resources.resource_filename("refextract.references", "kbs")
 
 CFG_REFEXTRACT_KBS = {
-    'journals': "%s/journal-titles.kb" % CFG_KBS_DIR,
-    'journals_re': "%s/journal-titles-re.kb" % CFG_KBS_DIR,
-    'report-numbers': "%s/report-numbers.kb" % CFG_KBS_DIR,
-    'authors': "%s/authors.kb" % CFG_KBS_DIR,
-    'collaborations': "%s/collaborations.kb" % CFG_KBS_DIR,
-    'books': "%s/books.kb" % CFG_KBS_DIR,
-    'publishers': "%s/publishers.kb" % CFG_KBS_DIR,
-    'special_journals': "%s/special-journals.kb" % CFG_KBS_DIR,
+    "journals": "%s/journal-titles.kb" % CFG_KBS_DIR,
+    "journals_re": "%s/journal-titles-re.kb" % CFG_KBS_DIR,
+    "report-numbers": "%s/report-numbers.kb" % CFG_KBS_DIR,
+    "authors": "%s/authors.kb" % CFG_KBS_DIR,
+    "collaborations": "%s/collaborations.kb" % CFG_KBS_DIR,
+    "books": "%s/books.kb" % CFG_KBS_DIR,
+    "publishers": "%s/publishers.kb" % CFG_KBS_DIR,
+    "special_journals": "%s/special-journals.kb" % CFG_KBS_DIR,
 }
 
 # Reference fields:
 CFG_REFEXTRACT_FIELDS = {
-    'misc': 'm',
-    'linemarker': 'o',
-    'doi': 'a',
-    'hdl': 'a',
-    'reportnumber': 'r',
-    'journal': 's',
-    'url': 'u',
-    'urldesc': 'z',
-    'author': 'h',
-    'title': 't',
-    'isbn': 'i',
-    'publisher': 'p',
-    'year': 'y',
-    'collaboration': 'c',
-    'recid': '0',
+    "misc": "m",
+    "linemarker": "o",
+    "doi": "a",
+    "hdl": "a",
+    "reportnumber": "r",
+    "journal": "s",
+    "url": "u",
+    "urldesc": "z",
+    "author": "h",
+    "title": "t",
+    "isbn": "i",
+    "publisher": "p",
+    "year": "y",
+    "collaboration": "c",
+    "recid": "0",
 }
 
 # Internal tags are used by refextract to mark-up recognised citation

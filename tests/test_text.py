@@ -30,44 +30,44 @@ from refextract.references.text import (
 def test_simple():
     marker_pattern = r"^\s*(?P<mark>\[\s*(?P<marknum>\d+)\s*\])"
     refs = [
-        u"[1] hello",
-        u"hello2",
-        u"[2] foo",
+        "[1] hello",
+        "hello2",
+        "[2] foo",
     ]
     rebuilt_refs = rebuild_reference_lines(refs, marker_pattern)
     assert rebuilt_refs == [
-        u"[1] hello hello2",
-        u"[2] foo",
+        "[1] hello hello2",
+        "[2] foo",
     ]
 
 
 def test_pagination_non_removal():
     marker_pattern = r"^\s*(?P<mark>\[\s*(?P<marknum>\d+)\s*\])"
     refs = [
-        u"[1] hello",
-        u"hello2",
-        u"[2]",
-        u"foo",
+        "[1] hello",
+        "hello2",
+        "[2]",
+        "foo",
     ]
     rebuilt_refs = rebuild_reference_lines(refs, marker_pattern)
     assert rebuilt_refs == [
-        u"[1] hello hello2",
-        u"[2] foo",
+        "[1] hello hello2",
+        "[2] foo",
     ]
 
 
 def test_2_lines_together():
     marker_pattern = r"\s*(?P<mark>\[\s*(?P<marknum>\d+)\s*\])"
     refs = [
-        u"[1] hello",
-        u"hello2 [2] foo",
+        "[1] hello",
+        "hello2 [2] foo",
     ]
     rebuilt_refs = rebuild_reference_lines(refs, marker_pattern)
     assert rebuilt_refs == [
-        u"[1] hello hello2",
-        u"[2] foo",
+        "[1] hello hello2",
+        "[2] foo",
     ]
 
 
 def test_get_number_header_lines_does_not_crash_on_final_empty_page(pdf_files):
-    assert extract_references_from_file(pdf_files['1805.05865.pdf'])
+    assert extract_references_from_file(pdf_files["1805.05865.pdf"])
