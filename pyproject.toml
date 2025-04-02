@@ -2,7 +2,7 @@
 name = "refextract"
 version = "0.1.0"
 description = "Small library for extracting references used in scholarly communication."
-readme = "README.rst"
+readme = "README.md"
 homepage = "https://github.com/inspirehep/refextract"
 license = "GPL-2.0-or-later"
 authors = [
