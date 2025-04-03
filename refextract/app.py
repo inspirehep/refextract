@@ -25,7 +25,7 @@ def create_app():
             "publication_infos": fields.List(fields.Dict, required=True),
             "journal_kb_data": fields.Dict(required=True),
         },
-        locations=("json",),
+        location="json",
     )
     def extract_journal_info(args):
         publication_infos = args.pop("publication_infos")
@@ -62,7 +62,7 @@ def create_app():
             "text": fields.String(required=True),
             "journal_kb_data": fields.Dict(required=True),
         },
-        locations=("json",),
+        location="json",
     )
     def extract_references_from_text(args):
         text = args.pop("text")
@@ -87,7 +87,7 @@ def create_app():
             "url": fields.String(required=True),
             "journal_kb_data": fields.Dict(required=True),
         },
-        locations=("json",),
+        location="json",
     )
     def extract_references_from_file_url(args):
         url = args.pop("url")
@@ -114,7 +114,7 @@ def create_app():
             "raw_references": fields.List(fields.String, required=True),
             "journal_kb_data": fields.Dict(required=True),
         },
-        locations=("json",),
+        location="json",
     )
     def extract_references_from_list(args):
         references = args.pop("raw_references")

@@ -23,8 +23,8 @@
 
 import logging
 
-from PyPDF2 import PdfFileReader
-from PyPDF2.generic import ByteStringObject
+from pypdf import PdfReader
+from pypdf.generic import ByteStringObject
 
 from refextract.references.regexs import re_reference_in_dest
 
@@ -52,11 +52,11 @@ def extract_texkeys_and_urls_from_pdf(pdf_file):
     """
     with open(pdf_file, "rb") as pdf_stream:
         try:
-            pdf = PdfFileReader(pdf_stream, strict=False)
-            destinations = pdf.getNamedDestinations()
+            pdf = PdfReader(pdf_stream, strict=False)
+            destinations = pdf.named_destinations
             urls = extract_urls(pdf)
         except Exception:
-            LOGGER.debug("PDF: Internal PyPDF2 error, no TeXkeys returned.")
+            LOGGER.debug("PDF: Internal pypdf error, no TeXkeys returned.")
             return []
         # not all named destinations point to references
         refs = []
@@ -194,7 +194,7 @@ def _destinations_in_two_columns(pdf, destinations, cutoff=3):
     """
     Check if the named destinations are organized along two columns (heuristic)
 
-    @param pdf: a PdfFileReader object
+    @param pdf: a PdfReader object
     @param destinations:
 
     'cutoff' is used to tune the heuristic: if 'cutoff' destinations in the
@@ -222,15 +222,15 @@ def _destination_position(pdf, destination):
     This representation is useful for sorting named destinations and
     assumes the text has at most 2 columns
     """
-    pagewidth = pdf.getPage(
-        pdf.getDestinationPageNumber(destination)
-    ).cropBox.lowerRight[0]
+    pagewidth = pdf.pages[
+        pdf.get_destination_page_number(destination)
+    ].cropbox.right
     if not destination.left or not destination.top:
         raise IncompleteCoordinatesError(destination)
     # assuming max 2 columns
     column = (2 * destination.left) // pagewidth
     return (
-        pdf.getDestinationPageNumber(destination),
+        pdf.get_destination_page_number(destination),
         column,
         -destination.top,
         destination.left,
@@ -244,7 +244,7 @@ def _uri_position(pdf, uri_destination):
     page_nb = uri_destination.get("page_nb")
     destintation_left = uri_destination["/Rect"][0]
     destintation_top = uri_destination["/Rect"][3]
-    pagewidth = pdf.getPage(page_nb).cropBox.lowerRight[0]
+    pagewidth = pdf.get_page(page_nb).cropbox.right
     column = (2 * destintation_left) // pagewidth
     # neccessary to exclude column from sorting
     return (page_nb, column, -destintation_top, destintation_left)
@@ -252,10 +252,10 @@ def _uri_position(pdf, uri_destination):
 
 def extract_urls(pdf):
     urls = []
-    pages = pdf.getNumPages()
+    pages = len(pdf.pages)
     for page_nb in range(pages):
-        page = pdf.getPage(page_nb)
-        page_object = page.getObject()
+        page = pdf.pages[page_nb]
+        page_object = page.get_object()
         urls_for_page = _get_urls_data_from_page_object(page_object, page_nb)
         urls.extend(urls_for_page)
     return urls
@@ -265,7 +265,7 @@ def _get_urls_data_from_page_object(page_object, page_nb):
     urls_at_page = []
     annotations = page_object.get("/Annots", [])
     for annotation in annotations:
-        annotation_object = annotation.getObject()
+        annotation_object = annotation.get_object()
         if "/URI" in annotation_object["/A"]:
             annotation_object.update({"page_nb": page_nb})
             urls_at_page.append(annotation_object)
