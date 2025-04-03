@@ -27,7 +27,7 @@ jobs:
                 --entrypoint poetry
                 refextract
                 run pytest
-    push_and_deploy:
+    push_and_deploy_qa:
         runs-on: ubuntu-latest
         needs: [lint_and_test]
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
