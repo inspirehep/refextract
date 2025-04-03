@@ -192,3 +192,27 @@ def test_5_digits_suffix_version_new_2012():
     ref_line = u"""{any prefix}1210.12345v9 [physics.ins-det]{any postfix}"""
     r = tag_arxiv(ref_line)
     assert r.strip(': ') == u"{any prefix}1210.12345v9 [physics.ins-det]{any postfix}"
+
+
+def test_4_digits_new_url():
+    ref_line = u"""{any prefix}https://arxiv.org/abs/1311.2198{any postfix}"""
+    r = tag_arxiv(ref_line)
+    assert r.strip(': ') == u"{any prefix}<cds.REPORTNUMBER>arXiv:1311.2198</cds.REPORTNUMBER>{any postfix}"
+
+
+def test_5_digits_new_url():
+    ref_line = u"""{any prefix}https://arxiv.org/abs/1602.03988{any postfix}"""
+    r = tag_arxiv(ref_line)
+    assert r.strip(': ') == u"{any prefix}<cds.REPORTNUMBER>arXiv:1602.03988</cds.REPORTNUMBER>{any postfix}"
+
+
+def test_4_digits_version_new_url():
+    ref_line = u"""{any prefix}https://arxiv.org/abs/0708.0882v1{any postfix}"""
+    r = tag_arxiv(ref_line)
+    assert r.strip(': ') == u"{any prefix}<cds.REPORTNUMBER>arXiv:0708.0882</cds.REPORTNUMBER>{any postfix}"
+
+
+def test_5_digits_new_pdf_url():
+    ref_line = u"""{any prefix}https://arxiv.org/pdf/1712.03976.pdf{any postfix}"""
+    r = tag_arxiv(ref_line)
+    assert r.strip(': ') == u"{any prefix}<cds.REPORTNUMBER>arXiv:1712.03976</cds.REPORTNUMBER>{any postfix}"

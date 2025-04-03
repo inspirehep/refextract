@@ -367,6 +367,38 @@ def test_doi_subdivisions():
     assert references[0]['linemarker'] == [u'10']
 
 
+def test_old_arxiv():
+    ref_line = u'[20]  B. Moore, T. R. Quinn, F. Governato, J. Stadel, and G. Lake, "Cold collapse and the corecatastrophe," Mon. Not. Roy. Astron. Soc.310(1999) 1147–1152, arXiv:astro-ph/9903164 [astro-ph].'
+    res = get_references(ref_line)
+    references = res[0]
+    assert references[0]['reportnumber'] == [u'astro-ph/9903164']
+    assert references[0]['linemarker'] == [u'20']
+
+
+def test_old_lanl_url_version():
+    ref_line = u'[44]  Navarro, J.F., Frenk, C.S., White, S.D.M. http://xxx.lanl.gov/pdf/astro-ph/9508025v1'
+    res = get_references(ref_line)
+    references = res[0]
+    assert references[0]['reportnumber'] == [u'astro-ph/9508025']
+    assert references[0]['linemarker'] == [u'44']
+
+
+def test_old_arxiv_url():
+    ref_line = u'[298] 	V. Allori, D. Duerr, S. Goldstein, and N. Zanghi. 2002. Seven steps towards the classical world. Journal of Optics B : Quantum and semiclassical Optics, Volume 4, number 4. https://arxiv.org/abs/quant-ph/0112005'
+    res = get_references(ref_line)
+    references = res[0]
+    assert references[0]['reportnumber'] == [u'quant-ph/0112005']
+    assert references[0]['linemarker'] == [u'298']
+
+
+def test_old_arxiv_mirror_url():
+    ref_line = u'[13] A. Zupanc, et al, Belle Collaboration, https://cn.arxiv.org/abs/hep-ex/0703040 2007'
+    res = get_references(ref_line)
+    references = res[0]
+    assert references[0]['reportnumber'] == [u'hep-ex/0703040']
+    assert references[0]['linemarker'] == [u'13']
+
+
 def test_get_plaintext_document_body(tmpdir):
     input = [u"Some text\n", u"on multiple lines\n"]
     f = tmpdir.join("plain.txt")
