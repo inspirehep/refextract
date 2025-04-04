@@ -21,7 +21,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-from refextract.references.kbs import get_kbs
+import csv
+
+from refextract.references.kbs import file_resolving, get_kbs
 
 
 def test_get_kbs_doesnt_override_default_if_value_is_none():
@@ -41,8 +43,10 @@ def test_get_kbs_caches_journal_dict():
     second_cache = get_kbs(custom_kbs={"journals": journals})
     # the cache is reused, so identity of the cache elements doesn't change
     assert all(
-        cached_first is cached_second for (cached_first, cached_second)
-        in zip(first_cache["journals"], second_cache["journals"], strict=False)
+        cached_first is cached_second
+        for (cached_first, cached_second) in zip(
+            first_cache["journals"], second_cache["journals"], strict=False
+        )
     )
 
 
@@ -54,8 +58,23 @@ def test_get_kbs_invalidates_cache_if_input_changes():
     second_cache = get_kbs(custom_kbs={"journals": journals})
     # the cache is invalidated, so identity of the cache elements changes
     assert all(
-        cached_first is not cached_second for (cached_first, cached_second)
-        in zip(first_cache["journals"], second_cache["journals"], strict=False)
+        cached_first is not cached_second
+        for (cached_first, cached_second) in zip(
+            first_cache["journals"], second_cache["journals"], strict=False
+        )
     )
     assert len(second_cache["journals"]) == 3
     assert second_cache["journals"][-1] == ["JOURNAL OF TESTING", "J TEST"]
+
+
+def test_file_resolving():
+    # Test that the file resolving works as expected
+    with file_resolving("tests/data/file_resolving.csv") as fh:
+        assert fh.read() == "1|2|3\n4|5|6\n"
+
+
+def test_file_resolving_reader():
+    # Test that the file resolving works as expected with a reader
+    with file_resolving("tests/data/file_resolving.csv", reader=csv.reader) as fh:
+        rows = list(fh)
+        assert rows == [["1", "2", "3"], ["4", "5", "6"]]
