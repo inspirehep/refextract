@@ -28,7 +28,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            registry.cern.ch/cern-sis/inspire/refextract
+            registry.cern.ch/cern-sis/inspirehep/refextract
           tags: "type=sha"
 
       - name: send event inspire
