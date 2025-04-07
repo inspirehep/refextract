@@ -226,7 +226,9 @@ def _destination_position(pdf, destination):
     This representation is useful for sorting named destinations and
     assumes the text has at most 2 columns
     """
-    pagewidth = pdf.pages[pdf.get_destination_page_number(destination)].cropbox.right
+    pagewidth = pdf.pages[
+        pdf.get_destination_page_number(destination)
+    ].cropbox.lower_right[0]
     if not destination.left or not destination.top:
         raise IncompleteCoordinatesError(destination)
     # assuming max 2 columns
@@ -246,7 +248,7 @@ def _uri_position(pdf, uri_destination):
     page_nb = uri_destination.get("page_nb")
     destintation_left = uri_destination["/Rect"][0]
     destintation_top = uri_destination["/Rect"][3]
-    pagewidth = pdf.get_page(page_nb).cropbox.right
+    pagewidth = pdf.get_page(page_nb).cropbox.lower_right[0]
     column = (2 * destintation_left) // pagewidth
     # neccessary to exclude column from sorting
     return (page_nb, column, -destintation_top, destintation_left)
