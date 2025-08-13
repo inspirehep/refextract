@@ -37,7 +37,7 @@ gunicorn = "^23.0.0"
 python-magic = "^0.4.27"
 inspire-utils = "^3.0.61"
 requests = "^2.32.3"
-pypdf = "^5.4.0"
+pypdf = ">=5.4,<7.0"
 
 
 [tool.poetry.group.dev.dependencies]
