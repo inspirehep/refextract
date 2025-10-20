@@ -23,7 +23,7 @@
 
 
 include LICENSE *.rst
-include .coveragerc run-tests.sh pytest.ini tox.ini Dockerfile
+Dockerfile
 include docs/*.rst docs/*.py docs/Makefile
 
 recursive-include refextract *
