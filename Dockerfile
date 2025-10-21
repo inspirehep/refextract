@@ -12,8 +12,7 @@ RUN pip install --no-cache-dir poetry
 RUN poetry config virtualenvs.create false \
     && poetry install --only main
 
-ENV PROMETHEUS_MULTIPROC_DIR='/tmp'
-ENTRYPOINT ["gunicorn", "-b", ":5000", "--access-logfile", "-", "--error-logfile", "-", "refextract.app:app", "--timeout", "650"]
+ENTRYPOINT ["/bin/bash" ]
 
 FROM refextract AS refextract-tests
 

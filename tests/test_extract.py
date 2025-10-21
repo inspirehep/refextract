@@ -1,10 +1,15 @@
-import json
-
 import mock
 import pytest
 
+from refextract.extract import (
+    extract_journal_info,
+    extract_references_from_file_url,
+    extract_references_from_list,
+    extract_references_from_text,
+)
 
-def test_extract_journal_info(app_client):
+
+def test_extract_journal_info():
     journal_kb_data = {
         "COMMUNICATIONS IN ASTEROSEISMOLOGY": "Commun.Asteros.",
         "PHYS REV": "Phys.Rev.",
@@ -25,29 +30,15 @@ def test_extract_journal_info(app_client):
         {"journal_title": "Phys. Rev."},
     ]
 
-    payload = {
-        "journal_kb_data": journal_kb_data,
-        "publication_infos": publication_infos,
-    }
+    extracted = extract_journal_info(publication_infos, journal_kb_data)
 
-    headers = {
-        "content-type": "application/json",
-    }
-    response = app_client.post(
-        "/extract_journal_info",
-        headers=headers,
-        data=json.dumps(payload),
-    )
-    assert response.status_code == 200
-    assert "extracted_publication_infos" in response.json
-    assert len(response.json["extracted_publication_infos"]) == 2
+    assert "extracted_publication_infos" in extracted
+    assert len(extracted["extracted_publication_infos"]) == 2
 
 
-@mock.patch(
-    "refextract.app.extract_journal_reference", side_effect=KeyError("test message")
-)
+@mock.patch("refextract.extract.extract_journal_reference", side_effect=KeyError)
 def test_extract_journal_info_when_timeout_from_refextract(
-    mock_extract_refs, app_client
+    extract_journal_reference_mock,
 ):
     journal_kb_data = {
         "COMMUNICATIONS IN ASTEROSEISMOLOGY": "Commun.Asteros.",
@@ -66,26 +57,12 @@ def test_extract_journal_info_when_timeout_from_refextract(
     }
     publication_infos = [{"pubinfo_freetext": "Phys. Rev. 127 (1962) 965-970"}]
 
-    payload = {
-        "journal_kb_data": journal_kb_data,
-        "publication_infos": publication_infos,
-    }
+    extracted = extract_journal_info(publication_infos, journal_kb_data)
 
-    headers = {
-        "content-type": "application/json",
-    }
-    response = app_client.post(
-        "/extract_journal_info",
-        headers=headers,
-        data=json.dumps(payload),
-    )
-    assert response.status_code == 500
-    assert response.json == {
-        "message": "Can not extract publication info data. Reason: 'test message'"
-    }
+    assert not extracted
 
 
-def test_extract_journal_info_for_multiple_pubinfos(app_client):
+def test_extract_journal_info_for_multiple_pubinfos():
     journal_kb_data = {
         "COMMUNICATIONS IN ASTEROSEISMOLOGY": "Commun.Asteros.",
         "PHYS REV": "Phys.Rev.",
@@ -106,141 +83,95 @@ def test_extract_journal_info_for_multiple_pubinfos(app_client):
         {"pubinfo_freetext": "Phys.Rev.Lett. 127 (1962) 965-970"},
     ]
 
-    payload = {
-        "journal_kb_data": journal_kb_data,
-        "publication_infos": publication_infos,
-    }
+    extracted = extract_journal_info(publication_infos, journal_kb_data)
 
-    headers = {
-        "content-type": "application/json",
-    }
-    response = app_client.post(
-        "/extract_journal_info",
-        headers=headers,
-        data=json.dumps(payload),
-    )
-    assert response.status_code == 200
-    assert "extracted_publication_infos" in response.json
-    assert len(response.json["extracted_publication_infos"]) == 2
+    assert "extracted_publication_infos" in extracted
+    assert len(extracted["extracted_publication_infos"]) == 2
 
 
-def test_extract_extract_references_from_text(app_client):
+def test_extract_extract_references_from_text():
     journal_kb_data = {
         "COMMUNICATIONS IN ASTEROSEISMOLOGY": "Commun.Asteros.",
         "PHYS REV": "Phys.Rev.",
         "PHYSICAL REVIEW": "Phys.Rev.",
     }
-    headers = {
-        "content-type": "application/json",
-    }
     text = "Iskra Ł W et al 2017 Acta Phys. Pol. B 48 581"
-    payload = {"journal_kb_data": journal_kb_data, "text": text}
-    response = app_client.post(
-        "/extract_references_from_text",
-        headers=headers,
-        data=json.dumps(payload),
-    )
-    assert response.status_code == 200
-    assert "extracted_references" in response.json
-    assert len(response.json["extracted_references"]) == 1
-    assert "author" in response.json["extracted_references"][0]
-    assert "misc" in response.json["extracted_references"][0]
-    assert "year" in response.json["extracted_references"][0]
+
+    extracted = extract_references_from_text(text, journal_kb_data)
+
+    assert "extracted_references" in extracted
+    assert len(extracted["extracted_references"]) == 1
+    assert "author" in extracted["extracted_references"][0]
+    assert "misc" in extracted["extracted_references"][0]
+    assert "year" in extracted["extracted_references"][0]
 
 
-@mock.patch(
-    "refextract.app.extract_references_from_string",
-    side_effect=KeyError("test message"),
-)
+@mock.patch("refextract.extract.extract_references_from_string", side_effect=KeyError)
 def test_extract_references_from_text_when_timeout_from_refextract(
-    mock_extract_refs, app_client
+    extract_references_from_string_mock,
 ):
     journal_kb_data = {
         "COMMUNICATIONS IN ASTEROSEISMOLOGY": "Commun.Asteros.",
         "PHYS REV": "Phys.Rev.",
         "PHYSICAL REVIEW": "Phys.Rev.",
     }
-    headers = {
-        "content-type": "application/json",
-    }
+
     text = "Iskra Ł W et al 2017 Acta Phys. Pol. B 48 581"
-    payload = {"journal_kb_data": journal_kb_data, "text": text}
-    response = app_client.post(
-        "/extract_references_from_text", headers=headers, data=json.dumps(payload)
-    )
-    assert response.status_code == 500
-    assert response.json == {
-        "message": "Can not extract references. Reason: 'test message'"
-    }
+
+    extracted = extract_references_from_text(text, journal_kb_data)
+
+    assert not extracted
 
 
-def test_extract_extract_references_from_list(app_client):
+def test_extract_references_from_list():
     journal_kb_data = {
         "COMMUNICATIONS IN ASTEROSEISMOLOGY": "Commun.Asteros.",
         "PHYS REV": "Phys.Rev.",
         "PHYSICAL REVIEW": "Phys.Rev.",
-    }
-    headers = {
-        "content-type": "application/json",
     }
     raw_references = [
         "Iskra Ł W et al 2017 Acta Phys. Pol. B 48 581",
         "Iskra Ł W et al 2017 Acta Phys. Pol. B 48 582",
         "Iskra Ł W et al 2017 Acta Phys. Pol. B 48 583",
     ]
-    payload = {"journal_kb_data": journal_kb_data, "raw_references": raw_references}
-    response = app_client.post(
-        "/extract_references_from_list",
-        headers=headers,
-        data=json.dumps(payload),
-    )
-    assert response.status_code == 200
-    assert "extracted_references" in response.json
-    assert len(response.json["extracted_references"]) == 3
-    for reference in response.json["extracted_references"]:
+
+    extracted = extract_references_from_list(raw_references, journal_kb_data)
+
+    assert "extracted_references" in extracted
+    assert len(extracted["extracted_references"]) == 3
+    for reference in extracted["extracted_references"]:
         assert "author" in reference
         assert "misc" in reference
         assert "year" in reference
 
 
-@mock.patch(
-    "refextract.app.extract_references_from_string",
-    side_effect=KeyError("test message"),
-)
-def test_extract_extract_references_from_list_when_error_from_refextract(
-    mock_extract_refs, app_client
+@mock.patch("refextract.extract.extract_references_from_string", side_effect=KeyError)
+def test_extract_references_from_list_when_error_from_refextract(
+    extract_references_from_string_mock,
 ):
     journal_kb_data = {
         "COMMUNICATIONS IN ASTEROSEISMOLOGY": "Commun.Asteros.",
         "PHYS REV": "Phys.Rev.",
         "PHYSICAL REVIEW": "Phys.Rev.",
     }
-    headers = {
-        "content-type": "application/json",
-    }
     raw_references = [
         "Iskra Ł W et al 2017 Acta Phys. Pol. B 48 581",
         "Iskra Ł W et al 2017 Acta Phys. Pol. B 48 582",
         "Iskra Ł W et al 2017 Acta Phys. Pol. B 48 583",
     ]
-    payload = {"journal_kb_data": journal_kb_data, "raw_references": raw_references}
-    response = app_client.post(
-        "/extract_references_from_list",
-        headers=headers,
-        data=json.dumps(payload),
-    )
+
+    extracted = extract_references_from_list(raw_references, journal_kb_data)
 
     expected_response = [
         {"raw_ref": ["Iskra Ł W et al 2017 Acta Phys. Pol. B 48 581"]},
         {"raw_ref": ["Iskra Ł W et al 2017 Acta Phys. Pol. B 48 582"]},
         {"raw_ref": ["Iskra Ł W et al 2017 Acta Phys. Pol. B 48 583"]},
     ]
-    assert response.status_code == 200
-    assert response.json["extracted_references"] == expected_response
+    assert extracted["extracted_references"] == expected_response
 
 
 @pytest.mark.vcr
-def test_extract_extract_references_from_url(app_client):
+def test_extract_references_from_url():
     journal_kb_data = {
         "COMMUNICATIONS IN ASTEROSEISMOLOGY": "Commun.Asteros.",
         "PHYS REV": "Phys.Rev.",
@@ -256,16 +187,9 @@ def test_extract_extract_references_from_url(app_client):
         "BULLETIN OF THE CALCUTTA MATHEMATICAL SOCIETY": "Bull.Calcutta Math.Soc.",
         "QUANTUM MACHINE INTELLIGENCE": "Quantum Machine Intelligence",
     }
-    headers = {
-        "content-type": "application/json",
-    }
     url = "https://inspirehep.net/files/33ea6e86a7bfb4cab4734ed5c14d4529"
-    payload = {"url": url, "journal_kb_data": journal_kb_data}
-    response = app_client.post(
-        "/extract_references_from_url",
-        headers=headers,
-        data=json.dumps(payload),
-    )
-    assert response.status_code == 200
-    assert "extracted_references" in response.json
-    assert len(response.json["extracted_references"]) == 2
+
+    extracted = extract_references_from_file_url(url, journal_kb_data)
+
+    assert "extracted_references" in extracted
+    assert len(extracted["extracted_references"]) == 2

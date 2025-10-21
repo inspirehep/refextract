@@ -5,5 +5,10 @@ on:
     branches: [master]
 
 jobs:
+  lint:
+    uses: ./.github/workflows/lint.yml
+    with:
+      ref: ${{ github.event.pull_request.head.sha }}
   tests:
+    needs: [lint]
     uses: ./.github/workflows/test.yml

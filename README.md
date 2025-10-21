@@ -18,7 +18,7 @@ docker build --target refextract-tests -t refextract .
 
 After that, spin up a `refextract` service with:
 ```shell
-docker run -it -d -p 5000:5000 -v ./tests:/refextract/tests -v ./refextract:/refextract/refextract --name refextract refextract
+docker run -it -v ./tests:/refextract/tests -v ./refextract:/refextract/refextract  refextract
 ```
 
 ### Running tests
