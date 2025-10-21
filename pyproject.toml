@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "refextract"
-version = "1.1.4"
+version = "1.1.5"
 description = "Small library for extracting references used in scholarly communication."
 readme = "README.md"
 homepage = "https://github.com/inspirehep/refextract"
