@@ -39,7 +39,7 @@ pypdf = "^5.4.0"
 [tool.poetry.group.dev.dependencies]
 mock = "^5.2.0"
 responses =">=0.25.7,~=0.25"
-pytest = "^8.3.3"
+pytest = ">=8.3.3,<10.0.0"
 pytest-cov = "^6.0.0"
 ipdb = "^0.13.9"
 
