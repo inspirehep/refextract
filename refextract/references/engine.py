@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # This file is part of refextract.
 # Copyright (C) 2013, 2015, 2016, 2017, 2018, 2020 CERN.
@@ -395,10 +394,7 @@ def remove_invalid_references(splitted_citations):
         for citation in splitted_citations:
             if not valid_citation(citation):
                 # Merge to previous one misc txt
-                if previous_citation:
-                    citation_to_merge_into = previous_citation
-                else:
-                    citation_to_merge_into = splitted_citations[1]
+                citation_to_merge_into = previous_citation or splitted_citations[1]
 
                 for el in citation:
                     add_misc(citation_to_merge_into[-1], el["misc_txt"])

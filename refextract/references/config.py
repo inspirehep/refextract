@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # This file is part of refextract.
 # Copyright (C) 2013, 2015, 2017, 2018, 2020 CERN.
@@ -24,20 +23,14 @@
 """refextract configuration."""
 
 import os
-
-try:
-    from shutil import which
-except ImportError:
-    # CPython <3.3
-    from distutils.spawn import find_executable as which
-
-import pkg_resources
+from importlib.resources import files
+from shutil import which
 
 # Version number:
 CFG_PATH_PDFTOTEXT = os.environ.get("CFG_PATH_PDFTOTEXT", which("pdftotext"))
 
 # Module config directory
-CFG_KBS_DIR = pkg_resources.resource_filename("refextract.references", "kbs")
+CFG_KBS_DIR = str(files("refextract.references") / "kbs")
 
 CFG_REFEXTRACT_KBS = {
     "journals": "%s/journal-titles.kb" % CFG_KBS_DIR,
