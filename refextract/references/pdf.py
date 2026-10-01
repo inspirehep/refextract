@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # This file is part of refextract.
 # Copyright (C) 2016, 2017, 2018, 2020 CERN.

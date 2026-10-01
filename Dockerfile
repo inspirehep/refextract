@@ -1,4 +1,5 @@
-FROM python:3.11.6-slim-bullseye AS refextract
+ARG PYTHON_VERSION=3.11
+FROM python:${PYTHON_VERSION}-slim AS refextract
 
 ARG APP_HOME=/refextract
 WORKDIR ${APP_HOME}
